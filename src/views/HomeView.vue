@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+import { useAxios } from '@/stores/axios';
+const axios= useAxios();
 </script>
 
 <template>
   <main>
-    <TheWelcome />
   </main>
 </template>
