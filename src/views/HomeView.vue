@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useAxios } from '@/stores/axios';
-const axios= useAxios();
+import { onMounted } from 'vue';
+const axios= useAxios().Axios;
+
 </script>
 
 <template>

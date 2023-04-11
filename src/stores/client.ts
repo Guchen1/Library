@@ -6,7 +6,7 @@ interface ClientData {
 }
 export const useClient = defineStore('client', () => {
     
-    const loggedIn = ref(true)
+    const loggedIn = ref(false)
     const clientData= reactive({
         clientName: '',
         clientType: 'admin',
