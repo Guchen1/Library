@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { useAxios } from '@/stores/axios'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed,watch } from 'vue'
 import BookPreview from '@/components/BookPreview.vue'
 const axios = useAxios().Axios
 const topimg = ref()
 const props = defineProps<{
   width: number
 }>()
+watch(()=>props.width,(newval)=>{
+  newval>1600?topimg.value.src='/src/assets/Librarywithhangingbulbs2.png':topimg.value.src='/src/assets/Librarywithhangingbulbs1.png'
+})
 const x = computed(() => {
   return props.width > 1600 ? 0.192505 * props.width + 'px' : 0.247755 * props.width + 'px'
 })
@@ -26,12 +29,14 @@ const x = computed(() => {
         <a-input class="main-search" placeholder="Search The Books">12</a-input>
       </div>
     </div>
+    <img src="@/assets/Librarywithhangingbulbs1.png" loading='lazy' v-if="false">
+    <img src="@/assets/Librarywithhangingbulbs2.png" loading='lazy' v-if="false">
     <img
       ref="topimg"
       :src="
         props.width > 1600
-          ? '/src/assets/Library with hanging bulbs2.png'
-          : '/src/assets/Library with hanging bulbs1.png'
+          ? '/src/assets/Librarywithhangingbulbs2.png'
+          : '/src/assets/Librarywithhangingbulbs1.png'
       "
       alt="logo"
     />
