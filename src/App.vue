@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onMounted, ref, watch } from 'vue'
 import { useClient } from './stores/client'
-import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
+import { useRouter, useRoute} from 'vue-router'
 import LoginAddon from './components/LoginAddon.vue'
 import { ReloadOutlined } from '@ant-design/icons-vue'
 const LoginRef = ref<InstanceType<typeof LoginAddon>>()
