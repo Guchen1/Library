@@ -12,25 +12,18 @@ const show=ref(true)
 const client = useClient()
 const selectedKeys = ref<Array<string>>([])
 const height = ref('')
+const width = ref(0)
 interface table {
   [key: string]: string
 }
 const routetable: table = {
-  '1': '/books',
+  '0': '/books',
+  '1': '/checkout',
   '2': '/manage',
-  '3': '/nav3',
-  '4': '/personal'
+  '3': '/checkin',
+  '4': '/personal',
+  '5': '/news'
 }
-watch(selectedKeys, (value) => {
-  if (value.length > 0) {
-    router.push(routetable[value[0]])
-  } else {
-    router.replace(route.path)
-  }
-})
-onMounted(() => {
-  height.value = (window.innerHeight - 64 - 70).toString()
-})
 const reload=()=>{
   spinning.value=true
   show.value=false
@@ -46,6 +39,21 @@ const goHome = () => {
   //清空selectedKeys
   selectedKeys.value.shift()
 }
+watch(selectedKeys, (value) => {
+  if (value.length > 0) {
+    router.push(routetable[value[0]])
+  } else {
+    router.replace(route.path)
+  }
+})
+onMounted(() => {
+  height.value = (window.innerHeight - 64 - 70).toString()
+  width.value = (window.innerWidth)
+  window.onresize = () => {
+    height.value = (window.innerHeight - 64 - 70).toString()
+    width.value = (window.innerWidth)
+  }
+})
 </script>
 
 <template>
@@ -56,11 +64,14 @@ const goHome = () => {
         <a-menu
           v-model:selectedKeys="selectedKeys"
           mode="horizontal"
-          :style="{ lineHeight: '64px', border: '0px' }"
+          :style="{ lineHeight: '64px', border: '0px','width':(width-350)+'px' }"
+          
         >
-          <a-menu-item key="1">Books</a-menu-item>
+          <a-menu-item key="0">Books</a-menu-item>
+          <a-menu-item key="5">News</a-menu-item>
+          <a-menu-item v-if="client.isUser" key="1">Check Out</a-menu-item>
+          <a-menu-item v-if="client.isUser" key="3">Check In</a-menu-item>
           <a-menu-item v-if="client.isAdmin" key="2">Manage</a-menu-item>
-          <a-menu-item v-if="client.isAdmin" key="3">nav 3</a-menu-item>
           <a-menu-item v-if="client.loggedIn" key="4">Personal Center</a-menu-item>
         </a-menu>
       </div>
