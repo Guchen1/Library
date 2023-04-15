@@ -17,11 +17,6 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue')
     },
     {
-      path: '/checkout',
-      name: 'checkout',
-      component: () => import('../views/CheckOut.vue')
-    },
-    {
       path: '/personal',
       name: 'personal',
       component: () => import('../views/PersonalCenter.vue')
@@ -32,9 +27,9 @@ const router = createRouter({
       component: () => import('../views/ManageView.vue')
     },
     {
-      path:'/checkin',
-      name:'checkin',
-      component:()=>import('../views/CheckIn.vue')
+      path:'/checkinout',
+      name:'checkinout',
+      component:()=>import('../views/CheckInout.vue')
     },
     {
       path:'/books',
