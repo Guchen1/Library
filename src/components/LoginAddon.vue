@@ -47,6 +47,7 @@ const onFinish = (values: RegisterState | FormState) => {
           console.log(err)
           setTimeout(() => {
             client.loggedIn = true
+            localStorage.setItem('loggedin', 'true')
             client.clientData.clientType = 'user'
           }, 500)
           visible.value = false

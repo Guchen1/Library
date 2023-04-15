@@ -15,13 +15,17 @@
 
 <script setup lang="ts">
 import BookCard from '@/components/BookCard.vue'
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import BookSearch from '@/components/BookSearch.vue'
 import { useAxios } from '@/stores/axios'
 import type { BookDetail } from '@/types/type'
 const axios = useAxios().Axios
 //todo: add network request to get books and search function
 const data = reactive<BookDetail[]>([])
+onMounted(() => {
+  console.log('mounted')
+})
+
 data.push({
   name: 'Fresh Cream',
   author: 'Cream',
