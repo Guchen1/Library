@@ -1,71 +1,87 @@
 <script setup lang="ts">
-
+import { ref, reactive } from 'vue'
 interface BookDetail {
-    name: string
-    author: string
-    isbn: string
-    info: string
-    situation: boolean
-    picAdd: string
+  name: string
+  author: string
+  isbn: string
+  info: string
+  situation: boolean
+  picAdd: string
 }
 
-let a : BookDetail = {
-    name: "Fresh Cream",
-    author: "Cream",
-    isbn: "T4988 005 00760 5",
-    info: "Cream debut album released in 1967, featuring I Feel Free.",
-    situation: true,
-    picAdd: "https://i.discogs.com/-MFOcWZEds4m0aIBEwrdBZYVLItKac3trqugpxK5YoA/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE3NTE4/ODMtMTUzODEyOTkx/My0zNDkxLmpwZWc.jpeg"
-}
+const a: BookDetail = reactive({
+  name: 'Fresh Cream',
+  author: 'Cream',
+  isbn: 'T4988 005 00760 5',
+  info: 'Cream debut album released in 1967, featuring I Feel Free.',
+  situation: true,
+  picAdd:
+    'https://i.discogs.com/-MFOcWZEds4m0aIBEwrdBZYVLItKac3trqugpxK5YoA/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE3NTE4/ODMtMTUzODEyOTkx/My0zNDkxLmpwZWc.jpeg'
+})
 </script>
 
 <template>
-    <a-card class="card">
-        <div class="upper">
-            <div class="uLeft">
-                <img style="max-width: 100px;align: center;" alt="example" :src="a.picAdd"/>
-            </div>
-            <div class="uRight">
-                <ul style="align: center;">
-                    <li>bookName: {{ a.name }}</li>
-                    <li>author: {{ a.author }}</li>
-                    <li>isbn: {{ a.isbn }}</li>
-                    <li>info: {{ a.info }}</li>
-                </ul>
-            </div>
+  <a-card class="card">
+    <div class="upper">
+      <div class="uLeft">
+        <img alt="example" :src="a.picAdd" />
+      </div>
+      <div class="uRight">
+        <div>
+          <div>bookName: {{ a.name }}</div>
+          <div>author: {{ a.author }}</div>
+          <div>isbn: {{ a.isbn }}</div>
+          <div>info: {{ a.info }}</div>
         </div>
-        <div class="lower">
-            <p>situation: {{ a.situation ? "OK" : "NOPE" }}</p>
-        </div>
-    </a-card>
+      </div>
+    </div>
+    <div class="lower">
+      <p>
+        <a-badge :status="a.situation ? 'success' : 'error'" />{{
+          a.situation ? 'In the library' : 'borrowed'
+        }}
+      </p>
+    </div>
+  </a-card>
 </template>
 
 <style scoped>
-
 .card {
-    flex-wrap: wrap;
+  flex-wrap: wrap;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  margin-right: 10px;
 }
 
 .card .upper {
-    height: 95%
+  height: 95%;
+  display: flex;
 }
 
 .card .upper .uLeft {
-    width: 30%;
-    align-items: flex-start;
-    display: inline-flex;
+  width: 40%;
+  align-items: flex-start;
+  display: inline-flex;
 }
 
 .card .upper .uRight {
-    width: 70%;
-    height: 100%;
-    align-items: flex-start;
-    display: inline-block;
+  width: 60%;
+  height: 100%;
+  display: inline-flex;
 }
 
 .card .lower {
-    height: 5%;
-    text-align: center;
+  height: 5%;
+  justify-content: center;
+  display: flex;
 }
-
+p {
+  margin: 0px;
+  padding-top: 10px;
+  margin-bottom: -10px;
+}
+img {
+  max-width: 110px;
+  border-radius: 10px;
+}
 </style>

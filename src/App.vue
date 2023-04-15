@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { nextTick, onMounted, ref, watch } from 'vue'
 import { useClient } from './stores/client'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
 import LoginAddon from './components/LoginAddon.vue'
 import { ReloadOutlined } from '@ant-design/icons-vue'
 const LoginRef = ref<InstanceType<typeof LoginAddon>>()
 const router = useRouter()
 const route = useRoute()
 const spinning = ref(false)
-const show=ref(true)
+const show = ref(true)
 const client = useClient()
 const selectedKeys = ref<Array<string>>([])
 const height = ref('')
@@ -24,21 +24,34 @@ const routetable: table = {
   '4': '/personal',
   '5': '/news'
 }
-const reload=()=>{
-  spinning.value=true
-  show.value=false
-  nextTick(()=>{
-    show.value=true
+const reload = () => {
+  spinning.value = true
+  show.value = false
+  nextTick(() => {
+    show.value = true
   })
   setTimeout(() => {
-    spinning.value=false
-  }, 1000);
+    spinning.value = false
+  }, 1000)
 }
 const goHome = () => {
   router.push('/')
   //清空selectedKeys
   selectedKeys.value.shift()
 }
+watch(
+  () => router.currentRoute.value.path,
+  (newValue) => {
+    if (newValue === '/') {
+      selectedKeys.value.shift()
+    } else {
+      selectedKeys.value = [
+        Object.keys(routetable).find((key) => routetable[key] === newValue) as string
+      ]
+    }
+  },
+  { immediate: true }
+)
 watch(selectedKeys, (value) => {
   if (value.length > 0) {
     router.push(routetable[value[0]])
@@ -48,24 +61,23 @@ watch(selectedKeys, (value) => {
 })
 onMounted(() => {
   height.value = (window.innerHeight - 64 - 70).toString()
-  width.value = (window.innerWidth)
+  width.value = window.innerWidth
   window.onresize = () => {
     height.value = (window.innerHeight - 64 - 70).toString()
-    width.value = (window.innerWidth)
+    width.value = window.innerWidth
   }
 })
 </script>
 
 <template>
-  <a-layout>
-    <a-layout-header v-cloak class="layout-head">
+  <a-layout theme="light">
+    <a-layout-header v-cloak class="layout-head" theme="light">
       <div style="display: flex">
         <div class="logo" @click="goHome()">Library</div>
         <a-menu
           v-model:selectedKeys="selectedKeys"
           mode="horizontal"
-          :style="{ lineHeight: '64px', border: '0px','width':(width-350)+'px' }"
-          
+          :style="{ lineHeight: '64px', border: '0px', width: width - 350 + 'px' }"
         >
           <a-menu-item key="0">Books</a-menu-item>
           <a-menu-item key="5">News</a-menu-item>
@@ -81,25 +93,25 @@ onMounted(() => {
           v-if="!client.loggedIn"
           @click="LoginRef ? (LoginRef.visible = true) : ''"
           >Login</a-button
-        ><reload-outlined :spin="spinning"  @click="reload()" style="height:30px;width:30px;cursor:pointer;margin-right: -25px;" />
+        ><reload-outlined
+          :spin="spinning"
+          @click="reload()"
+          style="height: 30px; width: 30px; cursor: pointer; margin-right: -25px"
+        />
       </div>
     </a-layout-header>
-    <a-layout-content
-      :style="{
-        padding: '0 50px',
-        marginTop: '64px',
-        'min-height': height + 'px',
-        'box-sizing': 'border-box',
-        'background-color': 'white'
-      }"
-    >
-      <RouterView v-if="show"></RouterView>
+    <a-layout-content class="layout-main" theme="light">
+      <router-view v-slot="{ Component }">
+        <keep-alive>
+          <component :width="Number(width)" :height="Number(height)" :is="Component" />
+        </keep-alive>
+      </router-view>
     </a-layout-content>
     <a-layout-footer :style="{ textAlign: 'center' }">
       Library ©2023 Created by SPM Class2 B3
     </a-layout-footer>
   </a-layout>
-  <LoginAddon  ref="LoginRef" v-if="!client.loggedIn"></LoginAddon>
+  <LoginAddon ref="LoginRef" v-if="!client.loggedIn"></LoginAddon>
 </template>
 <style scoped>
 .layout-head {
@@ -117,6 +129,15 @@ onMounted(() => {
   line-height: 64px;
   font-size: 20px;
   cursor: pointer;
+}
+.layout-main {
+  padding: 0 50px;
+  margin-top: 64px;
+  min-height: v-bind(height + 'px');
+  box-sizing: border-box;
+  background-color: white;
+  display: flex;
+  justify-content: center;
 }
 [v-cloak] {
   display: none;
