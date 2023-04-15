@@ -131,7 +131,7 @@ onMounted(() => {
   cursor: pointer;
 }
 .layout-main {
-  padding: 0 50px;
+  padding: 0px;
   margin-top: 64px;
   min-height: v-bind(height + 'px');
   box-sizing: border-box;
