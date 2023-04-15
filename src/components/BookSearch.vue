@@ -1,7 +1,7 @@
 <template>
   <a-card
     class="cardflex"
-    style="width: 250px; border-radius: 10px"
+    style="width: 250px; border-radius: 10px;box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.1);"
     :bodyStyle="{ 'padding-bottom': '0px', 'padding-top': '15px' }"
   >
     <a-typography-title :level="2" style="text-align: center">Search</a-typography-title>
