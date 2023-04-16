@@ -2,6 +2,7 @@
 import { ref, reactive } from 'vue'
 import { useAxios } from '@/stores/axios'
 import { useClient } from '@/stores/client'
+import type { AxiosResponse } from 'axios';
 const client = useClient()
 const axios = useAxios().Axios
 interface FormState {
@@ -40,10 +41,10 @@ const onFinish = (values: RegisterState | FormState) => {
             password: values.password
           }
         })
-        .then((res: any) => {
+        .then((res: AxiosResponse) => {
           console.log(res)
         })
-        .catch((err: any) => {
+        .catch((err: AxiosResponse) => {
           console.log(err)
           setTimeout(() => {
             client.loggedIn = true

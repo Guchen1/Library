@@ -1,7 +1,7 @@
 <template>
   <a-layout class="layout-top" theme="light">
     <a-layout-sider class="layout-side" theme="light">
-      <book-search />
+      <book-search :height="props.height" />
     </a-layout-sider>
     <a-layout-content theme="light" style="background-color: white">
       <a-row>
@@ -20,6 +20,9 @@ import BookSearch from '@/components/BookSearch.vue'
 import { useAxios } from '@/stores/axios'
 import type { BookDetail } from '@/types/type'
 const axios = useAxios().Axios
+const props= defineProps<{
+  height: number
+}>()
 //todo: add network request to get books and search function
 const data = reactive<BookDetail[]>([])
 onMounted(() => {

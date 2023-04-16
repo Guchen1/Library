@@ -26,7 +26,7 @@ const x = computed(() => {
     >
       <div class="main-text">
         <div class="text-body">The Library</div>
-        <a-input class="main-search" placeholder="Search The Books">12</a-input>
+        <a-input class="main-search" onfocus="this.placeholder=''" onblur="this.placeholder='Search The Books" placeholder="Search The Books">12</a-input>
       </div>
     </div>
     <img src="@/assets/Librarywithhangingbulbs1.png" loading='lazy' v-if="false">
