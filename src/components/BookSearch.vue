@@ -36,7 +36,7 @@
           <a-button danger @click="ResetForm()">
             <template #icon><CloseOutlined /></template>Reset</a-button
           >
-          <a-button type="primary" html-type="submit">
+          <a-button type="primary" html-type="submit" @click="Search()">
             <template #icon><SearchOutlined /></template>Search</a-button
           >
         </div>
@@ -44,9 +44,13 @@
     </a-form>
   </a-card>
 </template>
+
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { CheckOutlined, CloseOutlined, SearchOutlined } from '@ant-design/icons-vue'
+const props = defineProps<{
+  searchFunc: Function;
+}>()
 interface FormState {
   name: string
   author: string
@@ -65,6 +69,9 @@ const ResetForm = () => {
   formState.isbn = ''
 }
 //todo: add search function
+const Search = () => {
+  props.searchFunc(formState.name, formState.author, formState.isbn, formState.ready)
+}
 </script>
 <style scoped>
 .cardflex {

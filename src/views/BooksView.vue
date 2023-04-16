@@ -1,7 +1,7 @@
 <template>
   <a-layout class="layout-top" theme="light">
     <a-layout-sider class="layout-side" theme="light">
-      <book-search />
+      <book-search :search-func="search" />
     </a-layout-sider>
     <a-layout-content theme="light" style="background-color: white">
       <a-row>
@@ -18,10 +18,36 @@ import BookCard from '@/components/BookCard.vue'
 import { ref, reactive } from 'vue'
 import BookSearch from '@/components/BookSearch.vue'
 import { useAxios } from '@/stores/axios'
-import type { BookDetail } from '@/types/type'
+import type { BookDetail, ApiResponse } from '@/types/type'
+import type { AxiosResponse } from 'axios'
 const axios = useAxios().Axios
-//todo: add network request to get books and search function
 const data = reactive<BookDetail[]>([])
+const search = (name: string, author: string, isbn: string, ready: boolean) => {
+  alert(`${name}, ${author}, ${isbn}, ${ready}`)
+  /*axios.post('/userop/getbook', {
+    params: {
+      name: name,
+      author: author,
+      isbn: isbn,
+      ready: ready
+    }
+  }).then((res: AxiosResponse<ApiResponse<BookDetail[]>>) => {
+    if (res.status != 200) {
+      throw "xxx"
+    }
+    let resobj = res.data.data
+    resobj.forEach((e) => {
+      data.push({
+        name: e.name,
+        author: e.author,
+        isbn: e.isbn,
+        info: e.info,
+        situation: e.situation,
+        picAdd: e.picAdd,
+      })
+    })
+  }).error((err: any) => console.log(err))*/
+}
 data.push({
   name: 'Fresh Cream',
   author: 'Cream',
