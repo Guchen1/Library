@@ -7,7 +7,7 @@ const props=defineProps<{
 </script>
 
 <template>
-  <a-card class="card">
+  <a-card :bodyStyle="{height:'100%'}" class="card">
     <div class="upper">
       <div class="uLeft">
         <img alt="example" :src="props.book.picAdd" />
@@ -40,7 +40,7 @@ const props=defineProps<{
 }
 
 .card .upper {
-  height: 95%;
+  height: 90%;
   display: flex;
 }
 
@@ -58,9 +58,10 @@ const props=defineProps<{
 }
 
 .card .lower {
-  height: 5%;
+  height: 10%;
   justify-content: center;
   display: flex;
+  padding-bottom: 10px;
 }
 p {
   margin: 0px;

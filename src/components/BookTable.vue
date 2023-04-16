@@ -1,5 +1,5 @@
 <template>
-  <a-table :scroll="{  y:  props.height-295+'px' }"  :columns="columns" :pagination="{ position: ['bottomCenter'],pageSize: 10 }" :data-source="data">
+  <a-table :scroll="{  y:  props.height-295+'px',visible:false }"  :columns="columns" :pagination="{ position: ['bottomCenter'],pageSize: 10 }" :data-source="data">
     <template #headerCell="{ column }">
       <template v-if="column.key === 'isbn'">
         <span style="color: #1d39c4"> ISBN </span>
@@ -16,9 +16,9 @@
         <a-tag v-else color="red" class="tag">overdue</a-tag>
       </template>
       <template v-else-if="column.key === 'action'">
-        <a v-if="record.status == 'available'" style="font-size: 10px;" type="primary" size="small">Check Out</a>
-        <a v-else type="primary" style="font-size: 10px;"  size="small">Check In</a>
-        <a :disabled="!record.renewable"  v-if="record.status != 'available'" style="padding-left:5px;font-size: 10px;" type="primary" size="small">Renew</a>
+        <a v-if="record.status == 'available'" style="font-size: 10px;white-space: nowrap" type="primary"  size="small">Check Out</a>
+        <a v-else type="primary" style="font-size: 10px;white-space: nowrap"  size="small">Check In</a>
+        <div style="display:inline-block"><a :disabled="!record.renewable"  v-if="record.status != 'available'" style="padding-left:5px;font-size: 10px;word-wrap: break-word;word-break: keep-all;" type="primary" size="small">Renew</a></div>
         </template>
     </template>
   </a-table>

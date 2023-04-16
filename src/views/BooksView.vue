@@ -5,8 +5,8 @@
     </a-layout-sider>
     <a-layout-content theme="light" style="background-color: white">
       <a-row>
-        <a-col v-for="i in data" :key="i" span="12" :xxl="8">
-          <book-card :book="i" />
+        <a-col v-for="i in data" :key="i" span="12" :xxxl="8">
+          <book-card :book="i" style="height:95%" />
         </a-col>
       </a-row>
     </a-layout-content>
