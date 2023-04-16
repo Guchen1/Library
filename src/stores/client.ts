@@ -9,7 +9,7 @@ export const useClient = defineStore('client', () => {
     console.log(window.localStorage.getItem('loggedin'))
     const clientData= reactive({
         clientName: window.localStorage.getItem('clientName'),
-        clientType: 'admin',
+        clientType: 'user',
     })
     const login = (data:ClientData) => {
         loggedIn.value = true
@@ -21,8 +21,9 @@ export const useClient = defineStore('client', () => {
     }
     const logout = () => {
         loggedIn.value = false
+        window.localStorage.setItem('loggedin','false')
         clientData.clientName = ''
-        clientData.clientType = ''
+        clientData.clientType = 'user'
     }
     const isUser = computed(() => {
         return clientData.clientType === 'user'&&loggedIn.value

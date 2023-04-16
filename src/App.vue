@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onMounted, ref, watch } from 'vue'
 import { useClient } from './stores/client'
-import { useRouter, useRoute} from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import LoginAddon from './components/LoginAddon.vue'
 import { ReloadOutlined } from '@ant-design/icons-vue'
 const LoginRef = ref<InstanceType<typeof LoginAddon>>()
@@ -37,6 +37,10 @@ const goHome = () => {
   router.push('/')
   //清空selectedKeys
   selectedKeys.value.shift()
+}
+const logout = () => {
+  client.logout()
+  router.push('/')
 }
 watch(
   () => router.currentRoute.value.path,
@@ -91,6 +95,7 @@ onMounted(() => {
           v-if="!client.loggedIn"
           @click="LoginRef ? (LoginRef.visible = true) : ''"
           >Login</a-button
+        ><a-button v-else style="margin-right: 20px" @click="logout()">Logout</a-button
         ><reload-outlined
           :spin="spinning"
           @click="reload()"
@@ -99,11 +104,9 @@ onMounted(() => {
       </div>
     </a-layout-header>
     <a-layout-content class="layout-main" theme="light">
-      <router-view v-slot="{ Component }">
-        <keep-alive>
-          <component :width="Number(width)" :height="Number(height)" :is="Component" />
-        </keep-alive>
-      </router-view>
+        <router-view v-if="show" v-slot="{ Component }">
+            <component :width="Number(width)" :height="Number(height)" :is="Component" />
+        </router-view>
     </a-layout-content>
     <a-layout-footer :style="{ textAlign: 'center' }">
       Library ©2023 Created by SPM Class2 B3
@@ -114,7 +117,7 @@ onMounted(() => {
 <style scoped>
 .layout-head {
   position: fixed;
-  z-index: 1;
+  z-index: 1000;
   width: 100%;
   background-color: white;
   box-shadow: 0 2px 3px -3px black;
