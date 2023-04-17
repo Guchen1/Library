@@ -6,7 +6,7 @@
     <a-layout-content theme="light" style="background-color: white">
       <a-row>
         <a-col v-for="i in data" :key="i" span="12" :xxxl="8">
-          <book-card :book="i" style="height:95%" />
+          <book-card :book="i" style="height: 95%" />
         </a-col>
       </a-row>
     </a-layout-content>
@@ -15,11 +15,12 @@
 
 <script setup lang="ts">
 import BookCard from '@/components/BookCard.vue'
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import BookSearch from '@/components/BookSearch.vue'
 import { useAxios } from '@/stores/axios'
 import type { BookDetail, ApiResponse } from '@/types/type'
 import type { AxiosResponse } from 'axios'
+import { setMapStoreSuffix } from 'pinia'
 var testData = [
   {
     name: 'Fresh Cream',
@@ -69,10 +70,19 @@ var testData = [
 ]
 const axios = useAxios().Axios
 const data = reactive<BookDetail[]>([])
-const search = (name: string, author: string, isbn: string, ready: boolean) => {
-  console.log(`${name}, ${author}, ${isbn}, ${ready}`)
-  data.splice(0, data.length)
-  console.log(data.length)
+const isMore = ref(true)
+const page = ref(0)
+// Save the stat
+let nameSave: string = ''
+let authorSave: string = ''
+let isbnSave: string = ''
+let readySave: boolean = false
+const request = (name: string, author: string, isbn: string, ready: boolean) => {
+  nameSave = name
+  authorSave = author
+  isbnSave = isbn
+  readySave = ready
+
   testData
     .filter(
       (e) =>
@@ -91,34 +101,78 @@ const search = (name: string, author: string, isbn: string, ready: boolean) => {
         picAdd: e.picAdd
       })
     )
-  console.log(data.length)
-
-  /*axios.post('/userop/getbook', {
-    params: {
-      name: name,
-      author: author,
-      isbn: isbn,
-      ready: ready
-    }
-  }).then((res: AxiosResponse<ApiResponse<BookDetail[]>>) => {
-    if (res.status != 200) {
-      throw "xxx"
-    }
-    let resobj = res.data.data
-    resobj.forEach((e) => {
-      data.push({
-        name: e.name,
-        author: e.author,
-        isbn: e.isbn,
-        info: e.info,
-        situation: e.situation,
-        picAdd: e.picAdd,
-      })
+  page.value++
+  if (page.value > 4) isMore.value = false
+  /*axios
+    .post('/userop/getbook', {
+      params: {
+        name: name,
+        author: author,
+        isbn: isbn,
+        page: page.value,
+        ready: ready
+      }
     })
-  }).error((err: any) => console.log(err))*/
+    .then((res: AxiosResponse<ApiResponse<BookDetail[]>>) => {
+      if (res.status != 200) {
+        throw 'Unable to get data with status code ' + res.status
+      }
+      let resobj = res.data.data
+      if (resobj.length == 0) {
+        isMore.value = false
+      } else {
+        resobj.forEach((e) => {
+          data.push({
+            name: e.name,
+            author: e.author,
+            isbn: e.isbn,
+            info: e.info,
+            situation: e.situation,
+            picAdd: e.picAdd
+          })
+        })
+        page.value += 1
+      }
+    })
+    .error((err: any) => {
+      console.log(err)
+      throw err
+    })*/
 }
-onMounted(() => search('', '', '', false))
+const search = (name: string, author: string, isbn: string, ready: boolean) => {
+  data.splice(0, data.length)
+  request(name, author, isbn, ready)
+}
+onMounted(() => {
+  search('', '', '', false)
+  window.addEventListener('scroll', scrollHandle, false)
+})
+onUnmounted(() => {
+  window.removeEventListener('scroll', scrollHandle, false)
+})
 //todo: add infinite scroll
+
+function scrollHandle() {
+  if (!isMore.value) return
+  window.onscroll = () => {
+    console.log(
+      Math.abs(
+        document.documentElement.scrollHeight -
+          document.documentElement.clientHeight -
+          document.documentElement.scrollTop
+      )
+    )
+    let bottom =
+      Math.abs(
+        document.documentElement.scrollHeight -
+          document.documentElement.clientHeight -
+          document.documentElement.scrollTop
+      ) < 1
+    if (bottom && isMore.value) {
+      request(nameSave, authorSave, isbnSave, readySave)
+    }
+  }
+}
 </script>
 
 <style scoped>
