@@ -9,7 +9,7 @@
     :closable="false"
     :bodyStyle="{}"
   >
-    <a-typography-title style="text-align: center" :level="2">Add a Book</a-typography-title>
+    <a-typography-title style="text-align: center" :level="2">{{props.book!=undefined?'Add a Book':'Modify Book'}}</a-typography-title>
     <div class="padding">
       <a-upload
         v-model:file-list="fileList"
@@ -93,7 +93,7 @@ const handleCancel = () => {
   visible.value = false
 }
 const handleOk = () => {
-  //todo: function to add book and modify book
+  //todo: function to add book or modify book
     visible.value = false
 }
 const handleChange = (info: UploadChangeParam) => {
