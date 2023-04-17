@@ -15,11 +15,10 @@
       <a-form-item label="author" name="author">
         <a-input v-model:value="formState.author" />
       </a-form-item>
-
       <a-form-item label="name" name="name">
         <a-input v-model:value="formState.name" />
       </a-form-item>
-      <a-form-item label="isbn" name="isbn">
+      <a-form-item label="ISBN" name="isbn">
         <a-input v-model:value="formState.isbn" />
       </a-form-item>
       <a-form-item name="ready" :wrapper-col="{ span: 24 }">
@@ -33,8 +32,11 @@
       </a-form-item>
       <a-form-item :wrapper-col="{ span: 24 }">
         <div class="buttons">
-          <a-button danger @click="ResetForm()">
+          <a-button v-if="!client.isAdmin" danger @click="ResetForm()">
             <template #icon><CloseOutlined /></template>Reset</a-button
+          >
+          <a-button v-else danger style="border-color: #52c41a;color:#52c41a;background-color: #F6FFED;" @click="emits('show')">
+            <template #icon><PlusOutlined /></template>Add</a-button
           >
           <a-button type="primary" html-type="submit" @click="Search()">
             <template #icon><SearchOutlined /></template>Search</a-button
@@ -47,7 +49,13 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { CheckOutlined, CloseOutlined, SearchOutlined } from '@ant-design/icons-vue'
+import { CheckOutlined, CloseOutlined, SearchOutlined,PlusOutlined } from '@ant-design/icons-vue'
+import { useClient } from '@/stores/client';
+const client = useClient()
+const emits=defineEmits<{
+  (e: 'show'): void
+}>()
+
 const props = defineProps<{
   searchFunc: Function;
 }>()
@@ -68,7 +76,7 @@ const ResetForm = () => {
   formState.author = ''
   formState.isbn = ''
 }
-//todo: add search function
+//TODO: add search function
 const Search = () => {
   props.searchFunc(formState.name, formState.author, formState.isbn, formState.ready)
 }

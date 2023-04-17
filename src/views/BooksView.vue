@@ -1,12 +1,13 @@
 <template>
   <a-layout class="layout-top" theme="light">
     <a-layout-sider class="layout-side" theme="light">
-      <book-search :search-func="search" />
+      <BookSearch @show="show(undefined)" :searchFunc="search" />
     </a-layout-sider>
+    <BookOperation :book="tempbook" ref="BookOperationRef"  />
     <a-layout-content theme="light" style="background-color: white">
       <a-row>
         <a-col v-for="i in data" :key="i" span="12" :xxxl="8">
-          <book-card :book="i" style="height: 95%" />
+          <BookCard @show="(e)=>show(e)" :book="i" style="height:95%" />
         </a-col>
       </a-row>
     </a-layout-content>
@@ -19,10 +20,13 @@ import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import BookSearch from '@/components/BookSearch.vue'
 import { useAxios } from '@/stores/axios'
 import type { BookDetail, ApiResponse } from '@/types/type'
+import BookOperation from '@/components/BookOperation.vue'
 import type { AxiosResponse } from 'axios'
-import { setMapStoreSuffix } from 'pinia'
-var testData = [
+const BookOperationRef = ref<InstanceType<typeof BookOperation>>()
+const tempbook=ref<BookDetail['id']>()
+const testData:BookDetail[] = [
   {
+    id: 1,
     name: 'Fresh Cream',
     author: 'Cream',
     isbn: '25014',
@@ -32,6 +36,7 @@ var testData = [
       'https://i.discogs.com/-MFOcWZEds4m0aIBEwrdBZYVLItKac3trqugpxK5YoA/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE3NTE4/ODMtMTUzODEyOTkx/My0zNDkxLmpwZWc.jpeg'
   },
   {
+    id: 2,
     name: 'Wheels of Fire',
     author: 'Cream',
     isbn: '22033',
@@ -41,6 +46,7 @@ var testData = [
       'https://i.discogs.com/B9iDuausqOF7IsKt9bzu_uqoWDq7ZpM2djODtgkAZ4U/rs:fit/g:sm/q:90/h:500/w:500/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM2MjQ0/NjItMTM0MDE2NTAy/Mi05NDk2LmpwZWc.jpeg'
   },
   {
+    id: 3,
     name: 'Eric Clapton',
     author: 'Eric Clapton',
     isbn: '22009',
@@ -50,6 +56,7 @@ var testData = [
       'https://i.discogs.com/qO5TNtE7hEbLZXOwQu_8_QZNVg5xjrx5rgOy3pGy8YA/rs:fit/g:sm/q:90/h:600/w:597/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTY3OTc4/NS0xNDgwNDQ2MjY2/LTQxODYuanBlZw.jpeg'
   },
   {
+    id:4  ,
     name: '461 Ocean',
     author: 'Eric Clapton',
     isbn: '22015',
@@ -59,6 +66,7 @@ var testData = [
       'https://i.discogs.com/VisrTkhihdSN_RlgMnIZ_z6Qxj0y9f6jq23q_e8pE0s/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTU4NTE0/MS0xMzgxODAyNzI1/LTk3MDcuanBlZw.jpeg'
   },
   {
+    id: 5,
     name: 'Backless',
     author: 'Eric Clapton',
     isbn: '25010',
@@ -70,6 +78,11 @@ var testData = [
 ]
 const axios = useAxios().Axios
 const data = reactive<BookDetail[]>([])
+const show=(book:BookDetail['id']|undefined)=>{
+  tempbook.value=book
+  if(BookOperationRef.value!=undefined)
+  BookOperationRef.value.visible=true
+}
 const isMore = ref(true)
 const page = ref(0)
 // Save the stat
@@ -82,7 +95,6 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
   authorSave = author
   isbnSave = isbn
   readySave = ready
-
   testData
     .filter(
       (e) =>
@@ -93,6 +105,7 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
     )
     .forEach((e) =>
       data.push({
+        id: e.id,
         name: e.name,
         author: e.author,
         isbn: e.isbn,

@@ -1,9 +1,18 @@
 <script setup lang="ts">
 import type {BookDetail} from '@/types/type'
+import { useClient } from '@/stores/client';
+const client = useClient()
+
 const props=defineProps<{
   book:BookDetail
 }>()
 
+const emits=defineEmits<{
+  (e: 'show',a:BookDetail['id']): void
+}>()
+const del=(id:BookDetail['id'])=>{
+  //TODO: delete book
+}
 </script>
 
 <template>
@@ -22,11 +31,20 @@ const props=defineProps<{
       </div>
     </div>
     <div class="lower">
-      <p>
+      <p v-if="!client.isAdmin">
         <a-badge :status="props.book.situation ? 'success' : 'error'" />{{
           props.book.situation ? 'In the library' : 'borrowed'
         }}
       </p>
+      <div v-else >
+        <a-button
+        style="margin-right:20px"
+          danger
+          @click="del(props.book.id)">Withdraw</a-button>
+        <a-button
+          style="border-color: #52c41a;color:#52c41a;background-color: #F6FFED;"
+          @click="emits('show',props.book.id)">Change Info</a-button>
+      </div>
     </div>
   </a-card>
 </template>
@@ -40,7 +58,7 @@ const props=defineProps<{
 }
 
 .card .upper {
-  height: 90%;
+  height: 80%;
   display: flex;
 }
 
@@ -58,7 +76,7 @@ const props=defineProps<{
 }
 
 .card .lower {
-  height: 10%;
+  height: 20%;
   justify-content: center;
   display: flex;
   padding-bottom: 10px;
