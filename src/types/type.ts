@@ -1,4 +1,5 @@
 export interface BookDetail {
+  id: number
   name: string
   author: string
   isbn: string
@@ -6,7 +7,16 @@ export interface BookDetail {
   situation: boolean
   picAdd: string
 }
-
+export interface BookModify {
+  id: number
+  name: string
+  author: string
+  isbn: string
+  info: string
+  useable: boolean
+  inventory: number
+  picObj: string
+}
 export interface ApiResponse<T> {
   status: boolean
   op: string
