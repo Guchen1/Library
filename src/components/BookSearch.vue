@@ -76,7 +76,7 @@ const ResetForm = () => {
   formState.author = ''
   formState.isbn = ''
 }
-//todo: add search function
+//TODO: add search function
 const Search = () => {
   props.searchFunc(formState.name, formState.author, formState.isbn, formState.ready)
 }

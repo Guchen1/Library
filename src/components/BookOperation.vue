@@ -93,7 +93,7 @@ const handleCancel = () => {
   visible.value = false
 }
 const handleOk = () => {
-  //todo: function to add book or modify book
+  //TODO: function to add book or modify book
     visible.value = false
 }
 const handleChange = (info: UploadChangeParam) => {
@@ -125,7 +125,7 @@ watch(
   () => visible.value,
   (val:boolean) => {
     if (val&&props.book!=undefined) {
-        //todo: function to get book 
+        //TODO: function to get book 
     }
     else{
       fileList.value = []

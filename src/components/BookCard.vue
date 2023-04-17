@@ -11,7 +11,7 @@ const emits=defineEmits<{
   (e: 'show',a:BookDetail['id']): void
 }>()
 const del=(id:BookDetail['id'])=>{
-  //todo: delete book
+  //TODO: delete book
 }
 </script>
 

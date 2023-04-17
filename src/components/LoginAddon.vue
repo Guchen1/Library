@@ -32,6 +32,7 @@ const formRegister = reactive<RegisterState>({
 })
 const onFinish = (values: RegisterState | FormState) => {
   //判断是不是FormState
+  //TODO: rewrite this part
   if ('usertype' in values && 'remember' in values) {
     if (values.usertype == 'user') {
       axios

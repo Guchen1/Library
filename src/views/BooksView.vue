@@ -134,7 +134,7 @@ const search = (name: string, author: string, isbn: string, ready: boolean) => {
   }).error((err: any) => console.log(err))*/
 }
 onMounted(() => search('', '', '', false))
-//todo: add infinite scroll
+//TODO: add infinite scroll
 </script>
 
 <style scoped>
