@@ -84,7 +84,7 @@ onMounted(() => {
         >
           <a-menu-item key="0">Books</a-menu-item>
           <a-menu-item key="5">News</a-menu-item>
-          <a-menu-item v-if="client.isUser" key="3">Check In/Out</a-menu-item>
+          <a-menu-item v-if="client.isStaff" key="3">Check In/Out</a-menu-item>
           <a-menu-item v-if="client.isAdmin" key="2">Manage</a-menu-item>
           <a-menu-item v-if="client.loggedIn" key="4">Personal Center</a-menu-item>
         </a-menu>

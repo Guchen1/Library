@@ -49,7 +49,7 @@ const onFinish = (values: RegisterState | FormState) => {
           setTimeout(() => {
             client.loggedIn = true
             localStorage.setItem('loggedin', 'true')
-            client.clientData.clientType = 'user'
+            client.clientData.clientType = 'admin'
           }, 500)
           visible.value = false
         })

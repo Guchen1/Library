@@ -2,14 +2,14 @@ import { ref,reactive,computed } from 'vue'
 import { defineStore } from 'pinia'
 interface ClientData {
     clientName: string,
-    clientType: string,
+    clientType: 'user'|'staff'|'admin'|''
 }
 export const useClient = defineStore('client', () => {
     const loggedIn = ref(window.localStorage.getItem('loggedin')==='true')
     console.log(window.localStorage.getItem('loggedin'))
-    const clientData= reactive({
-        clientName: window.localStorage.getItem('clientName'),
-        clientType: 'user',
+    const clientData:ClientData= reactive({
+        clientName: window.localStorage.getItem('clientName')!==null?window.localStorage.getItem('clientName')!:'',
+        clientType: 'admin',
     })
     const login = (data:ClientData) => {
         loggedIn.value = true
@@ -23,7 +23,7 @@ export const useClient = defineStore('client', () => {
         loggedIn.value = false
         window.localStorage.setItem('loggedin','false')
         clientData.clientName = ''
-        clientData.clientType = 'user'
+        clientData.clientType = ''
     }
     const isUser = computed(() => {
         return clientData.clientType === 'user'&&loggedIn.value
@@ -31,5 +31,8 @@ export const useClient = defineStore('client', () => {
     const isAdmin= computed(() => {
         return clientData.clientType === 'admin'&&loggedIn.value
     })
-    return { loggedIn,login,logout,isUser,isAdmin,clientData }
+    const isStaff= computed(() => {
+        return clientData.clientType === 'staff'&&loggedIn.value
+    })
+    return { loggedIn,login,logout,isUser,isAdmin,clientData,isStaff }
 })
