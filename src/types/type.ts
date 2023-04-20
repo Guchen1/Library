@@ -2,10 +2,14 @@ export interface BookDetail {
   id: number
   name: string
   author: string
+  publisher: string
+  category: string
+  stock: number
+  price: number
   isbn: string
-  info: string
+  summary: string
   situation: boolean
-  picAdd: string
+  cover: string
 }
 export interface BookModify {
   id: number
@@ -17,12 +21,12 @@ export interface BookModify {
   inventory: number
   picObj: string
 }
-export interface ApiResponse<T> {
+export interface BookResponse {
   status: boolean
   op: string
   msg: {
     code: number
     content: string
   }
-  data: T
+  books: BookDetail[]
 }

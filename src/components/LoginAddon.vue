@@ -2,7 +2,8 @@
 import { ref, reactive } from 'vue'
 import { useAxios } from '@/stores/axios'
 import { useClient } from '@/stores/client'
-import type { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios'
+import { FileProtectOutlined } from '@ant-design/icons-vue'
 const client = useClient()
 const axios = useAxios().Axios
 interface FormState {
@@ -17,6 +18,7 @@ interface RegisterState {
   optcode: string
   usertype: string
 }
+//false login true register
 const func = ref(false)
 const formLogin = reactive<FormState>({
   username: '',
@@ -31,55 +33,48 @@ const formRegister = reactive<RegisterState>({
   usertype: 'user'
 })
 const onFinish = (values: RegisterState | FormState) => {
-  //判断是不是FormState
-  //TODO: rewrite this part
+  const params = new URLSearchParams()
+  params.append('account', values.username)
+  params.append('password', values.password)
   if ('usertype' in values && 'remember' in values) {
-    if (values.usertype == 'user') {
-      axios
-        .get('/userop/login', {
-          params: {
-            account: values.username,
-            password: values.password
-          }
-        })
-        .then((res: AxiosResponse) => {
-          console.log(res)
-        })
-        .catch((err: AxiosResponse) => {
-          console.log(err)
-          setTimeout(() => {
-            client.loggedIn = true
-            localStorage.setItem('loggedin', 'true')
-            client.clientData.clientType = 'admin'
-          }, 500)
-          visible.value = false
-        })
-    } else {
-      console.log('admin')
-      axios
-        .get('/managerop/login', {
-          params: {
-            account: values.username,
-            password: values.password
-          }
-        })
-        .then((res: any) => {
-          console.log(res)
-        })
-    }
-  } else {
+    //判断是不是FormState
+    //TODO: rewrite this part, usertype should remove
+    params.append('remember', String(values.remember))
+    params.append('type', values.usertype == 'user' ? '1' : '2')
     axios
-      .get('/userop/register', {
-        params: {
-          account: values.username,
-          password: values.password
+      .post(values.usertype == 'user' ? '/userop/login' : '/managerop/login', params)
+      .then((res: AxiosResponse) => {
+        if (!res.data.status) {
+          throw res.data.msg.content
         }
-      })
-      .then((res: any) => {
         console.log(res)
+        setTimeout(() => {
+          client.loggedIn = true
+          localStorage.setItem('loggedin', 'true')
+          //TODO: return value should be these three, temp admin
+          client.clientData.clientType = 'admin'
+        }, 500)
+        visible.value = false
       })
       .catch((err: any) => {
-        console.log(err)
+        alert(err)
+      })
+  } else {
+    params.append('optcode', values.optcode)
+    params.append('usertype', 'user')
+    axios
+      .post('/userop/register', params)
+      .then((res: any) => {
+        if (!res.data.status) {
+          throw res.data.msg.content
+        }
+        console.log(res)
+        setTimeout(() => {
+          func.value = !func.value
+        }, 500)
+      })
+      .catch((err: any) => {
+        alert(err)
       })
   }
 }

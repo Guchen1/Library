@@ -3,11 +3,11 @@
     <a-layout-sider class="layout-side" theme="light">
       <BookSearch @show="show(undefined)" :searchFunc="search" />
     </a-layout-sider>
-    <BookOperation :book="tempbook" ref="BookOperationRef"  />
+    <BookOperation :book="tempbook" ref="BookOperationRef" />
     <a-layout-content theme="light" style="background-color: white">
       <a-row>
         <a-col v-for="i in data" :key="i" span="12" :xxxl="8">
-          <BookCard @show="(e)=>show(e)" :book="i" style="height:95%" />
+          <BookCard @show="(e) => show(e)" :book="i" style="height: 95%" />
         </a-col>
       </a-row>
     </a-layout-content>
@@ -19,12 +19,13 @@ import BookCard from '@/components/BookCard.vue'
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import BookSearch from '@/components/BookSearch.vue'
 import { useAxios } from '@/stores/axios'
-import type { BookDetail, ApiResponse } from '@/types/type'
+import type { BookDetail, BookResponse } from '@/types/type'
 import BookOperation from '@/components/BookOperation.vue'
 import type { AxiosResponse } from 'axios'
 const BookOperationRef = ref<InstanceType<typeof BookOperation>>()
-const tempbook=ref<BookDetail['id']>()
-const testData:BookDetail[] = [
+const tempbook = ref<BookDetail['id']>()
+/*
+const testData: BookDetail[] = [
   {
     id: 1,
     name: 'Fresh Cream',
@@ -56,7 +57,7 @@ const testData:BookDetail[] = [
       'https://i.discogs.com/qO5TNtE7hEbLZXOwQu_8_QZNVg5xjrx5rgOy3pGy8YA/rs:fit/g:sm/q:90/h:600/w:597/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTY3OTc4/NS0xNDgwNDQ2MjY2/LTQxODYuanBlZw.jpeg'
   },
   {
-    id:4  ,
+    id: 4,
     name: '461 Ocean',
     author: 'Eric Clapton',
     isbn: '22015',
@@ -75,13 +76,12 @@ const testData:BookDetail[] = [
     picAdd:
       'https://i.discogs.com/-PwldMDo_xiAAGGJjaHpBbcu-x8OsjDLBaxb3D1ddyI/rs:fit/g:sm/q:90/h:600/w:596/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTYyNzI1/NDMtMTQ3Nzc0NTk1/Ny05MzgxLmpwZWc.jpeg'
   }
-]
+]*/
 const axios = useAxios().Axios
 const data = reactive<BookDetail[]>([])
-const show=(book:BookDetail['id']|undefined)=>{
-  tempbook.value=book
-  if(BookOperationRef.value!=undefined)
-  BookOperationRef.value.visible=true
+const show = (book: BookDetail['id'] | undefined) => {
+  tempbook.value = book
+  if (BookOperationRef.value != undefined) BookOperationRef.value.visible = true
 }
 const isMore = ref(true)
 const page = ref(0)
@@ -95,6 +95,45 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
   authorSave = author
   isbnSave = isbn
   readySave = ready
+  axios
+    .post('/managerop/getbook/byname', {
+      name: name,
+      author: author,
+      isbn: isbn,
+      page: page.value,
+      ready: ready
+    })
+    .then((res: AxiosResponse<BookResponse>) => {
+      if (res.status != 200) {
+        throw 'Unable to get data with status code ' + res.status
+      }
+      let resobj = res.data.books
+      if (resobj.length == 0) {
+        isMore.value = false
+      } else {
+        resobj.forEach((e) => {
+          data.push({
+            id: e.id,
+            name: e.name,
+            author: e.author,
+            publisher: e.publisher,
+            isbn: e.isbn,
+            price: e.price,
+            stock: e.stock,
+            summary: e.summary,
+            situation: e.situation,
+            category: e.category,
+            cover: e.cover
+          })
+        })
+        page.value += 1
+      }
+    })
+    .error((err: any) => {
+      console.log(err)
+      throw err
+    })
+  /*
   testData
     .filter(
       (e) =>
@@ -113,44 +152,9 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
         situation: e.situation,
         picAdd: e.picAdd
       })
-    )
+    )*/
   page.value++
   if (page.value > 4) isMore.value = false
-  /*axios
-    .post('/userop/getbook', {
-      params: {
-        name: name,
-        author: author,
-        isbn: isbn,
-        page: page.value,
-        ready: ready
-      }
-    })
-    .then((res: AxiosResponse<ApiResponse<BookDetail[]>>) => {
-      if (res.status != 200) {
-        throw 'Unable to get data with status code ' + res.status
-      }
-      let resobj = res.data.data
-      if (resobj.length == 0) {
-        isMore.value = false
-      } else {
-        resobj.forEach((e) => {
-          data.push({
-            name: e.name,
-            author: e.author,
-            isbn: e.isbn,
-            info: e.info,
-            situation: e.situation,
-            picAdd: e.picAdd
-          })
-        })
-        page.value += 1
-      }
-    })
-    .error((err: any) => {
-      console.log(err)
-      throw err
-    })*/
 }
 const search = (name: string, author: string, isbn: string, ready: boolean) => {
   data.splice(0, data.length)
