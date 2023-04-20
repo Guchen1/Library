@@ -8,7 +8,7 @@ export interface BookDetail {
   price: number
   isbn: string
   summary: string
-  situation: boolean
+  //situation: boolean
   cover: string
 }
 export interface BookModify {

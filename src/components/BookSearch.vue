@@ -1,7 +1,7 @@
 <template>
   <a-card
     class="cardflex"
-    style="width: 250px; border-radius: 10px;box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;"
+    style="width: 250px; border-radius: 10px; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px"
     :bodyStyle="{ 'padding-bottom': '0px', 'padding-top': '15px' }"
   >
     <a-typography-title :level="2" style="text-align: center">Search</a-typography-title>
@@ -35,7 +35,12 @@
           <a-button v-if="!client.isAdmin" danger @click="ResetForm()">
             <template #icon><CloseOutlined /></template>Reset</a-button
           >
-          <a-button v-else danger style="border-color: #52c41a;color:#52c41a;background-color: #F6FFED;" @click="emits('show')">
+          <a-button
+            v-else
+            danger
+            style="border-color: #52c41a; color: #52c41a; background-color: #f6ffed"
+            @click="emits('show')"
+          >
             <template #icon><PlusOutlined /></template>Add</a-button
           >
           <a-button type="primary" html-type="submit" @click="Search()">
@@ -49,15 +54,15 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { CheckOutlined, CloseOutlined, SearchOutlined,PlusOutlined } from '@ant-design/icons-vue'
-import { useClient } from '@/stores/client';
+import { CheckOutlined, CloseOutlined, SearchOutlined, PlusOutlined } from '@ant-design/icons-vue'
+import { useClient } from '@/stores/client'
 const client = useClient()
-const emits=defineEmits<{
+const emits = defineEmits<{
   (e: 'show'): void
 }>()
 
 const props = defineProps<{
-  searchFunc: Function;
+  searchFunc: Function
 }>()
 interface FormState {
   name: string
@@ -76,7 +81,6 @@ const ResetForm = () => {
   formState.author = ''
   formState.isbn = ''
 }
-//TODO: add search function
 const Search = () => {
   props.searchFunc(formState.name, formState.author, formState.isbn, formState.ready)
 }
