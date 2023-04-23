@@ -33,16 +33,14 @@ const formRegister = reactive<RegisterState>({
   usertype: 'user'
 })
 const onFinish = (values: RegisterState | FormState) => {
-  const params = new URLSearchParams()
-  params.append('account', values.username)
-  params.append('password', values.password)
+  const params = {
+    account: values.username,
+    password: values.password
+  }
+  //判断是不是FormState
   if ('usertype' in values && 'remember' in values) {
-    //判断是不是FormState
-    //TODO: rewrite this part, usertype should remove
-    params.append('remember', String(values.remember))
-    params.append('type', values.usertype == 'user' ? '1' : '2')
     axios
-      .post(values.usertype == 'user' ? '/userop/login' : '/managerop/login', params)
+      .post('login', params)
       .then((res: AxiosResponse) => {
         if (!res.data.status) {
           throw res.data.msg.content
@@ -60,8 +58,6 @@ const onFinish = (values: RegisterState | FormState) => {
         alert(err)
       })
   } else {
-    params.append('optcode', values.optcode)
-    params.append('usertype', 'user')
     axios
       .post('/userop/register', params)
       .then((res: any) => {

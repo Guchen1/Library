@@ -1,32 +1,33 @@
 <template>
   <div class="main">
-  <div class="innerwrapper">
-    <a-card ref="card" :bodyStyle="{ display: 'flex', alignItems: 'center' }" class="searchbar"
-      ><div class="title">Search</div>
-      <a-divider type="vertical" />
-      <a-form
-        @finish="onFinish"
-        style="display: inline-flex; justify-content: center"
-        layout="inline"
-        :model="searchForm"
-        ><a-form-item class="item"
-          ><a-input v-model:value="searchForm.name" placeholder="Name" /></a-form-item
-        ><a-form-item class="item"
-          ><a-input v-model:value="searchForm.isbn" placeholder="ISBN" /></a-form-item
-        ><a-form-item id="dateForm" class="item"><a-range-picker v-model:value="searchForm.date" /></a-form-item>
-        <div>
-          <a-button danger @click="ResetForm()">
-            <template #icon><CloseOutlined /></template>Reset</a-button
-          >
-          <a-button type="primary" html-type="submit" style="margin-left: 10px">
-            <template #icon><SearchOutlined /></template>Search</a-button
-          >
-        </div>
-      </a-form>
-      
-    </a-card>
-  </div>
-    <BookTable :height="props.height" class="tableSet"   />
+    <div class="innerwrapper">
+      <a-card ref="card" :bodyStyle="{ display: 'flex', alignItems: 'center' }" class="searchbar"
+        ><div class="title">Search</div>
+        <a-divider type="vertical" />
+        <a-form
+          @finish="onFinish"
+          style="display: inline-flex; justify-content: center"
+          layout="inline"
+          :model="searchForm"
+          ><a-form-item class="item"
+            ><a-input v-model:value="searchForm.name" placeholder="Name" /></a-form-item
+          ><a-form-item class="item"
+            ><a-input v-model:value="searchForm.isbn" placeholder="ISBN" /></a-form-item
+          ><a-form-item id="dateForm" class="item"
+            ><a-range-picker v-model:value="searchForm.date"
+          /></a-form-item>
+          <div>
+            <a-button danger @click="ResetForm()">
+              <template #icon><CloseOutlined /></template>Reset</a-button
+            >
+            <a-button type="primary" html-type="submit" style="margin-left: 10px">
+              <template #icon><SearchOutlined /></template>Search</a-button
+            >
+          </div>
+        </a-form>
+      </a-card>
+    </div>
+    <BookTable :height="props.height" class="tableSet" />
   </div>
 </template>
 
@@ -35,13 +36,15 @@ import type { Dayjs } from 'dayjs'
 import BookTable from '@/components/BookTable.vue'
 import { CloseOutlined, SearchOutlined } from '@ant-design/icons-vue'
 import { reactive, ref, computed, onMounted } from 'vue'
+import { useAxios } from '@/stores/axios'
+const axios = useAxios().Axios
 interface SearchForm {
   name: string
   isbn: string
   date: Array<Dayjs>
 }
 
-const card=ref()
+const card = ref()
 const cardWidth = computed(() => {
   return card.value.$el.offsetWidth
 })
@@ -51,9 +54,10 @@ const searchForm: SearchForm = reactive({
   date: []
 })
 onMounted(() => {
-  console.log(card.value.$el.offsetWidth)})
+  console.log(card.value.$el.offsetWidth)
+})
 const props = defineProps<{
-  width: number,
+  width: number
   height: number
 }>()
 const ResetForm = () => {
@@ -62,6 +66,11 @@ const ResetForm = () => {
   searchForm.date = []
 }
 const onFinish = () => {
+  axios.post('/managerop/bookBorrowInfo', {
+    name: searchForm.name,
+    isbn: searchForm.isbn,
+    date: searchForm.date
+  })
   console.log('Success:')
   console.log('Success:', searchForm.date[0].format('YYYY-MM-DD'))
 }
@@ -100,19 +109,19 @@ const computedWidth = computed(() => {
   margin-top: v-bind('computedWidth.second');
   margin-bottom: v-bind('computedWidth.third');
 }
-.innerwrapper{
+.innerwrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
 }
-@media  screen and (max-width: 872px) {
+@media screen and (max-width: 872px) {
   #dateForm {
     margin-top: 0px;
   }
 }
-.tableSet{
+.tableSet {
   width: v-bind('cardWidth+"px"');
-  margin-top:10px;
+  margin-top: 10px;
 }
 </style>

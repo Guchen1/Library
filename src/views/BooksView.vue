@@ -22,7 +22,6 @@ import { useAxios } from '@/stores/axios'
 import type { BookDetail, BookResponse } from '@/types/type'
 import BookOperation from '@/components/BookOperation.vue'
 import type { AxiosResponse } from 'axios'
-import qs from 'qs'
 const BookOperationRef = ref<InstanceType<typeof BookOperation>>()
 const tempbook = ref<BookDetail['id']>()
 const axios = useAxios().Axios
@@ -44,16 +43,13 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
   isbnSave = isbn
   readySave = ready
   axios
-    .post(
-      '/managerop/getbook/byname',
-      qs.stringify({
-        name: name,
-        author: author,
-        isbn: isbn,
-        page: page.value,
-        ready: ready
-      })
-    )
+    .post('/managerop/getbook/byname', {
+      name: name,
+      author: author,
+      isbn: isbn,
+      page: String(page.value),
+      ready: String(ready)
+    })
     .then((res: AxiosResponse<BookResponse>) => {
       if (!res.status) {
         throw 'Unable to get data with status code ' + res.status

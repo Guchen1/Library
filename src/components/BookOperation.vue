@@ -1,6 +1,6 @@
 <template>
   <a-modal
-  :maskClosable="false"
+    :maskClosable="false"
     v-model:visible="visible"
     :title="null"
     centered
@@ -9,7 +9,9 @@
     :closable="false"
     :bodyStyle="{}"
   >
-    <a-typography-title style="text-align: center" :level="2">{{props.book!=undefined?'Add a Book':'Modify Book'}}</a-typography-title>
+    <a-typography-title style="text-align: center" :level="2">{{
+      props.book != undefined ? 'Add a Book' : 'Modify Book'
+    }}</a-typography-title>
     <div class="padding">
       <a-upload
         v-model:file-list="fileList"
@@ -33,55 +35,67 @@
           <div class="ant-upload-text">Upload</div>
         </div>
       </a-upload>
-      <div style="display: inline-flex;padding-left:20px">
+      <div style="display: inline-flex; padding-left: 20px">
         <a-form
           :label-col="{ span: 6 }"
           :wrapper-col="{ span: 18 }"
           :model="book"
-          style="width: 100%;height:178px;font-size: 20px!important"
-          ><a-form-item style="margin-bottom:14px" label="Name"><a-input ></a-input> </a-form-item
-        ><a-form-item style="margin-bottom:14px" label="Author"><a-input ></a-input> </a-form-item
-        ><a-form-item style="margin-bottom:14px" label="ISBN"><a-input ></a-input> </a-form-item
-        ><a-form-item style="margin-bottom:0px" label="Info"><a-input ></a-input> </a-form-item
+          style="width: 100%; height: 178px; font-size: 20px !important"
+          ><a-form-item style="margin-bottom: 14px" label="Name"
+            ><a-input v-model="book.name"></a-input> </a-form-item
+          ><a-form-item style="margin-bottom: 14px" label="Author"
+            ><a-input v-model="book.author"></a-input> </a-form-item
+          ><a-form-item style="margin-bottom: 14px" label="ISBN"
+            ><a-input v-model="book.isbn"></a-input> </a-form-item
+          ><a-form-item style="margin-bottom: 0px" label="Info"
+            ><a-input v-model="book.info"></a-input> </a-form-item
         ></a-form>
       </div>
     </div>
     <div class="padding bottom-box">
-    <div class="text">
-    Can Use</div>
-        <a-switch v-model:checked="book.useable" />
-        <div class="text" style="padding-left:30px">
-    Inventory</div>
-    <a-input-number size="small" :precision="0" :min="0" v-model:value="book.inventory"></a-input-number>
+      <div class="text">Can Use</div>
+      <a-switch v-model:checked="book.useable" />
+      <div class="text" style="padding-left: 30px">Inventory</div>
+      <a-input-number
+        size="small"
+        :precision="0"
+        :min="0"
+        v-model:value="book.inventory"
+      ></a-input-number>
     </div>
     <div class="padding bottom-box">
-        <a-button style="margin-right: 20px;"  @click="handleCancel"><CloseOutlined/>Cancel</a-button>
-        <a-button type="primary" @click="handleOk"><CheckOutlined />OK</a-button>
+      <a-button style="margin-right: 20px" @click="handleCancel"><CloseOutlined />Cancel</a-button>
+      <a-button type="primary" @click="handleOk"><CheckOutlined />OK</a-button>
     </div>
   </a-modal>
 </template>
 <script setup lang="ts">
 import { reactive, ref, watch } from 'vue'
 import type { UploadChangeParam } from 'ant-design-vue'
-import { PlusOutlined, LoadingOutlined,CheckOutlined,CloseOutlined } from '@ant-design/icons-vue'
+import { PlusOutlined, LoadingOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
-import type { BookModify,BookDetail } from '@/types/type'
+import type { BookModify, BookDetail } from '@/types/type'
+import { useAxios } from '@/stores/axios'
+import { useClient } from '@/stores/client'
+import type { AxiosResponse } from 'axios'
 //引入message样式
 import 'ant-design-vue/es/message/style/css'
-const props=defineProps<{
-  book:BookDetail['id']|undefined
+const axios = useAxios().Axios
+const props = defineProps<{
+  book: BookDetail['id'] | undefined
 }>()
 const visible = ref<boolean>(false)
 const loading = ref<boolean>(false)
 const book: BookModify = reactive<BookModify>({
-  id:0,
+  id: 0,
   name: '',
   author: '',
   isbn: '',
   info: '',
+  price: 0,
   picObj: '',
   inventory: 0,
-  useable: true,
+  useable: true
 })
 const fileList = ref([])
 function getBase64(img: Blob, callback: (base64Url: string) => void) {
@@ -93,8 +107,18 @@ const handleCancel = () => {
   visible.value = false
 }
 const handleOk = () => {
-  //TODO: function to add book or modify book
-    visible.value = false
+  axios.post('managerop/addbook', {
+    isbn: book.isbn,
+    name: book.name,
+    author: book.author,
+    publisher: '',
+    summary: book.info,
+    cover: book.picObj,
+    price: String(1),
+    stock: String(book.inventory),
+    category: 'novel'
+  })
+  visible.value = false
 }
 const handleChange = (info: UploadChangeParam) => {
   if (info.file.status === 'uploading' && info.file.originFileObj != undefined) {
@@ -123,11 +147,10 @@ defineExpose({
 })
 watch(
   () => visible.value,
-  (val:boolean) => {
-    if (val&&props.book!=undefined) {
-        //TODO: function to get book 
-    }
-    else{
+  (val: boolean) => {
+    if (val && props.book != undefined) {
+      //TODO: function to get book
+    } else {
       fileList.value = []
       book.name = ''
       book.author = ''
@@ -164,15 +187,15 @@ watch(
   padding-top: 60px;
   width: 100%;
   display: flex;
-    justify-content: center;
+  justify-content: center;
 }
-.bottom-box{
-    display: flex;
-    justify-content: center;
+.bottom-box {
+  display: flex;
+  justify-content: center;
 }
-.text{
-    font-size: 20px;
-    line-height: 22px;
-    padding-right:10px
+.text {
+  font-size: 20px;
+  line-height: 22px;
+  padding-right: 10px;
 }
 </style>

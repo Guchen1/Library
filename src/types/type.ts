@@ -8,7 +8,7 @@ export interface BookDetail {
   price: number
   isbn: string
   summary: string
-  //situation: boolean
+  // situation: boolean
   cover: string
 }
 export interface BookModify {
@@ -19,6 +19,7 @@ export interface BookModify {
   info: string
   useable: boolean
   inventory: number
+  price: number
   picObj: string
 }
 export interface BookResponse {
@@ -29,4 +30,12 @@ export interface BookResponse {
     content: string
   }
   books: BookDetail[]
+}
+export interface BackendResponse {
+  status: boolean
+  op: string
+  msg: {
+    code: number
+    content: string
+  }
 }

@@ -1,6 +1,12 @@
 <script setup lang="ts">
-import type { BookDetail } from '@/types/type'
+import { nextTick } from 'vue'
+import type { BackendResponse, BookDetail } from '@/types/type'
 import { useClient } from '@/stores/client'
+import { useAxios } from '@/stores/axios'
+import type { AxiosResponse } from 'axios'
+
+const axios = useAxios().Axios
+
 const client = useClient()
 
 const props = defineProps<{
@@ -10,8 +16,23 @@ const props = defineProps<{
 const emits = defineEmits<{
   (e: 'show', a: BookDetail['id']): void
 }>()
-const del = (id: BookDetail['id']) => {
-  //TODO: delete book
+const del = (isbn: BookDetail['isbn']) => {
+  axios
+    .post('managerop/deletebook', {
+      ISBN: isbn
+    })
+    .then((e: AxiosResponse<BackendResponse>) => {
+      console.log(e.data.msg.content)
+      if (!e.data.status) {
+        throw e.data.msg.content
+      }
+      alert('删除成功，请按上方刷新键刷新')
+      nextTick(() => {})
+    })
+    .catch((e: any) => {
+      alert('删除失败：' + e)
+    })
+  // TODO: Father refresh
 }
 </script>
 
@@ -32,12 +53,14 @@ const del = (id: BookDetail['id']) => {
     </div>
     <div class="lower">
       <p v-if="!client.isAdmin">
-        <a-badge :status="props.book.situation ? 'success' : 'error'" />{{
-          props.book.situation ? 'In the library' : 'borrowed'
+        <a-badge :status="/*props.book.situation*/ true ? 'success' : 'error'" />{{
+          /*props.book.situation*/ true ? 'In the library' : 'borrowed'
         }}
       </p>
       <div v-else>
-        <a-button style="margin-right: 20px" danger @click="del(props.book.id)">Withdraw</a-button>
+        <a-button style="margin-right: 20px" danger @click="del(props.book.isbn)"
+          >Withdraw</a-button
+        >
         <a-button
           style="border-color: #52c41a; color: #52c41a; background-color: #f6ffed"
           @click="emits('show', props.book.id)"
