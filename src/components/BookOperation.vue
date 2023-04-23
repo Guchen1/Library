@@ -10,7 +10,7 @@
     :bodyStyle="{}"
   >
     <a-typography-title style="text-align: center" :level="2">{{
-      props.book != undefined ? 'Add a Book' : 'Modify Book'
+      bookDetail != undefined ? 'Add a Book' : 'Modify Book'
     }}</a-typography-title>
     <div class="padding">
       <a-upload
@@ -42,13 +42,13 @@
           :model="book"
           style="width: 100%; height: 178px; font-size: 20px !important"
           ><a-form-item style="margin-bottom: 14px" label="Name"
-            ><a-input v-model="book.name"></a-input> </a-form-item
-          ><a-form-item style="margin-bottom: 14px" label="Author"
-            ><a-input v-model="book.author"></a-input> </a-form-item
+            ><a-input v-model:value="book.name"></a-input> </a-form-item
+          ><a-form-item vue="margin-bottom: 14px" label="Author"
+            ><a-input v-model:value="book.author"></a-input> </a-form-item
           ><a-form-item style="margin-bottom: 14px" label="ISBN"
-            ><a-input v-model="book.isbn"></a-input> </a-form-item
+            ><a-input v-model:value="book.isbn"></a-input> </a-form-item
           ><a-form-item style="margin-bottom: 0px" label="Info"
-            ><a-input v-model="book.info"></a-input> </a-form-item
+            ><a-input v-model:value="book.info"></a-input> </a-form-item
         ></a-form>
       </div>
     </div>
@@ -71,21 +71,18 @@
 </template>
 <script setup lang="ts">
 import { reactive, ref, watch } from 'vue'
-import type { UploadChangeParam } from 'ant-design-vue'
 import { PlusOutlined, LoadingOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons-vue'
-import { message } from 'ant-design-vue'
+import { message, type UploadChangeParam } from 'ant-design-vue'
 import type { BookModify, BookDetail } from '@/types/type'
 import { useAxios } from '@/stores/axios'
 import { useClient } from '@/stores/client'
-import type { AxiosResponse } from 'axios'
+import { formToJSON, type AxiosResponse } from 'axios'
 //引入message样式
 import 'ant-design-vue/es/message/style/css'
 const axios = useAxios().Axios
-const props = defineProps<{
-  book: BookDetail['id'] | undefined
-}>()
 const visible = ref<boolean>(false)
 const loading = ref<boolean>(false)
+const bookDetail = ref<BookDetail | undefined>(undefined)
 const book: BookModify = reactive<BookModify>({
   id: 0,
   name: '',
@@ -143,13 +140,24 @@ const customRequest = (e: any) => {
   return
 }
 defineExpose({
-  visible
+  visible,
+  bookDetail
 })
 watch(
   () => visible.value,
   (val: boolean) => {
-    if (val && props.book != undefined) {
-      //TODO: function to get book
+    console.log(bookDetail.value + String(val))
+    if (val && bookDetail.value != undefined) {
+      fileList.value = []
+      book.name = bookDetail.value.name
+      book.author = bookDetail.value.author
+      book.isbn = bookDetail.value.isbn
+      book.info = bookDetail.value.summary
+      book.picObj = bookDetail.value.cover
+      book.inventory = bookDetail.value.stock
+      // TODO: useable to be implemented
+      book.useable = true
+      console.log(book.name)
     } else {
       fileList.value = []
       book.name = ''

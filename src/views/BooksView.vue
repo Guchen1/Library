@@ -22,13 +22,17 @@ import { useAxios } from '@/stores/axios'
 import type { BookDetail, BookResponse } from '@/types/type'
 import BookOperation from '@/components/BookOperation.vue'
 import type { AxiosResponse } from 'axios'
-const BookOperationRef = ref<InstanceType<typeof BookOperation>>()
-const tempbook = ref<BookDetail['id']>()
+const BookOperationRef = ref<typeof BookOperation>()
+const tempbook = ref<BookDetail>()
 const axios = useAxios().Axios
 const data = reactive<BookDetail[]>([])
-const show = (book: BookDetail['id'] | undefined) => {
+const show = (book: BookDetail | undefined) => {
   tempbook.value = book
-  if (BookOperationRef.value != undefined) BookOperationRef.value.visible = true
+
+  if (BookOperationRef.value != undefined) {
+    BookOperationRef.value.bookDetail = tempbook.value
+    BookOperationRef.value.visible = true
+  }
 }
 const isMore = ref(true)
 const page = ref(0)

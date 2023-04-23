@@ -14,7 +14,7 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits<{
-  (e: 'show', a: BookDetail['id']): void
+  (e: 'show', a: BookDetail): void
 }>()
 const del = (isbn: BookDetail['isbn']) => {
   axios
@@ -63,7 +63,7 @@ const del = (isbn: BookDetail['isbn']) => {
         >
         <a-button
           style="border-color: #52c41a; color: #52c41a; background-color: #f6ffed"
-          @click="emits('show', props.book.id)"
+          @click="emits('show', props.book)"
           >Change Info</a-button
         >
       </div>
