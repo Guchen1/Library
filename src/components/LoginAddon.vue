@@ -38,7 +38,7 @@ const onFinish = (values: RegisterState | FormState) => {
     password: values.password
   }
   //判断是不是FormState
-  if ('usertype' in values && 'remember' in values) {
+  if ( 'remember' in values) {
     axios
       .post('login', params)
       .then((res: AxiosResponse) => {
