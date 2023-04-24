@@ -29,7 +29,7 @@
         </a-form>
       </a-card>
     </div>
-    <BookTable :height="props.height" class="tableSet" />
+    <BookTable :height="props.height" class="tableSet" ref="borrowtable" />
   </div>
 </template>
 
@@ -48,7 +48,7 @@ interface SearchForm {
   date: Dayjs | null
   time: number | null
 }
-
+const borrowtable = ref<null | InstanceType<typeof BookTable>>(null)
 const card = ref()
 const cardWidth = computed(() => {
   return card.value.$el.offsetWidth
@@ -70,10 +70,10 @@ const ResetForm = () => {
   searchForm.name = ''
   searchForm.isbn = ''
   searchForm.date = null
-  searchForm.time = -1
+  searchForm.time = null
 }
 const onFinish = () => {
-  // 计算持续时间，然后给tnd发过去
+  /*
   console.log(searchForm.time)
   axios.post('/managerop/bookBorrowInfo', {
     name: searchForm.name,
@@ -82,7 +82,13 @@ const onFinish = () => {
     page: '1',
     num: '7'
   })
-  console.log('Success: on what?')
+  */
+  borrowtable.value?.search(
+    searchForm.name,
+    searchForm.isbn,
+    searchForm.date == null ? '' : searchForm.date.format('YYYY-MM-DD'),
+    searchForm.time == null ? '999' : String(searchForm.time)
+  )
   //console.log('Success:', searchForm.date[0].format('YYYY-MM-DD'))
 }
 const computedWidth = computed(() => {

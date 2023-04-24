@@ -3,7 +3,7 @@
     :scroll="{ y: props.height - 295 + 'px', visible: false }"
     :columns="columns"
     :pagination="{ position: ['bottomCenter'], pageSize: 10 }"
-    :data-source="data"
+    :data-source="dataFiltered"
   >
     <template #headerCell="{ column }">
       <template v-if="column.key === 'isbn'">
@@ -80,6 +80,7 @@ const hide = (record: BookInfo) => {
   }
 }
 const data = reactive<BookInfo[]>([])
+const dataFiltered = reactive<BookInfo[]>([])
 onMounted(async () => {
   let page: number = 1
   let isMore: boolean = true
@@ -165,10 +166,31 @@ onMounted(async () => {
       })
     }
   })
+  data.forEach((e) => {
+    dataFiltered.push(e)
+  })
   console.log(bookBorrowInfo)
   console.log(bookInfo)
   console.log(data)
 })
+
+const search = (name: string, isbn: string, date: string, time: string) => {
+  console.log('serarch!' + name + isbn + date + time)
+  dataFiltered.splice(0, dataFiltered.length)
+  data.forEach((e) => {
+    console.log(e.name.includes(isbn))
+    // TODO: search func rewrite, now ignore
+    if (
+      (e.name.includes(name) || e.name.includes(isbn)) &&
+      (e.borrowdate == date || date == '') &&
+      (Number(e.duedate).valueOf() <= Number(time).valueOf() || e.duedate == undefined)
+    ) {
+      dataFiltered.push(e)
+    }
+  })
+}
+
+defineExpose({ search })
 /*
 data.push({
   name: 'Harry Potter',
