@@ -19,7 +19,7 @@ import BookCard from '@/components/BookCard.vue'
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import BookSearch from '@/components/BookSearch.vue'
 import { useAxios } from '@/stores/axios'
-import type { BookDetail, BookResponse } from '@/types/type'
+import type { BookDetail } from '@/types/type'
 import BookOperation from '@/components/BookOperation.vue'
 import type { AxiosResponse } from 'axios'
 const BookOperationRef = ref<typeof BookOperation>()

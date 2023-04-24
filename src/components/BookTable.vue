@@ -21,17 +21,17 @@
         <a-tag v-else color="red" class="tag">overdue</a-tag>
       </template>
       <template v-else-if="column.key === 'action'">
-        <a-popover  v-if="record.status == 'available'" v-model:open="record.visible" title="Please input patron name" trigger="click">
+        <a-popover
+          v-if="record.status == 'available'"
+          v-model:open="record.visible"
+          title="Please input patron name"
+          trigger="click"
+        >
           <template #content>
-            <a-input v-model:value="name"></a-input><a-button style="display:inline-block" >Submit</a-button>
+            <a-input v-model:value="name"></a-input
+            ><a-button style="display: inline-block">Submit</a-button>
           </template>
-          <a
-            
-            style="font-size: 10px; white-space: nowrap"
-            type="primary"
-            size="small"
-            >Check Out</a
-          >
+          <a style="font-size: 10px; white-space: nowrap" type="primary" size="small">Check Out</a>
         </a-popover>
 
         <a v-else type="primary" style="font-size: 10px; white-space: nowrap" size="small"
@@ -52,8 +52,11 @@
   </a-table>
 </template>
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-const visible=reactive<boolean[]>([])
+import { onMounted, reactive, ref } from 'vue'
+import { useAxios } from '@/stores/axios'
+import type { AxiosResponse } from 'axios'
+const axios = useAxios().Axios
+const visible = reactive<boolean[]>([])
 interface BookInfo {
   name: string
   isbn: string
@@ -68,26 +71,105 @@ interface BookInfo {
 const props = defineProps<{
   height: number
 }>()
-const name=ref('')
-const hide=(record:BookInfo)=>{
-  for(let i=0;i<data.length;i++){
-    if(data[i].isbn==record.isbn){
-      data[i].visible=false
+const name = ref('')
+const hide = (record: BookInfo) => {
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].isbn == record.isbn) {
+      data[i].visible = false
     }
   }
 }
 const data = reactive<BookInfo[]>([])
-data.push({
-  name: 'Harry Potter',
-  isbn: '123456789',
-  author: 'J.K. Rowling',
-  borrower: 'John',
-  borrowdate: '2021-01-01',
-  duedate: '2021-01-31',
-  status: 'borrowed',
-  renewable: true,
-  visible: false
+onMounted(async () => {
+  let page: number = 1
+  let isMore: boolean = true
+  let bookBorrowInfo: any[] = []
+  let bookInfo: any[] = []
+  await axios
+    .post('/managerop/bookAllBorrowInfo', {
+      page: '1',
+      pagenum: '999'
+    })
+    .then((e: any) => {
+      // Do not ask me why...
+      e.data.infoList.forEach((e: any) => {
+        bookBorrowInfo.push(e)
+      })
+    })
+    .catch((e: any) => {
+      console.log(e)
+      alert(e)
+    })
+  try {
+    while (isMore) {
+      await axios
+        .post('/managerop/getbook/byname', {
+          name: '',
+          isbn: '',
+          author: '',
+          page: String(page),
+          ready: String(false)
+        })
+        .then((res: AxiosResponse) => {
+          if (!res.status) {
+            throw 'Unable to get data with status code ' + res.status
+          }
+          if (res.data.books.length == 0) {
+            isMore = false
+          } else {
+            res.data.books.forEach((element: any) => {
+              bookInfo.push(element)
+            })
+            page += 1
+          }
+        })
+    }
+  } catch (err) {
+    console.log(err)
+    alert(err)
+  }
+  bookInfo.forEach((e: any) => {
+    let whatever = e
+    let count: number = 0
+    function a(whatever: any) {
+      return (e: any) => {
+        if (e.bookName == whatever.bookName) {
+          data.push({
+            name: whatever.bookName,
+            isbn: whatever.bookIsbn,
+            author: whatever.bookAuthor,
+            borrower: e.borrowAccount,
+            borrowdate: e.borrowTime,
+            duedate: e.borrowDuration,
+            status: 'borrowed',
+            renewable: true,
+            visible: false
+          })
+          count++
+        }
+      }
+    }
+    bookBorrowInfo.forEach(a(whatever))
+    console.log(count)
+    for (var i = 0; i < whatever.bookStock - count; ++i) {
+      data.push({
+        name: whatever.bookName,
+        isbn: whatever.bookIsbn,
+        author: whatever.bookAuthor,
+        borrower: undefined,
+        borrowdate: undefined,
+        duedate: undefined,
+        status: 'available',
+        renewable: undefined,
+        visible: false
+      })
+    }
+  })
+  console.log(bookBorrowInfo)
+  console.log(bookInfo)
+  console.log(data)
 })
+/*
 data.push({
   name: 'Harry Potter',
   isbn: '123456789',
@@ -220,7 +302,7 @@ data.push({
   renewable: false,
   visible: false
 })
-
+*/
 const sortFunc = (a: BookInfo, b: BookInfo) => {
   if (a.isbn > b.isbn) {
     return true
@@ -297,7 +379,7 @@ const columns = [
   width: 66px;
   text-align: center;
 }
-.ant-popover-inner-content{
+.ant-popover-inner-content {
   display: flex;
 }
 </style>
