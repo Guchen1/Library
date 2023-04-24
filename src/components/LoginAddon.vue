@@ -101,7 +101,7 @@ defineExpose({
       :closable="false"
       :bodyStyle="{}"
     >
-      <div class="modal" :style="{ height: func ? '465px' : '465px' }">
+      <div class="modal" :style="{ height: func ? '365px' : '405px' }">
         <transition
           mode="out-in"
           name="fade"
@@ -134,16 +134,7 @@ defineExpose({
               >
                 <a-input-password v-model:value="formLogin.password" />
               </a-form-item>
-              <a-form-item
-                label="Usertype"
-                name="usertype"
-                :rules="[{ required: true, message: 'Please Select your usertype!' }]"
-              >
-                <a-select v-model:value="formLogin.usertype">
-                  <a-select-option value="user">User</a-select-option>
-                  <a-select-option value="admin">Admin</a-select-option>
-                </a-select>
-              </a-form-item>
+
               <a-form-item name="remember" :wrapper-col="{ offset: 9, span: 16 }">
                 <a-checkbox v-model:checked="formLogin.remember">Remember me</a-checkbox>
               </a-form-item>
@@ -182,22 +173,7 @@ defineExpose({
                 :rules="[{ required: true, message: 'Please input your password!' }]"
                 ><a-input v-model:value="formRegister.password" />
               </a-form-item>
-              <a-form-item
-                label="Optcode"
-                name="optcode"
-                :rules="[{ required: true, message: 'Please input the optcode!' }]"
-                ><a-input v-model:value="formRegister.optcode" />
-              </a-form-item>
-              <a-form-item
-                label="Usertype"
-                name="usertype"
-                :rules="[{ required: true, message: 'Please Select your usertype!' }]"
-              >
-                <a-select v-model:value="formRegister.usertype">
-                  <a-select-option value="user">User</a-select-option>
-                  <a-select-option value="admin">Admin</a-select-option>
-                </a-select>
-              </a-form-item>
+
               <a-form-item :wrapper-col="{ offset: 11, span: 12 }">
                 <a-button type="primary" html-type="submit">Register</a-button>
               </a-form-item>
