@@ -72,7 +72,7 @@
   </a-modal>
 </template>
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import { PlusOutlined, LoadingOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons-vue'
 import { message, type UploadChangeParam } from 'ant-design-vue'
 import type { BookModify, BookDetail } from '@/types/type'
@@ -105,14 +105,55 @@ function getBase64(img: Blob, callback: (base64Url: string) => void) {
 const handleCancel = () => {
   visible.value = false
 }
-const handleOk = (isAdd: boolean) => {
-  axios.post(isAdd ? 'managerop/addbook' : 'managerop/updatebook', {
+
+// Temp Solution
+let pic: UploadChangeParam | null = null
+let tokenA: String = ''
+const userMsg = new URLSearchParams()
+userMsg.append('phoneNum', '15934669879')
+userMsg.append('pwd', 'ZFHzfh123')
+
+onMounted(async () => {
+  if (tokenA == '') {
+    const { data } = await axios({
+      url: 'https://imgbed.link/imgbed/user/login',
+      method: 'post',
+      data: userMsg
+    })
+    console.log(data)
+    tokenA = data.token
+  }
+})
+
+const handleOk = async (isAdd: boolean) => {
+  if (pic != null && pic.file.originFileObj != undefined) {
+    const file = new FormData()
+    file.append('file', pic.file.originFileObj)
+    await axios({
+      url: 'https://imgbed.link/imgbed/file/upload',
+      method: 'post',
+      headers: {
+        token: tokenA
+      },
+      data: file
+    })
+      .then((e: any) => {
+        book.picObj = e.rows[0].url
+      })
+      .catch(() => {
+        book.picObj = 'https://imgbed.link/file/23947'
+      })
+  } else {
+    book.picObj = 'https://imgbed.link/file/23947'
+  }
+
+  await axios.post(isAdd ? 'managerop/addbook' : 'managerop/updatebook', {
     isbn: book.isbn,
     name: book.name,
     author: book.author,
     publisher: '',
     summary: book.info,
-    cover: 'https://imgbed.link/file/23947',
+    cover: book.picObj,
     price: String(1),
     stock: String(book.inventory),
     category: 'novel'
@@ -120,7 +161,7 @@ const handleOk = (isAdd: boolean) => {
   visible.value = false
 }
 const handleChange = (info: UploadChangeParam) => {
-  if (info.file.status === 'uploading' && info.file.originFileObj != undefined) {
+  /*if (info.file.status === 'uploading' && info.file.originFileObj != undefined) {
     getBase64(info.file.originFileObj, (base64Url: string) => {
       if (book != undefined) book.picObj = base64Url
       loading.value = false
@@ -132,6 +173,9 @@ const handleChange = (info: UploadChangeParam) => {
       //.value = base64Url
       loading.value = false
     })
+  }*/
+  if (info.file.originFileObj != undefined) {
+    pic = info
   }
   if (info.file.status === 'error') {
     loading.value = false

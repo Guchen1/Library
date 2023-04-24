@@ -38,7 +38,7 @@ const onFinish = (values: RegisterState | FormState) => {
     password: values.password
   }
   //判断是不是FormState
-  if ( 'remember' in values) {
+  if ('remember' in values) {
     axios
       .post('login', params)
       .then((res: AxiosResponse) => {
@@ -49,8 +49,18 @@ const onFinish = (values: RegisterState | FormState) => {
         setTimeout(() => {
           client.loggedIn = true
           localStorage.setItem('loggedin', 'true')
-          //TODO: return value should be these three, temp admin
-          client.clientData.clientType = 'admin'
+          console.log(res.data.userType)
+          switch (res.data.userType) {
+            case 1:
+              client.clientData.clientType = 'admin'
+              break
+            case 2:
+              client.clientData.clientType = 'user'
+              break
+            case 3:
+              client.clientData.clientType = 'staff'
+              break
+          }
         }, 500)
         visible.value = false
       })
