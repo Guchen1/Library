@@ -21,13 +21,19 @@
         <a-tag v-else color="red" class="tag">overdue</a-tag>
       </template>
       <template v-else-if="column.key === 'action'">
-        <a
-          v-if="record.status == 'available'"
-          style="font-size: 10px; white-space: nowrap"
-          type="primary"
-          size="small"
-          >Check Out</a
-        >
+        <a-popover  v-if="record.status == 'available'" v-model:open="record.visible" title="Please input patron name" trigger="click">
+          <template #content>
+            <a-input v-model:value="name"></a-input><a-button style="display:inline-block" >Submit</a-button>
+          </template>
+          <a
+            
+            style="font-size: 10px; white-space: nowrap"
+            type="primary"
+            size="small"
+            >Check Out</a
+          >
+        </a-popover>
+
         <a v-else type="primary" style="font-size: 10px; white-space: nowrap" size="small"
           >Check In</a
         >
@@ -46,7 +52,8 @@
   </a-table>
 </template>
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
+const visible=reactive<boolean[]>([])
 interface BookInfo {
   name: string
   isbn: string
@@ -56,10 +63,19 @@ interface BookInfo {
   duedate: string | undefined
   status: 'available' | 'borrowed' | 'overdue'
   renewable: boolean | undefined
+  visible: boolean
 }
 const props = defineProps<{
   height: number
 }>()
+const name=ref('')
+const hide=(record:BookInfo)=>{
+  for(let i=0;i<data.length;i++){
+    if(data[i].isbn==record.isbn){
+      data[i].visible=false
+    }
+  }
+}
 const data = reactive<BookInfo[]>([])
 data.push({
   name: 'Harry Potter',
@@ -69,7 +85,8 @@ data.push({
   borrowdate: '2021-01-01',
   duedate: '2021-01-31',
   status: 'borrowed',
-  renewable: true
+  renewable: true,
+  visible: false
 })
 data.push({
   name: 'Harry Potter',
@@ -79,7 +96,8 @@ data.push({
   borrowdate: '2021-01-01',
   duedate: '2021-01-31',
   status: 'borrowed',
-  renewable: true
+  renewable: true,
+  visible: false
 })
 data.push({
   name: 'Harry Potter',
@@ -89,7 +107,8 @@ data.push({
   borrowdate: '2021-01-01',
   duedate: '2021-01-31',
   status: 'borrowed',
-  renewable: true
+  renewable: true,
+  visible: false
 })
 data.push({
   name: 'Harry Potter',
@@ -99,7 +118,8 @@ data.push({
   borrowdate: '2021-01-01',
   duedate: '2021-01-31',
   status: 'borrowed',
-  renewable: true
+  renewable: true,
+  visible: false
 })
 data.push({
   name: 'Harry Potter',
@@ -109,7 +129,8 @@ data.push({
   borrowdate: '2021-01-01',
   duedate: '2021-01-31',
   status: 'borrowed',
-  renewable: true
+  renewable: true,
+  visible: false
 })
 data.push({
   name: 'Harry Potter',
@@ -119,7 +140,8 @@ data.push({
   borrowdate: '2021-01-01',
   duedate: '2021-01-31',
   status: 'borrowed',
-  renewable: true
+  renewable: true,
+  visible: false
 })
 data.push({
   name: 'Harry Potter',
@@ -129,7 +151,8 @@ data.push({
   borrowdate: '2021-01-01',
   duedate: '2021-01-31',
   status: 'borrowed',
-  renewable: true
+  renewable: true,
+  visible: false
 })
 data.push({
   name: 'Harry Potter',
@@ -139,7 +162,8 @@ data.push({
   borrowdate: '2021-01-01',
   duedate: '2021-01-31',
   status: 'borrowed',
-  renewable: true
+  renewable: true,
+  visible: false
 })
 data.push({
   name: 'Harry Potter',
@@ -149,7 +173,8 @@ data.push({
   borrowdate: '2021-01-01',
   duedate: '2021-01-31',
   status: 'borrowed',
-  renewable: true
+  renewable: true,
+  visible: false
 })
 data.push({
   name: 'Harry Potter',
@@ -159,7 +184,8 @@ data.push({
   borrowdate: '2021-01-01',
   duedate: '2021-01-31',
   status: 'borrowed',
-  renewable: true
+  renewable: true,
+  visible: false
 })
 data.push({
   name: 'Harry Potter',
@@ -169,7 +195,8 @@ data.push({
   borrowdate: '2021-01-01',
   duedate: '2021-01-31',
   status: 'borrowed',
-  renewable: true
+  renewable: true,
+  visible: false
 })
 data.push({
   name: 'One Piece',
@@ -179,7 +206,8 @@ data.push({
   borrowdate: undefined,
   duedate: undefined,
   status: 'available',
-  renewable: undefined
+  renewable: undefined,
+  visible: false
 })
 data.push({
   name: 'The Lord of the Rings',
@@ -189,7 +217,8 @@ data.push({
   borrowdate: '2021-12-01',
   duedate: '2021-12-31',
   status: 'overdue',
-  renewable: false
+  renewable: false,
+  visible: false
 })
 
 const sortFunc = (a: BookInfo, b: BookInfo) => {
@@ -267,5 +296,8 @@ const columns = [
 .tag {
   width: 66px;
   text-align: center;
+}
+.ant-popover-inner-content{
+  display: flex;
 }
 </style>
