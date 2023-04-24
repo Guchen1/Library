@@ -65,7 +65,9 @@
     </div>
     <div class="padding bottom-box">
       <a-button style="margin-right: 20px" @click="handleCancel"><CloseOutlined />Cancel</a-button>
-      <a-button type="primary" @click="handleOk"><CheckOutlined />OK</a-button>
+      <a-button type="primary" @click="handleOk(bookDetail == undefined)"
+        ><CheckOutlined />OK</a-button
+      >
     </div>
   </a-modal>
 </template>
@@ -103,14 +105,14 @@ function getBase64(img: Blob, callback: (base64Url: string) => void) {
 const handleCancel = () => {
   visible.value = false
 }
-const handleOk = () => {
-  axios.post('managerop/addbook', {
+const handleOk = (isAdd: boolean) => {
+  axios.post(isAdd ? 'managerop/addbook' : 'managerop/updatebook', {
     isbn: book.isbn,
     name: book.name,
     author: book.author,
     publisher: '',
     summary: book.info,
-    cover: book.picObj,
+    cover: 'https://imgbed.link/file/23947',
     price: String(1),
     stock: String(book.inventory),
     category: 'novel'
