@@ -35,7 +35,7 @@ const show = (book: BookDetail | undefined) => {
   }
 }
 const isMore = ref(true)
-const page = ref(0)
+const page = ref(1)
 // Save the stat
 let nameSave: string = ''
 let authorSave: string = ''
@@ -46,49 +46,51 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
   authorSave = author
   isbnSave = isbn
   readySave = ready
-  axios
-    .post('/managerop/getbook/byname', {
-      name: name,
-      author: author,
-      isbn: isbn,
-      page: String(page.value),
-      ready: String(ready)
-    })
-    .then((res: AxiosResponse<BookResponse>) => {
-      if (!res.status) {
-        throw 'Unable to get data with status code ' + res.status
-      }
-      let resobj = res.data.books
-      if (resobj.length == 0) {
-        isMore.value = false
-      } else {
-        resobj.forEach((e) => {
-          data.push({
-            author: e.author,
-            category: e.category,
-            cover: e.cover,
-            id: e.id,
-            isbn: e.isbn,
-            name: e.name,
-            price: e.price,
-            publisher: e.publisher,
-            stock: e.stock,
-            summary: e.summary
-            //situation: e.situation,
+  if (isMore.value) {
+    axios
+      .post('/managerop/getbook/byname', {
+        name: name,
+        isbn: isbn,
+        author: author,
+        page: String(page.value),
+        ready: String(ready)
+      })
+      .then((res: AxiosResponse) => {
+        if (!res.status) {
+          throw 'Unable to get data with status code ' + res.status
+        }
+        let resobj = res.data.books
+        if (resobj.length == 0) {
+          isMore.value = false
+        } else {
+          resobj.forEach((e: any) => {
+            console.log(e)
+            data.push({
+              author: e.bookAuthor,
+              category: e.bookCategoryName,
+              cover: e.bookCover,
+              id: e.bookId,
+              isbn: e.bookIsbn,
+              name: e.bookName,
+              price: e.bookPrice,
+              publisher: e.bookPublisher,
+              stock: e.bookStock,
+              summary: e.bookSummary
+              //situation: e.situation,
+            })
           })
-        })
-        page.value += 1
-      }
-    })
-    .catch((err: any) => {
-      console.log(err)
-      alert(err)
-    })
-  page.value++
-  if (page.value > 3) isMore.value = false
+          page.value += 1
+        }
+      })
+      .catch((err: any) => {
+        console.log(err)
+        alert(err)
+      })
+  }
 }
 const search = (name: string, author: string, isbn: string, ready: boolean) => {
   data.splice(0, data.length)
+  page.value = 1
   request(name, author, isbn, ready)
 }
 onMounted(() => {

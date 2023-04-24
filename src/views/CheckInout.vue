@@ -14,7 +14,9 @@
           ><a-form-item class="item"
             ><a-input v-model:value="searchForm.isbn" placeholder="ISBN" /></a-form-item
           ><a-form-item id="dateForm" class="item"
-            ><a-range-picker v-model:value="searchForm.date"
+            ><a-date-picker v-model:value="searchForm.date" /></a-form-item
+          ><a-form-item id="dateForm" class="item"
+            ><a-input v-model:value="searchForm.time" placeholder="Length"
           /></a-form-item>
           <div>
             <a-button danger @click="ResetForm()">
@@ -32,16 +34,19 @@
 </template>
 
 <script setup lang="ts">
+/** __vue_virtual_code_placeholder */
 import type { Dayjs } from 'dayjs'
 import BookTable from '@/components/BookTable.vue'
 import { CloseOutlined, SearchOutlined } from '@ant-design/icons-vue'
 import { reactive, ref, computed, onMounted } from 'vue'
 import { useAxios } from '@/stores/axios'
+import dayjs from 'dayjs'
 const axios = useAxios().Axios
 interface SearchForm {
   name: string
   isbn: string
-  date: Array<Dayjs>
+  date: Dayjs | null
+  time: number | null
 }
 
 const card = ref()
@@ -51,7 +56,8 @@ const cardWidth = computed(() => {
 const searchForm: SearchForm = reactive({
   name: '',
   isbn: '',
-  date: []
+  date: null,
+  time: null
 })
 onMounted(() => {
   console.log(card.value.$el.offsetWidth)
@@ -63,16 +69,21 @@ const props = defineProps<{
 const ResetForm = () => {
   searchForm.name = ''
   searchForm.isbn = ''
-  searchForm.date = []
+  searchForm.date = null
+  searchForm.time = null
 }
 const onFinish = () => {
+  // 计算持续时间，然后给tnd发过去
+  console.log(searchForm.date)
   axios.post('/managerop/bookBorrowInfo', {
     name: searchForm.name,
-    isbn: searchForm.isbn,
-    date: searchForm.date
+    date1: searchForm.date == null ? '' : searchForm.date.format('YYYY-MM-DD'),
+    date2: searchForm.time,
+    page: 1,
+    num: 7
   })
-  console.log('Success:')
-  console.log('Success:', searchForm.date[0].format('YYYY-MM-DD'))
+  console.log('Success: on what?')
+  //console.log('Success:', searchForm.date[0].format('YYYY-MM-DD'))
 }
 const computedWidth = computed(() => {
   return {
