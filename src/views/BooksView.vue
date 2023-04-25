@@ -90,7 +90,10 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
 }
 const search = (name: string, author: string, isbn: string, ready: boolean) => {
   data.splice(0, data.length)
+  isMore.value = true
   page.value = 1
+  console.log(isMore.value)
+  console.log(page.value)
   request(name, author, isbn, ready)
 }
 onMounted(() => {
@@ -103,13 +106,6 @@ onUnmounted(() => {
 function scrollHandle() {
   if (!isMore.value) return
   window.onscroll = () => {
-    console.log(
-      Math.abs(
-        document.documentElement.scrollHeight -
-          document.documentElement.clientHeight -
-          document.documentElement.scrollTop
-      )
-    )
     let bottom =
       Math.abs(
         document.documentElement.scrollHeight -

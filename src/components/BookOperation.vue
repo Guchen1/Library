@@ -138,9 +138,10 @@ const handleOk = async (isAdd: boolean) => {
       data: file
     })
       .then((e: any) => {
-        book.picObj = e.rows[0].url
+        book.picObj = e.data.rows[0].url
       })
-      .catch(() => {
+      .catch((e: any) => {
+        console.log(e)
         book.picObj = 'https://imgbed.link/file/23947'
       })
   } else {
@@ -161,7 +162,10 @@ const handleOk = async (isAdd: boolean) => {
   visible.value = false
 }
 const handleChange = (info: UploadChangeParam) => {
-  /*if (info.file.status === 'uploading' && info.file.originFileObj != undefined) {
+  if (info.file.originFileObj != undefined) {
+    pic = info
+  }
+  if (info.file.status === 'uploading' && info.file.originFileObj != undefined) {
     getBase64(info.file.originFileObj, (base64Url: string) => {
       if (book != undefined) book.picObj = base64Url
       loading.value = false
@@ -173,10 +177,8 @@ const handleChange = (info: UploadChangeParam) => {
       //.value = base64Url
       loading.value = false
     })
-  }*/
-  if (info.file.originFileObj != undefined) {
-    pic = info
   }
+
   if (info.file.status === 'error') {
     loading.value = false
     message.error('upload error')

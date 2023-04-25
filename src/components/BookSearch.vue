@@ -82,6 +82,7 @@ const ResetForm = () => {
   formState.isbn = ''
 }
 const Search = () => {
+  console.log('searching...')
   props.searchFunc(formState.name, formState.author, formState.isbn, formState.ready)
 }
 </script>
