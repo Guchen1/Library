@@ -24,17 +24,22 @@
         <a-popover
           v-if="record.status == 'available'"
           v-model:open="record.visible"
-          title="Please input patron name"
+          title="Please input patron name and length"
           trigger="click"
         >
           <template #content>
-            <a-input v-model:value="name"></a-input
-            ><a-button style="display: inline-block">Submit</a-button>
+            <a-input v-model:value="name"></a-input><a-input v-model:value="day"></a-input
+            ><a-button style="display: inline-block" @click="borrow(record.id)">Submit</a-button>
           </template>
           <a style="font-size: 10px; white-space: nowrap" type="primary" size="small">Check Out</a>
         </a-popover>
 
-        <a v-else type="primary" style="font-size: 10px; white-space: nowrap" size="small"
+        <a
+          v-else
+          type="primary"
+          style="font-size: 10px; white-space: nowrap"
+          size="small"
+          @click="giveback(record.id)"
           >Check In</a
         >
         <div style="display: inline-block">
@@ -58,9 +63,11 @@ import type { AxiosResponse } from 'axios'
 const axios = useAxios().Axios
 const visible = reactive<boolean[]>([])
 interface BookInfo {
+  id: number
   name: string
   isbn: string
   author: string
+  //borrowid: string | undefined
   borrower: string | undefined
   borrowdate: string | undefined
   duedate: string | undefined
@@ -72,6 +79,7 @@ const props = defineProps<{
   height: number
 }>()
 const name = ref('')
+const day = ref('')
 const hide = (record: BookInfo) => {
   for (let i = 0; i < data.length; i++) {
     if (data[i].isbn == record.isbn) {
@@ -129,6 +137,7 @@ onMounted(async () => {
     console.log(err)
     alert(err)
   }
+
   bookInfo.forEach((e: any) => {
     let whatever = e
     let count: number = 0
@@ -136,9 +145,11 @@ onMounted(async () => {
       return (e: any) => {
         if (e.bookName == whatever.bookName) {
           data.push({
+            id: 0,
             name: whatever.bookName,
             isbn: whatever.bookIsbn,
             author: whatever.bookAuthor,
+            // TODO: add borrowid
             borrower: e.borrowAccount,
             borrowdate: e.borrowTime,
             duedate: e.borrowDuration,
@@ -154,9 +165,11 @@ onMounted(async () => {
     console.log(count)
     for (var i = 0; i < whatever.bookStock - count; ++i) {
       data.push({
+        id: 0,
         name: whatever.bookName,
         isbn: whatever.bookIsbn,
         author: whatever.bookAuthor,
+        //borrowid: undefined,
         borrower: undefined,
         borrowdate: undefined,
         duedate: undefined,
@@ -166,8 +179,11 @@ onMounted(async () => {
       })
     }
   })
+  let count: number = 0
   data.forEach((e) => {
+    e.id = count
     dataFiltered.push(e)
+    count += 1
   })
   console.log(bookBorrowInfo)
   console.log(bookInfo)
@@ -181,13 +197,32 @@ const search = (name: string, isbn: string, date: string, time: string) => {
     console.log(e.name.includes(isbn))
     // TODO: search func rewrite, now ignore
     if (
-      (e.name.includes(name) || e.name.includes(isbn)) &&
+      e.name.includes(name) &&
+      e.name.includes(isbn) &&
       (e.borrowdate == date || date == '') &&
       (Number(e.duedate).valueOf() <= Number(time).valueOf() || e.duedate == undefined)
     ) {
       dataFiltered.push(e)
     }
   })
+}
+
+const borrow = (e: number) => {
+  data[e].borrower = name.value
+  data[e].borrowdate = '2023-04-25'
+  data[e].duedate = day.value
+  data[e].status = 'borrowed'
+  name.value = ''
+  day.value = ''
+  alert('Check out completed')
+}
+
+const giveback = (e: number) => {
+  data[e].borrower = undefined
+  data[e].borrowdate = undefined
+  data[e].duedate = undefined
+  data[e].status = 'available'
+  alert('Check in completed')
 }
 
 defineExpose({ search })
