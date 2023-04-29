@@ -4,6 +4,7 @@ import { useClient } from './stores/client'
 import { useRouter, useRoute } from 'vue-router'
 import LoginAddon from './components/LoginAddon.vue'
 import { ReloadOutlined } from '@ant-design/icons-vue'
+import HomeView from './views/HomeView.vue'
 const LoginRef = ref<InstanceType<typeof LoginAddon>>()
 const router = useRouter()
 const route = useRoute()
@@ -13,6 +14,7 @@ const client = useClient()
 const selectedKeys = ref<Array<string>>([])
 const height = ref('')
 const width = ref(0)
+
 interface table {
   [key: string]: string
 }
@@ -21,7 +23,8 @@ const routetable: table = {
   '2': '/manage',
   '3': '/checkinout',
   '4': '/personal',
-  '5': '/news'
+  '5': '/news',
+  '6': '/sign'
 }
 const reload = () => {
   spinning.value = true
@@ -74,7 +77,13 @@ onMounted(() => {
 
 <template>
   <a-layout theme="light">
-    <a-layout-header v-cloak class="layout-head" theme="light">
+    <a-layout-header
+      style="background-color: white"
+      v-if="route.path != '/' && route.path != '/sign'"
+      v-cloak
+      class="layout-head"
+      theme="light"
+    >
       <div style="display: flex">
         <div class="logo" @click="goHome()">Library</div>
         <a-menu
@@ -103,12 +112,24 @@ onMounted(() => {
         />
       </div>
     </a-layout-header>
-    <a-layout-content class="layout-main" theme="light">
-        <router-view v-if="show" v-slot="{ Component }">
+    <a-layout-content
+      :style="{ marginTop: route.path != '/' && route.path != '/sign' ? '64px' : '0px' }"
+      class="layout-main"
+      theme="light"
+    >
+        <div v-if="!client.loggedIn" v-show="route.path == '/'">
+          <HomeView :width="Number(width)"></HomeView>
+        </div>
+        <div v-if="show && route.path != '/'">
+          <router-view  v-slot="{ Component }">
             <component :width="Number(width)" :height="Number(height)" :is="Component" />
-        </router-view>
+          </router-view>
+        </div>
     </a-layout-content>
-    <a-layout-footer :style="{ textAlign: 'center' }">
+    <a-layout-footer
+      v-if="route.path != '/' && route.path != '/sign'"
+      :style="{ textAlign: 'center' }"
+    >
       Library ©2023 Created by SPM Class2 B3
     </a-layout-footer>
   </a-layout>
@@ -134,7 +155,7 @@ onMounted(() => {
 .layout-main {
   padding: 0px;
   margin-top: 64px;
-  min-height: v-bind(height + 'px');
+  min-height: v-bind("route.path=='/sign'?'0px': height + 'px'");
   box-sizing: border-box;
   background-color: white;
   display: flex;
@@ -142,5 +163,10 @@ onMounted(() => {
 }
 [v-cloak] {
   display: none;
+}
+</style>
+<style>
+body {
+  background-color: v-bind('route.path=='/"?' black':' white'");
 }
 </style>

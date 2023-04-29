@@ -5,6 +5,7 @@ interface ClientData {
     clientType: 'user'|'staff'|'admin'|''
 }
 export const useClient = defineStore('client', () => {
+    const state=ref('signin');
     const loggedIn = ref(window.localStorage.getItem('loggedin')==='true')
     console.log(window.localStorage.getItem('loggedin'))
     const clientData:ClientData= reactive({
@@ -34,5 +35,5 @@ export const useClient = defineStore('client', () => {
     const isStaff= computed(() => {
         return clientData.clientType === 'staff'&&loggedIn.value
     })
-    return { loggedIn,login,logout,isUser,isAdmin,clientData,isStaff }
+    return { loggedIn,login,logout,isUser,isAdmin,clientData,isStaff,state }
 })
