@@ -45,17 +45,10 @@ const logout = () => {
   client.logout()
   router.push('/')
 }
+
 watch(
   () => router.currentRoute.value.path,
   (newValue) => {
-    console.log(newValue)
-    if(!client.loggedIn&&newValue!='/sign'&&newValue!='/'){
-      console.log('not logged in')
-      nextTick(() => {
-        router.push('/')
-      })
-      selectedKeys.value.shift()
-    }
     if (newValue === '/') {
       selectedKeys.value.shift()
     } else {
