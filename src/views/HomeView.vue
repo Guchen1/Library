@@ -4,6 +4,7 @@ import { ref, onMounted, computed, watch, onActivated, onDeactivated, nextTick, 
 import { useClient } from '@/stores/client'
 const client = useClient()
 const loading = ref(true)
+const xx=ref(0)
 const ready=ref(false)
 const axios = useAxios().Axios
 function handleMessage(event: any) {
@@ -15,14 +16,23 @@ function handleMessage(event: any) {
       })
       break
     case 'ready':
+      if(props.visible)
       ready.value=true
+      else{
+        xx.value= setInterval(()=>{
+          if(props.visible)
+          ready.value=true
+          clearInterval(xx.value)
+        },100)
+      }
       break
     default:
       break
   }
 }
 const props = defineProps<{
-  width: number
+  width: number,
+  visible: boolean
 }>()
 onMounted(() => {
   window.addEventListener('message', handleMessage, false)

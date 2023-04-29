@@ -119,7 +119,7 @@ onMounted(() => {
       theme="light"
     >
         <div v-if="!client.loggedIn" v-show="route.path == '/'">
-          <HomeView :width="Number(width)"></HomeView>
+          <HomeView :visible="route.path == '/'" :width="Number(width)"></HomeView>
         </div>
         <div v-if="show && route.path != '/'">
           <router-view  v-slot="{ Component }">
