@@ -20,9 +20,10 @@ function handleMessage(event: any) {
       ready.value=true
       else{
         xx.value= setInterval(()=>{
-          if(props.visible)
+          if(props.visible){
           ready.value=true
           clearInterval(xx.value)
+          }
         },100)
       }
       break
@@ -106,6 +107,7 @@ a {
 <style>
 body {
   overflow: hidden;
+  background-color: black;
 }
 .fade-enter-active,
 .fade-leave-active {
