@@ -253,6 +253,7 @@ onMounted(() => {
   // Login Form Validation Function
   function loginFormValidation() {
     // Loop On All The Inputs
+    let loginFormValid = true
     allLoginFormFields.forEach((input) => {
       // Input Targte Field Name Value
       const inputAttribueValueName = input.attributes.name.value
@@ -264,8 +265,10 @@ onMounted(() => {
       // Check If The Input Value Is Empty
       if (inputValue === '') {
         // Call Function Set Error For
+        loginFormValid = false
         setErrorFor(input, `${inputAttribueValueName} is required. Please enter your response.`)
       } else if (inputRegex === false) {
+        loginFormValid = false
         // Else If: If The InputRegext Response Is False
         // Call Function Set Error For
         setErrorFor(input, `${inputAttribueValueName} Is Invalid .`)
@@ -275,10 +278,14 @@ onMounted(() => {
         setSuccessFor(input)
       }
     })
+    if(loginFormValid){
+    //TODO:finish login
+    }
   }
 
   // Sign-Up Form Validation Function
   function signUpFormValidation() {
+    let signUpFormValid = true
     // Loop On All The Inputs
     allSignUpFormFields.forEach((input) => {
       // Password And Confirm Password Fileds Values Without Spaces
@@ -293,9 +300,11 @@ onMounted(() => {
 
       // Check If The Input Value Is Empty
       if (inputValue === '') {
+        signUpFormValid = false
         // Call Function Set Error For
         setErrorFor(input, `${inputAttribueValueName} is required. Please enter your response.`)
       } else if (inputRegex === false) {
+        signUpFormValid = false
         // Else If: If The InputRegext Response Is False
         // Call Function Set Error For
         setErrorFor(input, `${inputAttribueValueName} Is Invalid .`)
@@ -307,10 +316,12 @@ onMounted(() => {
 
       // Validation The Confirm Password
       if (conifrmPassValue === '') {
+        signUpFormValid = false
         // Check If The Confirm Password Value Is Empty
         // Call Function Set Error For
         setErrorFor(confirmPassword, `Confirm password is required. Please enter your response.`)
       } else if (conifrmPassValue !== passwordFieldValue) {
+        signUpFormValid = false
         // Check If The Confirm Password Value Is Dose Not Match The Password Filed
         // Call Function Set Error For
         setErrorFor(confirmPassword, `Confirm password does not match`)
@@ -320,6 +331,9 @@ onMounted(() => {
         setSuccessFor(confirmPassword)
       }
     })
+    if(signUpFormValid){
+        //TODO:finish signup
+    }
   }
 
   // Set Error For Function
