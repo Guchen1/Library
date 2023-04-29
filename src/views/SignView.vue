@@ -7,7 +7,7 @@
         <!-- Login Form -->
         <form class="login__form" id="loginForm">
           <!-- Form Title -->
-          <div style="margin-top: -40px; padding-bottom: 10px;margin-left:-20px">
+          <div style="margin-top: -40px; padding-bottom: 10px; margin-left: -20px">
             <a-page-header
               style="border: 0px solid rgb(235, 237, 240)"
               title="Back"
@@ -35,7 +35,7 @@
             <label for="checkboxInput" class="remeber_me">
               <input type="checkbox" id="checkboxInput" />
               <span class="checkmark"></span>
-              <span style="padding-left:5px">Remeber Me</span>
+              <span style="padding-left: 5px">Remeber Me</span>
             </label>
             <div class="forgot_password">Forgot Password?</div>
           </div>
@@ -48,7 +48,7 @@
         <!-- Sign Up Form -->
         <form class="sign-up__form" id="signUpForm">
           <!-- Form Title -->
-          <div style="margin-top: -40px; padding-bottom: 10px;margin-left:-20px">
+          <div style="margin-top: -40px; padding-bottom: 10px; margin-left: -20px">
             <a-page-header
               style="border: 0px solid rgb(235, 237, 240)"
               title="Back"
@@ -108,14 +108,14 @@
       <!-- Aside Area -->
       <div class="aside__area" id="aside_Area">
         <div class="login__aside-info">
-            <div style="height:40px"></div>
+          <div style="height: 40px"></div>
           <h4>Hello</h4>
           <img src="https://d.top4top.io/p_1945xjz2y1.png" alt="Image" />
           <p>Enter your personal details and start journey with us</p>
           <button id="aside_signUp_Btn">Sign Up</button>
         </div>
         <div class="sign-up__aside-info">
-        <div style="height:40px"></div>
+          <div style="height: 40px"></div>
           <h4>Welcome</h4>
           <img src="https://e.top4top.io/p_1945sidbp2.png" alt="Image" />
           <p>To Keep connected with us please login with your personal info</p>
@@ -140,7 +140,11 @@
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import 'boxicons/css/boxicons.min.css'
+import { useAxios } from '@/stores/axios'
 import { useClient } from '@/stores/client'
+import { message } from 'ant-design-vue'
+import 'ant-design-vue/es/message/style/css'
+const axios = useAxios().Axios
 const client = useClient()
 const router = useRouter()
 //import { LeftOutlined } from '@ant-design/icons-vue'
@@ -175,7 +179,7 @@ onMounted(() => {
     // All This Regex Code Is For Demo You Can Add Your Own Regex Code :)
     username: /^[a-z]+\d?/,
     email: /^[^\W\d.-_]+\w\d?@[a-z0-9]+\.([a-z0-9]{2,6})(\.[a-z0-9]{2,6})?$/,
-    password: /^[^\d\W]\w+\d?\W?\w?/i
+    password: /^[a-z0-9]+\d?/
   }
 
   // Aside Area
@@ -206,9 +210,9 @@ onMounted(() => {
   aside__Area.addEventListener('click', chnageFormMode)
   aside__Area.addEventListener('click', chnageFormMode)
   // - - - - -  Functions - - - - - //
-  if(client.state=='signup'){
+  if (client.state == 'signup') {
     wrapper__Area.classList.add('sign-up__Mode-active')
-  }else{
+  } else {
     wrapper__Area.classList.remove('sign-up__Mode-active')
   }
   // Change Form Mode Function
@@ -278,8 +282,39 @@ onMounted(() => {
         setSuccessFor(input)
       }
     })
-    if(loginFormValid){
-    //TODO:finish login
+    if (loginFormValid) {
+      axios
+        .post('login', {
+          account: allLoginFormFields[0].value,
+          password: allLoginFormFields[1].value
+        })
+        .then((res) => {
+          if (!res.data.status) {
+            throw res.data.msg.content
+          }
+          console.log(res)
+          setTimeout(() => {
+            client.loggedIn = true
+            localStorage.setItem('loggedin', 'true')
+            console.log(res.data.userType)
+            switch (res.data.userType) {
+              case 1:
+                client.clientData.clientType = 'admin'
+                break
+              case 2:
+                client.clientData.clientType = 'user'
+                break
+              case 3:
+                client.clientData.clientType = 'staff'
+                break
+            }
+            message.info(`Login success, you identity is ${client.clientData.clientType}`)
+            // Todo: goto mainpage
+          }, 500)
+        })
+        .catch((err) => {
+          message.error(`Login failed with error: ${err}`)
+        })
     }
   }
 
@@ -288,6 +323,7 @@ onMounted(() => {
     let signUpFormValid = true
     // Loop On All The Inputs
     allSignUpFormFields.forEach((input) => {
+      console.log(input.value)
       // Password And Confirm Password Fileds Values Without Spaces
       const passwordFieldValue = passwordField.value.trim()
       const conifrmPassValue = confirmPassword.value.trim()
@@ -331,8 +367,27 @@ onMounted(() => {
         setSuccessFor(confirmPassword)
       }
     })
-    if(signUpFormValid){
-        //TODO:finish signup
+
+    if (signUpFormValid) {
+      axios
+        .post('/userop/register', {
+          account: allSignUpFormFields[0].value,
+          password: allSignUpFormFields[2].value,
+          email: allSignUpFormFields[1].value
+        })
+        .then((res) => {
+          console.log(res)
+          if (!res.data.status) {
+            message.error(`Sign up failed with error: ${res.data.msg.content}`)
+          } else {
+            setTimeout(() => {
+              // Todo: Goto login page
+            }, 500)
+          }
+        })
+        .catch((err) => {
+          message.error(`Sign up failed with error: ${err}`)
+        })
     }
   }
 
