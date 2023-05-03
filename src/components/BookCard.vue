@@ -16,6 +16,9 @@ const props = defineProps<{
 const emits = defineEmits<{
   (e: 'show', a: BookDetail): void
 }>()
+const borrow=(isbn:string)=>{
+  //TODO: finish borrow function
+}
 const del = (isbn: BookDetail['isbn']) => {
   axios
     .post('managerop/deletebook', {
@@ -52,10 +55,12 @@ const del = (isbn: BookDetail['isbn']) => {
       </div>
     </div>
     <div class="lower">
-      <p v-if="!client.isAdmin">
-        <a-badge :status="/*props.book.situation*/ true ? 'success' : 'error'" />{{
-          /*props.book.situation*/ true ? 'In the library' : 'borrowed'
-        }}
+      <p v-if="client.isUser">
+        <a-button
+          style="border-color: #52c41a; color: #52c41a; background-color: #f6ffed"
+          @click="borrow(props.book.isbn)"
+          >Borrow</a-button
+        >
       </p>
       <div v-else>
         <a-button style="margin-right: 20px" danger @click="del(props.book.isbn)"

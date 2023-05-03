@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import { useClient } from '../stores/client'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,12 +6,12 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: () => import('../views/HomeView.vue')
     },
     {
-      path: '/personal',
-      name: 'personal',
-      component: () => import('../views/PersonalCenter.vue')
+      path: '/history',
+      name: 'history',
+      component: () => import('../views/HistoryView.vue')
     },
     {
       path: '/manage',
@@ -20,8 +19,8 @@ const router = createRouter({
       component: () => import('../views/ManageView.vue')
     },
     {
-      path:'/checkinout',
-      name:'checkinout',
+      path:'/check',
+      name:'check',
       component:()=>import('../views/CheckInout.vue')
     },
     {
@@ -39,10 +38,16 @@ const router = createRouter({
       name:'news',
       component:()=>import('../views/NewsView.vue')
     },
+    {
+      path:'/dashboard',
+      name:'dashboard',
+      component:()=>import('../views/DashBoard.vue')
+    }
   ]
 })
 router.beforeEach((to, from, next) => {
   if (to.name !== 'sign'&&to.name !=='home' && !useClient().loggedIn) next({ name: 'home' })
+  else if((to.name == 'sign'||to.name =='home')&&useClient().loggedIn) next({ name: 'dashboard' })
   else next()
 })
 export default router

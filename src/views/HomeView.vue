@@ -2,10 +2,12 @@
 import { useAxios } from '@/stores/axios'
 import { ref, onMounted, computed, watch, onActivated, onDeactivated, nextTick, onUnmounted } from 'vue'
 import { useClient } from '@/stores/client'
+import { useRoute } from 'vue-router'
 const client = useClient()
 const loading = ref(true)
 const xx=ref(0)
 const ready=ref(false)
+const route = useRoute()
 const axios = useAxios().Axios
 function handleMessage(event: any) {
   var data = event.data
@@ -106,7 +108,7 @@ a {
 </style>
 <style>
 body {
-  overflow: hidden;
+  overflow: v-bind("route.path=='/' ?'hidden':'auto'");
   background-color: black;
 }
 .fade-enter-active,

@@ -1,17 +1,15 @@
 <template>
-  <a-layout class="layout-top" theme="light">
-    <a-layout-sider class="layout-side" theme="light">
+  <div style="margin-top:20px">
       <BookSearch @show="show(undefined)" :searchFunc="search" />
-    </a-layout-sider>
     <BookOperation :book="tempbook" ref="BookOperationRef" />
-    <a-layout-content theme="light" style="background-color: white">
+    <a-layout-content  theme="light" style="background-color: white;padding-top:20px;padding-left: 20px;padding-right: 0px;">
       <a-row>
-        <a-col v-for="i in data" :key="i" span="12" :xxxl="8">
+        <a-col v-for="i in data" :key="i" span="12" :xxl="8" :xxxl="6">
           <BookCard @show="(e) => show(e)" :book="i" style="height: 95%" />
         </a-col>
       </a-row>
     </a-layout-content>
-  </a-layout>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -82,7 +80,188 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
     })
     .catch((err: any) => {
       console.log(err)
-      alert(err)
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
     })
   page.value++
   if (page.value > 3) isMore.value = false
@@ -125,6 +304,7 @@ function scrollHandle() {
 .layout-top {
   padding: 0px;
   padding-top: 20px;
+  margin:0px;
   background-color: white;
 }
 

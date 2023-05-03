@@ -1,42 +1,29 @@
 <template>
-  <a-card
-    class="cardflex"
-    style="width: 250px; border-radius: 10px; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px"
-    :bodyStyle="{ 'padding-bottom': '0px', 'padding-top': '15px' }"
-  >
-    <a-typography-title :level="2" style="text-align: center">Search</a-typography-title>
+
+    <a-typography-title :level="2" style="text-align: center">Search Books</a-typography-title>
     <a-form
+    layout="inline"
       :model="formState"
       name="basic"
       :label-col="{ span: 7 }"
       :wrapper-col="{ span: 17 }"
       autocomplete="off"
+      :style="{ display: 'flex', justifyContent: 'center' }"
     >
-      <a-form-item label="author" name="author">
+      <a-form-item label="Author" name="author">
         <a-input v-model:value="formState.author" />
       </a-form-item>
-      <a-form-item label="name" name="name">
+      <a-form-item label="Name" name="name">
         <a-input v-model:value="formState.name" />
       </a-form-item>
       <a-form-item label="ISBN" name="isbn">
         <a-input v-model:value="formState.isbn" />
       </a-form-item>
-      <a-form-item name="ready" :wrapper-col="{ span: 24 }">
-        <div class="checkbox">
-          only in the library
-          <a-switch style="margin-left: 10px" v-model:checked="formState.ready"
-            ><template #checkedChildren><check-outlined /></template>
-            <template #unCheckedChildren><close-outlined /></template
-          ></a-switch>
-        </div>
-      </a-form-item>
+
       <a-form-item :wrapper-col="{ span: 24 }">
         <div class="buttons">
-          <a-button v-if="!client.isAdmin" danger @click="ResetForm()">
-            <template #icon><CloseOutlined /></template>Reset</a-button
-          >
           <a-button
-            v-else
+          v-if="client.isStaff"
             danger
             style="border-color: #52c41a; color: #52c41a; background-color: #f6ffed"
             @click="emits('show')"
@@ -49,7 +36,7 @@
         </div>
       </a-form-item>
     </a-form>
-  </a-card>
+
 </template>
 
 <script setup lang="ts">

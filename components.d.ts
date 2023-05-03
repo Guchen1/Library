@@ -15,6 +15,7 @@ declare module '@vue/runtime-core' {
     ACheckbox: typeof import('ant-design-vue/es')['Checkbox']
     ACol: typeof import('ant-design-vue/es')['Col']
     ADivider: typeof import('ant-design-vue/es')['Divider']
+    AdminDash: typeof import('./src/components/Dashboards/AdminDash.vue')['default']
     AForm: typeof import('ant-design-vue/es')['Form']
     AFormItem: typeof import('ant-design-vue/es')['FormItem']
     AInput: typeof import('ant-design-vue/es')['Input']
@@ -43,6 +44,7 @@ declare module '@vue/runtime-core' {
     BookPreview: typeof import('./src/components/BookPreview.vue')['default']
     BookSearch: typeof import('./src/components/BookSearch.vue')['default']
     BookTable: typeof import('./src/components/BookTable.vue')['default']
+    copy: typeof import('./src/components/AdminDash copy.vue')['default']
     HomeSlider: typeof import('./src/components/HomeSlider.vue')['default']
     IconCommunity: typeof import('./src/components/icons/IconCommunity.vue')['default']
     IconDocumentation: typeof import('./src/components/icons/IconDocumentation.vue')['default']
@@ -52,5 +54,8 @@ declare module '@vue/runtime-core' {
     LoginAddon: typeof import('./src/components/LoginAddon.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    StaffDash: typeof import('./src/components/Dashboards/StaffDash.vue')['default']
+    SuperDash: typeof import('./src/components/Dashboards/SuperDash.vue')['default']
+    UserDash: typeof import('./src/components/Dashboards/UserDash.vue')['default']
   }
 }
