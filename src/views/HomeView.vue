@@ -39,6 +39,7 @@ const props = defineProps<{
 }>()
 onMounted(() => {
   window.addEventListener('message', handleMessage, false)
+  //设置body overflow
 })
 onUnmounted(() => {
   loading.value = true
@@ -107,10 +108,7 @@ a {
 
 </style>
 <style>
-body {
-  overflow: v-bind("route.path=='/' ?'hidden':'auto'");
-  background-color: black;
-}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 6s ease;

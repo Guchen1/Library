@@ -46,8 +46,9 @@ const router = createRouter({
   ]
 })
 router.beforeEach((to, from, next) => {
-  if (to.name !== 'sign'&&to.name !=='home' && !useClient().loggedIn) next({ name: 'home' })
-  else if((to.name == 'sign'||to.name =='home')&&useClient().loggedIn) next({ name: 'dashboard' })
-  else next()
+  if (to.name !== 'sign'&&to.name !=='home' && !useClient().loggedIn) {  document.body.style.overflow = 'hidden';next({ name: 'home' })}
+  else if((to.name == 'sign'||to.name =='home')&&useClient().loggedIn){setTimeout(()=>document.body.style.overflow = 'auto',50) ; next({ name: 'dashboard' })}
+  else if(to.name =='home') {document.body.style.overflow = 'hidden';next()}
+  else {setTimeout(()=>document.body.style.overflow = 'auto',50) ;next()}
 })
 export default router

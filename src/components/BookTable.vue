@@ -1,8 +1,8 @@
 <template>
   <a-table
-    :scroll="{ y: props.height - 295 + 'px', visible: false }"
+    :scroll="{ y: props.height -320+ 'px', visible: false }"
     :columns="columns"
-    :pagination="{ position: ['bottomCenter'], pageSize: 10 }"
+    :pagination="{ position: ['bottomCenter'], pageSize: 12 }"
     :data-source="data"
   >
     <template #headerCell="{ column }">
@@ -16,12 +16,14 @@
         {{ record.name }}
       </template>
       <template v-else-if="column.key === 'status'">
-        <a-tag v-if="record.status == 'available'" class="tag" color="green">available</a-tag>
-        <a-tag v-else-if="record.status == 'borrowed'" class="tag" color="blue">borrowed</a-tag>
-        <a-tag v-else color="red" class="tag">overdue</a-tag>
+        <a-tag v-if="record.status == 'available'" class="tag" color="green">Available</a-tag>
+        <a-tag v-else-if="record.status == 'returned'" class="tag" color="green">Returned</a-tag>
+        <a-tag v-else-if="record.status == 'borrowed'" class="tag" color="blue">Borrowed</a-tag>
+        <a-tag v-else-if="record.status == 'renewed'" class="tag" color="yellow">Renewed</a-tag>
+        <a-tag v-else color="red" class="tag">Overdue</a-tag>
       </template>
       <template v-else-if="column.key === 'action'">
-        <a-popover  v-if="record.status == 'available'" v-model:open="record.visible" title="Please input patron name" trigger="click">
+        <a-popover  v-if="record.status == 'available'&&props.type!='user'" v-model:open="record.visible" title="Please input patron name" trigger="click">
           <template #content>
             <a-input v-model:value="name"></a-input><a-button style="display:inline-block" >Submit</a-button>
           </template>
@@ -34,16 +36,17 @@
           >
         </a-popover>
 
-        <a v-else type="primary" style="font-size: 10px; white-space: nowrap" size="small"
+        <a v-else-if="props.type!='user'" type="primary" style="font-size: 10px; white-space: nowrap" size="small"
           >Check In</a
         >
-        <div style="display: inline-block">
+        <div style="display: inline-flex;justify-content: center;width:100%">
           <a
-            :disabled="!record.renewable"
-            v-if="record.status != 'available'"
+            :disabled="record.renewable == false?'disabled':null"
+            v-if="record.status != 'available'&&record.status != 'Returned'"
             style="padding-left: 5px; font-size: 10px; word-wrap: break-word; word-break: keep-all"
             type="primary"
             size="small"
+            @click="renew(record)"
             >Renew</a
           >
         </div>
@@ -52,6 +55,7 @@
   </a-table>
 </template>
 <script setup lang="ts">
+
 import { reactive, ref } from 'vue'
 const visible=reactive<boolean[]>([])
 interface BookInfo {
@@ -61,12 +65,14 @@ interface BookInfo {
   borrower: string | undefined
   borrowdate: string | undefined
   duedate: string | undefined
-  status: 'available' | 'borrowed' | 'overdue'
+  returndate: string | undefined
+  status: 'available' | 'borrowed' | 'overdue'|'returned'|'renewed'
   renewable: boolean | undefined
   visible: boolean
 }
 const props = defineProps<{
-  height: number
+  height: number,
+  type: string
 }>()
 const name=ref('')
 const hide=(record:BookInfo)=>{
@@ -76,6 +82,9 @@ const hide=(record:BookInfo)=>{
     }
   }
 }
+const renew=(record:BookInfo)=>{
+  //TODO: Finish renew function
+}
 const data = reactive<BookInfo[]>([])
 data.push({
   name: 'Harry Potter',
@@ -84,6 +93,7 @@ data.push({
   borrower: 'John',
   borrowdate: '2021-01-01',
   duedate: '2021-01-31',
+  returndate: '2021-01-31',
   status: 'borrowed',
   renewable: true,
   visible: false
@@ -94,6 +104,19 @@ data.push({
   author: 'J.K. Rowling',
   borrower: 'John',
   borrowdate: '2021-01-01',
+  returndate: '2021-01-31',
+  duedate: '2021-01-31',
+  status: 'renewed',
+  renewable: true,
+  visible: false
+})
+data.push({
+  name: 'Harry Potter',
+  isbn: '123456789',
+  author: 'J.K. Rowling',
+  borrower: 'John',
+  borrowdate: '2021-01-01',
+  returndate: '2021-01-31',
   duedate: '2021-01-31',
   status: 'borrowed',
   renewable: true,
@@ -105,6 +128,7 @@ data.push({
   author: 'J.K. Rowling',
   borrower: 'John',
   borrowdate: '2021-01-01',
+  returndate: '2021-01-31',
   duedate: '2021-01-31',
   status: 'borrowed',
   renewable: true,
@@ -116,6 +140,7 @@ data.push({
   author: 'J.K. Rowling',
   borrower: 'John',
   borrowdate: '2021-01-01',
+  returndate: '2021-01-31',
   duedate: '2021-01-31',
   status: 'borrowed',
   renewable: true,
@@ -127,6 +152,7 @@ data.push({
   author: 'J.K. Rowling',
   borrower: 'John',
   borrowdate: '2021-01-01',
+  returndate: '2021-01-31',
   duedate: '2021-01-31',
   status: 'borrowed',
   renewable: true,
@@ -138,6 +164,7 @@ data.push({
   author: 'J.K. Rowling',
   borrower: 'John',
   borrowdate: '2021-01-01',
+  returndate: '2021-01-31',
   duedate: '2021-01-31',
   status: 'borrowed',
   renewable: true,
@@ -149,6 +176,7 @@ data.push({
   author: 'J.K. Rowling',
   borrower: 'John',
   borrowdate: '2021-01-01',
+  returndate: '2021-01-31',
   duedate: '2021-01-31',
   status: 'borrowed',
   renewable: true,
@@ -160,6 +188,7 @@ data.push({
   author: 'J.K. Rowling',
   borrower: 'John',
   borrowdate: '2021-01-01',
+  returndate: '2021-01-31',
   duedate: '2021-01-31',
   status: 'borrowed',
   renewable: true,
@@ -171,6 +200,7 @@ data.push({
   author: 'J.K. Rowling',
   borrower: 'John',
   borrowdate: '2021-01-01',
+  returndate: '2021-01-31',
   duedate: '2021-01-31',
   status: 'borrowed',
   renewable: true,
@@ -182,17 +212,7 @@ data.push({
   author: 'J.K. Rowling',
   borrower: 'John',
   borrowdate: '2021-01-01',
-  duedate: '2021-01-31',
-  status: 'borrowed',
-  renewable: true,
-  visible: false
-})
-data.push({
-  name: 'Harry Potter',
-  isbn: '123456789',
-  author: 'J.K. Rowling',
-  borrower: 'John',
-  borrowdate: '2021-01-01',
+  returndate: '2021-01-31',
   duedate: '2021-01-31',
   status: 'borrowed',
   renewable: true,
@@ -204,6 +224,7 @@ data.push({
   author: 'Eiichiro Oda',
   borrower: undefined,
   borrowdate: undefined,
+  returndate: undefined,
   duedate: undefined,
   status: 'available',
   renewable: undefined,
@@ -216,12 +237,38 @@ data.push({
   borrower: 'John',
   borrowdate: '2021-12-01',
   duedate: '2021-12-31',
+  returndate: undefined,
   status: 'overdue',
   renewable: false,
   visible: false
 })
+const filter=reactive([
 
+      {
+        text: 'Borrowed',
+        value: 'borrowed'
+      },
+      {
+        text: 'Overdue',
+        value: 'overdue'
+      },
+      {
+        text: 'Returned',
+        value: 'returned'
+      },
+      {
+        text: 'Renewed',
+        value: 'renewed'
+      }
+    ])
+    if(props.type!='user'){
+      filter.push({
+        text: 'Available',
+        value: 'available'
+      })
+    }
 const sortFunc = (a: BookInfo, b: BookInfo) => {
+  //TODO: sorter with backend
   if (a.isbn > b.isbn) {
     return true
   } else {
@@ -264,26 +311,211 @@ const columns = [
     name: 'Borrow Date',
     dataIndex: 'borrowdate',
     key: 'borrowdate',
-    title: 'Borrow Date'
+    title: 'Borrow Date',
+    sorter: (a: BookInfo, b: BookInfo) => {
+      //TODO: sorter with backend
+      if(a.borrowdate === undefined ) return false
+      if(b.borrowdate === undefined ) return true
+      if (a.borrowdate > b.borrowdate) {
+        return true
+      } else {
+        return false
+      }
+    },
+    filters: [
+      {
+        text: 'Recent 14 days',
+        value: '14'
+      },
+      {
+        text: 'Recent 30 days',
+        value: '30'
+      },
+      {
+        text: 'Recent 90 days',
+        value: '90'
+      }
+    ],
+    onFilter: (value: string, record: BookInfo) => {
+      //TODO: filter with backend
+      if (value === '14') {
+        if (record.borrowdate === undefined) return false
+        const date = new Date()
+        date.setDate(date.getDate() - 14)
+        const date2 = new Date(record.borrowdate)
+        if (date2 > date) {
+          return true
+        } else {
+          return false
+        }
+      } else if (value === '30') {
+        if (record.borrowdate === undefined) return false
+        const date = new Date()
+        date.setDate(date.getDate() - 30)
+        const date2 = new Date(record.borrowdate)
+        if (date2 > date) {
+          return true
+        } else {
+          return false
+        }
+      } else if (value === '90') {
+        if (record.borrowdate === undefined) return false
+        const date = new Date()
+        date.setDate(date.getDate() - 90)
+        const date2 = new Date(record.borrowdate)
+        if (date2 > date) {
+          return true
+        } else {
+          return false
+        }
+      } else {
+        return false
+      }
+    }
   },
   {
     name: 'Due Date',
     dataIndex: 'duedate',
     key: 'duedate',
-    title: 'Due Date'
+    title: 'Due Date',
+    sorter: (a: BookInfo, b: BookInfo) => {
+      //TODO: sorter with backend
+      if(a.duedate === undefined ) return false
+      if(b.duedate === undefined ) return true
+      if (a.duedate > b.duedate) {
+        return true
+      } else {
+        return false
+      }
+    },
+    filters: [
+      {
+        text: 'Recent 14 days',
+        value: '14'
+      },
+      {
+        text: 'Recent 30 days',
+        value: '30'
+      },
+      {
+        text: 'Recent 90 days',
+        value: '90'
+      }
+    ],
+    onFilter: (value: string, record: BookInfo) => {
+      //TODO: filter with backend
+      if (value === '14') {
+        if (record.duedate === undefined) return false
+        const date = new Date()
+        date.setDate(date.getDate() - 14)
+        const date2 = new Date(record.duedate)
+        if (date2 > date) {
+          return true
+        } else {
+          return false
+        }
+      } else if (value === '30') {
+        if (record.duedate === undefined) return false
+        const date = new Date()
+        date.setDate(date.getDate() - 30)
+        const date2 = new Date(record.duedate)
+        if (date2 > date) {
+          return true
+        } else {
+          return false
+        }
+      } else if (value === '90') {
+        if (record.duedate === undefined) return false
+        const date = new Date()
+        date.setDate(date.getDate() - 90)
+        const date2 = new Date(record.duedate)
+        if (date2 > date) {
+          return true
+        } else {
+          return false
+        }
+      } else {
+        return false
+      }},
+  },
+  {
+    name: 'Return Date',
+    dataIndex: 'Returndate',
+    key: 'returndate',
+    title: 'Return Date',
+    sorter: (a: BookInfo, b: BookInfo) => {
+      //TODO: sorter with backend
+      if(a.returndate === undefined ) return false
+      if(b.returndate === undefined ) return true
+      if (a.returndate > b.returndate) {
+        return true
+      } else {
+        return false
+      }
+    },
+    filters: [
+      {
+        text: 'Recent 14 days',
+        value: '14'
+      },
+      {
+        text: 'Recent 30 days',
+        value: '30'
+      },
+      {
+        text: 'Recent 90 days',
+        value: '90'
+      }
+    ],
+    onFilter: (value: string, record: BookInfo) => {
+      //TODO: filter with backend
+      if (value=='14')
+      {
+        if (record.returndate === undefined) return false
+        const date = new Date()
+        date.setDate(date.getDate() - 14)
+        const date2 = new Date(record.returndate)
+        if (date2 > date) {
+          return true
+        } else {
+          return false
+        }
+      } else if (value=='30')
+      {
+        if (record.returndate === undefined) return false
+        const date = new Date()
+        date.setDate(date.getDate() - 30)
+        const date2 = new Date(record.returndate)
+        if (date2 > date) {
+          return true
+        } else {
+          return false
+        }
+      } else if (value=='90')
+      {
+        if (record.returndate === undefined) return false
+        const date = new Date()
+        date.setDate(date.getDate() - 90)
+        const date2 = new Date(record.returndate)
+        if (date2 > date) {
+          return true
+        } else {
+          return false
+        }
+      } else {
+        return false
+      }},
   },
   {
     name: 'Status',
     dataIndex: 'status',
     key: 'status',
     title: 'Status',
-    sorter: (a: BookInfo, b: BookInfo) => {
-      if (a.status > b.status) {
-        return true
-      } else {
-        return false
-      }
-    }
+    filters: filter,
+    onFilter: (value: string, record: BookInfo) => {
+      //TODO: filter with backend
+      return record.status === value
+    },
   },
   {
     name: 'Action',
@@ -291,6 +523,29 @@ const columns = [
     title: 'Operation'
   }
 ]
+if(props.type=='user'){
+  for(let i of columns){
+    //移除借书人
+    if(i.name=='Borrower'){
+      columns.splice(columns.indexOf(i),1)
+      break
+    }
+  }
+  for(let i of columns){
+    if(i.name=='Author'){
+      columns.splice(columns.indexOf(i),1)
+      break
+    }
+  }
+}
+else{
+  for(let i of columns){
+    if(i.name=='Return Date'){
+      columns.splice(columns.indexOf(i),1)
+      break
+    }
+  }
+}
 </script>
 <style>
 .tag {

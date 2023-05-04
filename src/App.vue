@@ -91,8 +91,9 @@ onMounted(() => {
 <template>
   <a-layout  theme="light">
     <a-button
-      style="position: fixed; bottom: 120px; right: 30px; z-index: 900"
+      style="position: fixed; bottom: 60px; right: 50px; z-index: 900"
       @click="reload()"
+      v-if="!(route.path=='/')&&(route.path!='/sign')"
       shape="circle"
       size="large"
     >
@@ -101,9 +102,10 @@ onMounted(() => {
       </template>
     </a-button>
     <a-button
-      style="position: fixed; bottom: 60px; right: 30px; z-index: 900"
+      style="position: fixed; bottom: 120px; right: 50px; z-index: 900"
       shape="circle"
       size="large"
+      v-if="route.path=='/books'"
       @click="scrollTop"
     >
       <template #icon>
@@ -255,7 +257,4 @@ onMounted(() => {
 }
 </style>
 <style>
-body {
-  background-color: v-bind('route.path=='/"?' black':' white'");
-}
 </style>
