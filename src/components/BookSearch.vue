@@ -16,7 +16,10 @@
       <a-form-item label="Name" name="name" style="margin-left:-15px;margin-top:5px">
         <a-input v-model:value="formState.name" />
       </a-form-item>
-      <a-form-item label="ISBN" name="isbn" style="margin-left:-15px;margin-top:5px">
+      <a-form-item label="Borrower" name="borrower" style="margin-left:-15px;margin-top:5px">
+        <a-input v-model:value="formState.borrower" />
+      </a-form-item>
+      <a-form-item label="ISBN" name="isbn" style="margin-left:-10px;margin-top:5px">
         <a-input v-model:value="formState.isbn" />
       </a-form-item>
 
@@ -56,12 +59,14 @@ interface FormState {
   author: string
   isbn: string
   ready: boolean
+  borrower: string
 }
 const formState: FormState = reactive({
   name: '',
   author: '',
   isbn: '',
-  ready: false
+  ready: false,
+  borrower: ''
 })
 const ResetForm = () => {
   formState.name = ''
