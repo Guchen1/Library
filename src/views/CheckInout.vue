@@ -27,7 +27,7 @@
         </a-form>
       </a-card>
     </div>
-    <BookTable :height="props.height" class="tableSet" />
+    <BookTable :type="'staff'" :height="props.height" class="tableSet" />
   </div>
 </template>
 

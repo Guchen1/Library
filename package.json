@@ -17,6 +17,7 @@
     "ant-design-vue": "^3.2.17",
     "axios": "^1.3.5",
     "boxicons": "^2.1.4",
+    "c-scrollbar": "^1.0.2",
     "dayjs": "^1.11.7",
     "echarts": "^5.4.2",
     "gsap": "^3.11.5",

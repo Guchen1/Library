@@ -37,9 +37,9 @@
         </a-popover>
 
         <a v-else-if="props.type!='user'" type="primary" style="font-size: 10px; white-space: nowrap" size="small"
-          >Check In</a
+          >Return</a
         >
-        <div style="display: inline-flex;justify-content: center;width:100%">
+        <div style="display: inline-block">
           <a
             :disabled="record.renewable == false?'disabled':null"
             v-if="record.status != 'available'&&record.status != 'Returned'"

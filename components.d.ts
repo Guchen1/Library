@@ -12,6 +12,7 @@ declare module '@vue/runtime-core' {
     ABadge: typeof import('ant-design-vue/es')['Badge']
     AButton: typeof import('ant-design-vue/es')['Button']
     ACard: typeof import('ant-design-vue/es')['Card']
+    ACascader: typeof import('ant-design-vue/es')['Cascader']
     ACheckbox: typeof import('ant-design-vue/es')['Checkbox']
     ACol: typeof import('ant-design-vue/es')['Col']
     ADivider: typeof import('ant-design-vue/es')['Divider']
@@ -34,6 +35,8 @@ declare module '@vue/runtime-core' {
     APopover: typeof import('ant-design-vue/es')['Popover']
     ARangePicker: typeof import('ant-design-vue/es')['RangePicker']
     ARow: typeof import('ant-design-vue/es')['Row']
+    ASelect: typeof import('ant-design-vue/es')['Select']
+    ASelectOption: typeof import('ant-design-vue/es')['SelectOption']
     ASwitch: typeof import('ant-design-vue/es')['Switch']
     ATable: typeof import('ant-design-vue/es')['Table']
     ATag: typeof import('ant-design-vue/es')['Tag']
@@ -56,6 +59,7 @@ declare module '@vue/runtime-core' {
     RouterView: typeof import('vue-router')['RouterView']
     StaffDash: typeof import('./src/components/Dashboards/StaffDash.vue')['default']
     SuperDash: typeof import('./src/components/Dashboards/SuperDash.vue')['default']
+    TypeList: typeof import('./src/components/TypeList.vue')['default']
     UserDash: typeof import('./src/components/Dashboards/UserDash.vue')['default']
   }
 }

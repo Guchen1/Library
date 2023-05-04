@@ -1,8 +1,9 @@
 <template>
-  <div style="margin-top:20px">
-      <BookSearch @show="show(undefined)" :searchFunc="search" />
-    <BookOperation :book="tempbook" ref="BookOperationRef" />
-    <a-layout-content  theme="light" style="background-color: white;padding-top:20px;padding-left: 20px;padding-right: 0px;">
+  <div style="margin-top:20px;">
+      <BookSearch @show="show(undefined)" style="padding-left:5px" :searchFunc="search" />
+      <TypeList ref="types" style="padding:20px" v-model:selected="selected"/>
+    <BookOperation :typeList="types?.list==undefined?[]:types.list" ref="BookOperationRef" />
+    <a-layout-content  theme="light" style="background-color: white;padding-left: 20px;padding-right: 0px;">
       <a-row>
         <a-col v-for="i in data" :key="i" span="12" :xxl="8" :xxxl="6">
           <BookCard @show="(e) => show(e)" :book="i" style="height: 95%" />
@@ -14,7 +15,7 @@
 
 <script setup lang="ts">
 import BookCard from '@/components/BookCard.vue'
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 import BookSearch from '@/components/BookSearch.vue'
 import { useAxios } from '@/stores/axios'
 import type { BookDetail, BookResponse } from '@/types/type'
@@ -24,6 +25,9 @@ const BookOperationRef = ref<typeof BookOperation>()
 const tempbook = ref<BookDetail>()
 const axios = useAxios().Axios
 const data = reactive<BookDetail[]>([])
+const types=ref()
+const selected=ref([
+])
 const show = (book: BookDetail | undefined) => {
   tempbook.value = book
 
@@ -60,6 +64,7 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
       if (resobj.length == 0) {
         isMore.value = false
       } else {
+        //TODO: ask backend to update api
         resobj.forEach((e) => {
           data.push({
             author: e.author,
@@ -68,6 +73,8 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
             id: e.id,
             isbn: e.isbn,
             name: e.name,
+            location: e.location,
+            type: e.type,
             price: e.price,
             publisher: e.publisher,
             stock: e.stock,
@@ -87,6 +94,8 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
         id: 1,
         isbn: 'Error',
         name: 'Error',
+        location: ['Error'],
+        type: 'Error',
         price: 2,
         publisher: 'Error',
         stock: 2,
@@ -99,6 +108,83 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
         cover: 'Error',
         id: 1,
         isbn: 'Error',
+        location: ['Error'],
+        type: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        location: ['Error'],
+        type: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        location: ['Error'],
+        type: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        location: ['Error'],
+        type: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        location: ['Error'],
+        type: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        location: ['Error'],
+        type: 'Error',
         name: 'Error',
         price: 2,
         publisher: 'Error',
@@ -113,6 +199,8 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
         id: 1,
         isbn: 'Error',
         name: 'Error',
+        location: ['Error'],
+        type: 'Error',
         price: 2,
         publisher: 'Error',
         stock: 2,
@@ -122,6 +210,68 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
       data.push({
         author: 'Error',
         category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        name: 'Error',
+        location: ['Error'],
+        type: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        location: ['Error'],
+        type: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        cover: 'Error',
+        location: ['Error'],
+        type: 'Error',
+        id: 1,
+        isbn: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        location: ['Error'],
+        type: 'Error',
+        cover: 'Error',
+        id: 1,
+        isbn: 'Error',
+        name: 'Error',
+        price: 2,
+        publisher: 'Error',
+        stock: 2,
+        summary: 'Error'
+        
+      })
+      data.push({
+        author: 'Error',
+        category: 'Error',
+        location: ['Error'],
+        type: 'Error',
         cover: 'Error',
         id: 1,
         isbn: 'Error',
@@ -136,123 +286,8 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
         author: 'Error',
         category: 'Error',
         cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
+        location: ['Error'],
+        type: 'Error',
         id: 1,
         isbn: 'Error',
         name: 'Error',
@@ -270,6 +305,10 @@ const search = (name: string, author: string, isbn: string, ready: boolean) => {
   data.splice(0, data.length)
   request(name, author, isbn, ready)
 }
+watch(selected,(e)=>{
+  //TODO: finish search by type
+  //request(nameSave,authorSave,isbnSave,readySave)
+})
 onMounted(() => {
   search('', '', '', false)
   window.addEventListener('scroll', scrollHandle, false)

@@ -9,8 +9,8 @@
     :closable="false"
     :bodyStyle="{}"
   >
-    <a-typography-title style="text-align: center" :level="2">{{
-      bookDetail != undefined ? 'Add a Book' : 'Modify Book'
+    <a-typography-title style="text-align: center; padding-top: 20px" :level="2">{{
+      bookDetail == undefined ? 'Add a Book' : 'Modify Book'
     }}</a-typography-title>
     <div class="padding">
       <a-upload
@@ -41,27 +41,38 @@
           :wrapper-col="{ span: 18 }"
           :model="book"
           style="width: 100%; height: 178px; font-size: 20px !important"
-          ><a-form-item style="margin-bottom: 14px" label="Name"
+          ><a-form-item style="margin-bottom: 10px" label="ISBN"
+            ><a-input style="width: 60%; margin-right: 13px" v-model:value="book.isbn"></a-input
+            ><a-button>Check</a-button> </a-form-item
+          ><a-form-item style="margin-bottom: 10px" label="Name"
             ><a-input v-model:value="book.name"></a-input> </a-form-item
-          ><a-form-item vue="margin-bottom: 14px" label="Author"
+          ><a-form-item style="margin-bottom: 10px" label="Author"
             ><a-input v-model:value="book.author"></a-input> </a-form-item
-          ><a-form-item style="margin-bottom: 14px" label="ISBN"
-            ><a-input v-model:value="book.isbn"></a-input> </a-form-item
-          ><a-form-item style="margin-bottom: 0px" label="Info"
+          ><a-form-item style="margin-bottom: 10px" label="Type"
+            ><a-select v-model:value="book.type">
+            <template v-for="item in typeList" :key="item">
+              <a-select-option v-if="item!='All'"  :value="item">{{
+                item
+              }}</a-select-option>
+            </template>
+            </a-select>
+          </a-form-item>
+          <a-form-item style="margin-bottom: 0px" label="Info"
             ><a-input v-model:value="book.info"></a-input> </a-form-item
         ></a-form>
       </div>
     </div>
     <div class="padding bottom-box">
-      <div class="text">Can Use</div>
-      <a-switch v-model:checked="book.useable" />
-      <div class="text" style="padding-left: 30px">Inventory</div>
-      <a-input-number
-        size="small"
-        :precision="0"
-        :min="0"
-        v-model:value="book.inventory"
-      ></a-input-number>
+      <div style="width: 100%; padding-bottom: 20px" class="bottom-box">
+        <div class="text">Location</div>
+        <a-cascader v-model:value="book.location" :options="options" placeholder="Please select" />
+      </div>
+      <div class="bottom-box">
+        <div class="text">Can Use</div>
+        <a-switch v-model:checked="book.useable" />
+        <div class="text" style="padding-left: 30px">Inventory</div>
+        <a-input-number :precision="0" :min="0" v-model:value="book.inventory"></a-input-number>
+      </div>
     </div>
     <div class="padding bottom-box">
       <a-button style="margin-right: 20px" @click="handleCancel"><CloseOutlined />Cancel</a-button>
@@ -81,6 +92,52 @@ import { useClient } from '@/stores/client'
 import { formToJSON, type AxiosResponse } from 'axios'
 //引入message样式
 import 'ant-design-vue/es/message/style/css'
+import type { CascaderProps } from 'ant-design-vue'
+defineProps<{
+  typeList: string[]
+}>()
+//TODO::finish location and type selection
+const options: CascaderProps['options'] = [
+  {
+    value: 'floor1',
+    label: 'Floor 1',
+    children: [
+      {
+        value: 'stack_a',
+        label: 'Stack A',
+        children: [
+          {
+            value: 'shelf1',
+            label: 'Shelf 1',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    value: 'floor2',
+    label: 'Floor 2',
+    children: [
+      {
+        value: 'stack_a',
+        label: 'Stack A',
+        children: [
+          {
+            value: 'zhonghuamen',
+            label: 'Zhong Hua Men'
+          }
+        ]
+      }
+    ]
+  }
+]
+const value = ref<string[]>([])
 const axios = useAxios().Axios
 const visible = ref<boolean>(false)
 const loading = ref<boolean>(false)
@@ -92,6 +149,8 @@ const book: BookModify = reactive<BookModify>({
   isbn: '',
   info: '',
   price: 0,
+  location: [],
+  type: '',
   picObj: '',
   inventory: 0,
   useable: true
@@ -193,8 +252,11 @@ watch(
 }
 </style>
 <style scoped>
+.avatar-uploader {
+  margin-top: 18px;
+}
 .padding {
-  padding-top: 60px;
+  padding-top: 40px;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -202,10 +264,14 @@ watch(
 .bottom-box {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
 }
 .text {
   font-size: 20px;
   line-height: 22px;
   padding-right: 10px;
+  display: flex;
+  align-items: center;
 }
 </style>

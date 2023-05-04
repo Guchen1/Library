@@ -1,5 +1,5 @@
 <template>
-
+<div>
     <a-typography-title :level="2" style="text-align: center">Search Books</a-typography-title>
     <a-form
     layout="inline"
@@ -10,13 +10,13 @@
       autocomplete="off"
       :style="{ display: 'flex', justifyContent: 'center' }"
     >
-      <a-form-item label="Author" name="author">
+      <a-form-item label="Author" name="author" style="margin-top:5px">
         <a-input v-model:value="formState.author" />
       </a-form-item>
-      <a-form-item label="Name" name="name">
+      <a-form-item label="Name" name="name" style="margin-left:-15px;margin-top:5px">
         <a-input v-model:value="formState.name" />
       </a-form-item>
-      <a-form-item label="ISBN" name="isbn">
+      <a-form-item label="ISBN" name="isbn" style="margin-left:-15px;margin-top:5px">
         <a-input v-model:value="formState.isbn" />
       </a-form-item>
 
@@ -25,7 +25,7 @@
           <a-button
           v-if="client.isStaff"
             danger
-            style="border-color: #52c41a; color: #52c41a; background-color: #f6ffed"
+            style="border-color: #52c41a; color: #52c41a; background-color: #f6ffed;margin-right:5px;margin-left:-15px"
             @click="emits('show')"
           >
             <template #icon><PlusOutlined /></template>Add</a-button
@@ -36,7 +36,7 @@
         </div>
       </a-form-item>
     </a-form>
-
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -80,6 +80,7 @@ const Search = () => {
 .buttons {
   display: flex;
   justify-content: space-around;
+  margin-top:5px
 }
 .checkbox {
   display: flex;
