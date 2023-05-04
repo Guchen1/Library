@@ -1,7 +1,7 @@
 <template>
   <div style="padding-top:20px;padding-left:20px;padding-right:20px">
     <BookSearch :search-func="search" />
-    <BookTable type="user" style="padding-top:20px" :height="props.height" />
+    <BookTable :width="width" type="user" style="padding-top:20px" :height="props.height" />
   </div>
 </template>
 

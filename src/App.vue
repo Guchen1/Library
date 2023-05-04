@@ -2,7 +2,7 @@
 import { nextTick, onMounted, ref, watch } from 'vue'
 import { useClient } from './stores/client'
 import { useRouter, useRoute } from 'vue-router'
-import { ReloadOutlined,VerticalAlignTopOutlined} from '@ant-design/icons-vue'
+import { ReloadOutlined,VerticalAlignTopOutlined,ClearOutlined } from '@ant-design/icons-vue'
 import HomeView from './views/HomeView.vue'
 const router = useRouter()
 const route = useRoute()
@@ -12,7 +12,7 @@ const client = useClient()
 const selectedKeys = ref<Array<string>>([])
 const height = ref('')
 const width = ref(0)
-
+const compo=ref()
 interface table {
   [key: string]: string
 }
@@ -47,6 +47,10 @@ const scrollTop = () => {
       
     }
   }, 2)
+}
+const clearList = () => {
+  //清空list
+  compo.value.clearList()
 }
 const goHome = () => {
   router.push('/')
@@ -112,6 +116,17 @@ onMounted(() => {
         <vertical-align-top-outlined />
       </template>
     </a-button>
+    <a-button
+      style="position: fixed; bottom: 120px; right: 50px; z-index: 900"
+      shape="circle"
+      size="large"
+      v-if="route.path=='/check'"
+      @click="clearList"
+    >
+      <template #icon>
+        <clear-outlined />
+      </template>
+    </a-button>
     <a-layout-sider
       v-if="route.path != '/' && route.path != '/sign'"
       class="sider"
@@ -153,7 +168,7 @@ onMounted(() => {
         </div>
         <div style="width: 100%" v-if="show && route.path != '/'">
           <router-view v-slot="{ Component }">
-            <component :width="Number(width)" :height="Number(height)" :is="Component" />
+            <component ref="compo" :width="Number(width)" :height="Number(height)" :is="Component" />
           </router-view>
         </div>
       </a-layout-content>
