@@ -12,23 +12,22 @@ const client = useClient()
 const props = defineProps<{
   book: BookDetail
 }>()
-const computedLocation=computed(()=>{
-  let res=''
-  if(props.book.location.length==0){
-    res='none'
-  }
-  else{
-    props.book.location.forEach((e)=>{
-      res+=e+'/'
+const computedLocation = computed(() => {
+  let res = ''
+  if (props.book.location.length == 0) {
+    res = 'none'
+  } else {
+    props.book.location.forEach((e) => {
+      res += e + '/'
     })
   }
-  res=res.substring(0,res.length-1)
+  res = res.substring(0, res.length - 1)
   return res
 })
 const emits = defineEmits<{
   (e: 'show', a: BookDetail): void
 }>()
-const borrow=(isbn:string)=>{
+const borrow = (isbn: string) => {
   //TODO: finish borrow function
 }
 const del = (isbn: BookDetail['isbn']) => {
@@ -47,7 +46,7 @@ const del = (isbn: BookDetail['isbn']) => {
     .catch((e: any) => {
       alert('删除失败：' + e)
     })
-  // TODO: Father refresh
+  // : Father refresh
 }
 </script>
 
@@ -62,7 +61,7 @@ const del = (isbn: BookDetail['isbn']) => {
           <div>Name: {{ props.book.name }}</div>
           <div>Author: {{ props.book.author }}</div>
           <div>Type: {{ props.book.type }}</div>
-          <div>Location: {{  computedLocation}}</div>
+          <div>Location: {{ computedLocation }}</div>
           <div>ISBN: {{ props.book.isbn }}</div>
           <div>Info: {{ props.book.summary }}</div>
         </div>
