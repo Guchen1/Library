@@ -22,6 +22,7 @@ declare module '@vue/runtime-core' {
     AInput: typeof import('ant-design-vue/es')['Input']
     AInputNumber: typeof import('ant-design-vue/es')['InputNumber']
     AInputPassword: typeof import('ant-design-vue/es')['InputPassword']
+    AInputSearch: typeof import('ant-design-vue/es')['InputSearch']
     ALayout: typeof import('ant-design-vue/es')['Layout']
     ALayoutContent: typeof import('ant-design-vue/es')['LayoutContent']
     ALayoutFooter: typeof import('ant-design-vue/es')['LayoutFooter']
@@ -61,5 +62,7 @@ declare module '@vue/runtime-core' {
     SuperDash: typeof import('./src/components/Dashboards/SuperDash.vue')['default']
     TypeList: typeof import('./src/components/TypeList.vue')['default']
     UserDash: typeof import('./src/components/Dashboards/UserDash.vue')['default']
+    UserSearch: typeof import('./src/components/UserSearch.vue')['default']
+    UserTable: typeof import('./src/components/UserTable.vue')['default']
   }
 }

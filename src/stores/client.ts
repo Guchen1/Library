@@ -5,6 +5,7 @@ interface ClientData {
   clientType: string
 }
 export const useClient = defineStore('client', () => {
+  const reload=ref<Function>(()=>{});
   const state = ref('signin')
   const loggedIn = ref(window.localStorage.getItem('loggedin') === 'true')
   console.log(window.localStorage.getItem('loggedin'))
@@ -43,5 +44,5 @@ export const useClient = defineStore('client', () => {
   const isSuper = computed(() => {
     return clientData.clientType === 'superuser' && loggedIn.value
   })
-  return { loggedIn, login, logout, isUser, isAdmin, clientData, isStaff, state, isSuper }
+  return { loggedIn, login, logout, isUser, isAdmin, clientData, isStaff, state, isSuper,reload }
 })

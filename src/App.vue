@@ -1,103 +1,107 @@
 <script setup lang="ts">
-import { nextTick, onMounted, ref, watch } from 'vue'
-import { useClient } from './stores/client'
-import { useRouter, useRoute } from 'vue-router'
-import { ReloadOutlined,VerticalAlignTopOutlined,ClearOutlined } from '@ant-design/icons-vue'
-import HomeView from './views/HomeView.vue'
-const router = useRouter()
-const route = useRoute()
-const spinning = ref(false)
-const show = ref(true)
-const client = useClient()
-const selectedKeys = ref<Array<string>>([])
-const height = ref('')
-const width = ref(0)
-const compo=ref()
+import { nextTick, onMounted, ref, watch } from "vue";
+import { useClient } from "./stores/client";
+import { useRouter, useRoute } from "vue-router";
+import {
+  ReloadOutlined,
+  VerticalAlignTopOutlined,
+  ClearOutlined,
+} from "@ant-design/icons-vue";
+import HomeView from "./views/HomeView.vue";
+const router = useRouter();
+const route = useRoute();
+const spinning = ref(false);
+const show = ref(true);
+const client = useClient();
+const selectedKeys = ref<Array<string>>([]);
+const height = ref("");
+const width = ref(0);
+const compo = ref();
 interface table {
-  [key: string]: string
+  [key: string]: string;
 }
 const routetable: table = {
-  '0': '/books',
-  '1': '/history',
-  '3': '/check',
-  '6': '/sign',
-  '7': '/dashboard',
-  '8': '/users'
-}
+  "0": "/books",
+  "1": "/history",
+  "3": "/check",
+  "6": "/sign",
+  "7": "/dashboard",
+  "8": "/users",
+};
 const reload = () => {
-  spinning.value = true
-  show.value = false
+  spinning.value = true;
+  show.value = false;
   nextTick(() => {
-    show.value = true
-  })
+    show.value = true;
+  });
   setTimeout(() => {
-    spinning.value = false
-  }, 1000)
-}
+    spinning.value = false;
+  }, 1000);
+};
+client.reload = reload;
 const scrollTop = () => {
   //缓慢滚动到顶部
   //阻止滚动事件
-  window.onscroll = null
+  window.onscroll = null;
   let scroll = setInterval(() => {
     if (document.documentElement.scrollTop > 0) {
-      document.documentElement.scrollTop -= 50
+      document.documentElement.scrollTop -= 50;
     } else {
-      clearInterval(scroll)
+      clearInterval(scroll);
       //恢复滚动事件
-      
     }
-  }, 2)
-}
+  }, 2);
+};
 const clearList = () => {
   //清空list
-  compo.value.clearList()
-}
+  compo.value.clearList();
+};
 const goHome = () => {
-  router.push('/')
+  router.push("/");
   //清空selectedKeys
-  selectedKeys.value.shift()
-}
+  selectedKeys.value.shift();
+};
 const logout = () => {
-  client.logout()
-  router.push('/')
-}
+  client.logout();
+  router.push("/");
+};
 
 watch(
   () => router.currentRoute.value.path,
   (newValue) => {
-    if (newValue === '/') {
-      selectedKeys.value.shift()
+    if (newValue === "/") {
+      selectedKeys.value.shift();
     } else {
       selectedKeys.value = [
-        Object.keys(routetable).find((key) => routetable[key] === newValue) as string
-      ]
+        Object.keys(routetable).find((key) => routetable[key] === newValue) as string,
+      ];
     }
   },
   { immediate: true }
-)
+);
 watch(selectedKeys, (value) => {
   if (value.length > 0) {
-    router.push(routetable[value[0]])
+    router.push(routetable[value[0]]);
   } else {
-    router.replace(route.path)
+    router.replace(route.path);
   }
-})
+});
 onMounted(() => {
-  height.value = (window.innerHeight - 70).toString()
-  width.value = window.innerWidth
+  height.value = (window.innerHeight - 70).toString();
+  width.value = window.innerWidth;
   window.onresize = () => {
-    height.value = (window.innerHeight - 70).toString()
-    width.value = window.innerWidth
-  }
-})
+    height.value = (window.innerHeight - 70).toString();
+    width.value = window.innerWidth;
+  };
+});
 </script>
 
 <template>
-  <a-layout  theme="light">
+  <a-layout theme="light">
     <a-button
       style="position: fixed; bottom: 60px; right: 50px; z-index: 900"
       @click="reload()"
-      v-if="!(route.path=='/')&&(route.path!='/sign')"
+      v-if="!(route.path == '/') && route.path != '/sign'"
       shape="circle"
       size="large"
     >
@@ -109,7 +113,7 @@ onMounted(() => {
       style="position: fixed; bottom: 120px; right: 50px; z-index: 900"
       shape="circle"
       size="large"
-      v-if="route.path=='/books'"
+      v-if="route.path == '/books'"
       @click="scrollTop"
     >
       <template #icon>
@@ -120,7 +124,7 @@ onMounted(() => {
       style="position: fixed; bottom: 120px; right: 50px; z-index: 900"
       shape="circle"
       size="large"
-      v-if="route.path=='/check'"
+      v-if="route.path == '/check' || (route.path == '/users' && client.isAdmin)"
       @click="clearList"
     >
       <template #icon>
@@ -132,7 +136,14 @@ onMounted(() => {
       class="sider"
       theme="light"
       style="justify-content: center"
-      :style="{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0, top: 0, bottom: 0 }"
+      :style="{
+        overflow: 'auto',
+        height: '100vh',
+        position: 'fixed',
+        left: 0,
+        top: 0,
+        bottom: 0,
+      }"
     >
       <div class="logo"><img src="@/assets/Vector.png" /> Library</div>
       <div class="box-bottom">
@@ -145,7 +156,9 @@ onMounted(() => {
         </a-menu>
         <div class="user-data">
           <div style="width: 80%">
-            <div style="font-size: 30px; font-weight: 700">{{ client.clientData.clientName }}</div>
+            <div style="font-size: 30px; font-weight: 700">
+              {{ client.clientData.clientName }}
+            </div>
             <div style="font-size: 16px">{{ client.clientData.clientType }}</div>
           </div>
           <div style="display: flex; align-items: center">
@@ -154,7 +167,7 @@ onMounted(() => {
               src="@/assets/log-out.png"
               @click="
                 client.logout();
-                router.push('/')
+                router.push('/');
               "
             />
           </div>
@@ -168,7 +181,12 @@ onMounted(() => {
         </div>
         <div style="width: 100%" v-if="show && route.path != '/'">
           <router-view v-slot="{ Component }">
-            <component ref="compo" :width="Number(width)" :height="Number(height)" :is="Component" />
+            <component
+              ref="compo"
+              :width="Number(width)"
+              :height="Number(height)"
+              :is="Component"
+            />
           </router-view>
         </div>
       </a-layout-content>
@@ -177,7 +195,14 @@ onMounted(() => {
         v-if="route.path != '/' && route.path != '/sign'"
         :style="{ textAlign: 'center' }"
       >
-        <div style="box-sizing: border-box; width: 100%; padding-left: 350px; text-align: center">
+        <div
+          style="
+            box-sizing: border-box;
+            width: 100%;
+            padding-left: 350px;
+            text-align: center;
+          "
+        >
           Library ©2023 Created by SPM Class2 B3
         </div>
       </a-layout-footer>
@@ -271,5 +296,4 @@ onMounted(() => {
   height: 100%;
 }
 </style>
-<style>
-</style>
+<style></style>

@@ -34,9 +34,9 @@ const router = createRouter({
       component:()=>import('../views/SignView.vue')
     },
     {
-      path:'/news',
-      name:'news',
-      component:()=>import('../views/NewsView.vue')
+      path:'/users',
+      name:'users',
+      component:()=>import('../views/UsersView.vue')
     },
     {
       path:'/dashboard',
