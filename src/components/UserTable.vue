@@ -72,7 +72,6 @@ const resize = () => {
     const c = Number(a?.split("px")[0]);
     if (c != undefined) {
       if (c - b >= 20) {
-        console.log(b, c);
         maxHeight.value = b + 10 + "px";
       } else {
         maxHeight.value = c + "px";
