@@ -293,7 +293,7 @@ onMounted(() => {
             throw res.data.msg.content
           }
           console.log(res)
-          setTimeout(() => {
+          
             client.loggedIn = true
             localStorage.setItem('loggedin', 'true')
             console.log(res.data.userType)
@@ -309,6 +309,8 @@ onMounted(() => {
                 break
             }
             message.info(`Login success, you identity is ${client.clientData.clientType}`)
+            setTimeout(() => {
+              router.push('/')
             // Todo: goto mainpage
           }, 500)
         })
