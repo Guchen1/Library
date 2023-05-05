@@ -13,6 +13,11 @@ export interface BookDetail {
   // situation: boolean
   cover: string
 }
+export interface UserDetail {
+  id: number
+  name: string
+  type: string
+}
 export interface BookModify {
   id: number
   name: string
