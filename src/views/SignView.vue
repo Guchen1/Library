@@ -254,6 +254,43 @@ onMounted(() => {
     })
   })()
 
+  // Login Function
+  function login(username, password) {
+    axios
+      .post('login', {
+        account: username,
+        password: password
+      })
+      .then((res) => {
+        if (!res.data.status) {
+          throw res.data.msg.content
+        }
+        console.log(res)
+        client.loggedIn = true
+        localStorage.setItem('loggedin', 'true')
+        console.log(res.data.userType)
+        // client.clientData.clientType = res.data.userType
+        switch (res.data.userType) {
+          case 0:
+            client.clientData.clientType = 'super'
+            break
+          case 1:
+            client.clientData.clientType = 'admin'
+            break
+          case 2:
+            client.clientData.clientType = 'user'
+            break
+          case 3:
+            client.clientData.clientType = 'staff'
+            break
+        }
+        router.replace('/')
+      })
+      .catch((err) => {
+        message.error(`Login failed with error: ${err}`)
+      })
+  }
+
   // Login Form Validation Function
   function loginFormValidation() {
     // Loop On All The Inputs
@@ -283,40 +320,7 @@ onMounted(() => {
       }
     })
     if (loginFormValid) {
-      axios
-        .post('login', {
-          account: allLoginFormFields[0].value,
-          password: allLoginFormFields[1].value
-        })
-        .then((res) => {
-          if (!res.data.status) {
-            throw res.data.msg.content
-          }
-          console.log(res)
-          
-            client.loggedIn = true
-            localStorage.setItem('loggedin', 'true')
-            console.log(res.data.userType)
-            switch (res.data.userType) {
-              case 1:
-                client.clientData.clientType = 'admin'
-                break
-              case 2:
-                client.clientData.clientType = 'user'
-                break
-              case 3:
-                client.clientData.clientType = 'staff'
-                break
-            }
-            message.info(`Login success, you identity is ${client.clientData.clientType}`)
-            setTimeout(() => {
-              router.push('/')
-            // Todo: goto mainpage
-          }, 500)
-        })
-        .catch((err) => {
-          message.error(`Login failed with error: ${err}`)
-        })
+      login(allLoginFormFields[0].value, allLoginFormFields[1].value)
     }
   }
 
@@ -382,13 +386,13 @@ onMounted(() => {
           if (!res.data.status) {
             message.error(`Sign up failed with error: ${res.data.msg.content}`)
           } else {
-            setTimeout(() => {
-              // Todo: Goto login page
-            }, 500)
+            message.info(`Sign up success, now login with this...`)
+            console.log(allSignUpFormFields[0].value)
+            login(allSignUpFormFields[0].value, allSignUpFormFields[2].value)
           }
         })
         .catch((err) => {
-          message.error(`Sign up failed with error: ${err}`)
+          message.error(`Error detected while signing up: ${err}`)
         })
     }
   }
