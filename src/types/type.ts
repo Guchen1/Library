@@ -48,3 +48,9 @@ export interface BackendResponse {
     content: string
   }
 }
+export interface LogInfo {
+  id: string
+  operator: string
+  type: string
+  time: string
+}

@@ -20,7 +20,7 @@
       <a-button @click="toRole('admin')" class="batch">To Admin</a-button>
       <a-button @click="del" class="batch" type="danger">Delete</a-button>
     </div>
-    <div v-if="client.isAdmin" style="display: flex; justify-content: center">
+    <div style="display: flex; justify-content: center">
       <UserTable ref="table" :height="height" style="max-width: 1000px; width: 100%" />
     </div>
   </div>
