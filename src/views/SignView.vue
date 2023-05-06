@@ -266,11 +266,11 @@ onMounted(() => {
           throw res.data.msg.content
         }
         console.log(res)
-        client.loggedIn = true
-        localStorage.setItem('loggedin', 'true')
-        console.log(res.data.userType)
-        client.clientData.clientType = res.data.userType
-        router.replace('/')
+        client.login({
+          clientName: username,
+          clientType: res.data.userType
+        })
+        router.push('/')
       })
       .catch((err) => {
         message.error(`Login failed with error: ${err}`)

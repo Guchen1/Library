@@ -54,7 +54,7 @@ const deleteBook = (isbn: BookDetail) => {
         throw e.data.msg.content
       }
       message.info('删除成功')
-      // TODO-C: Father refresh
+      //TODO-C: Father refresh
       nextTick(() => {
         data.splice(data.indexOf(isbn), 1)
       })
@@ -107,7 +107,7 @@ const search = (name: string, author: string, isbn: string, ready: boolean) => {
   request(name, author, isbn, ready)
 }
 watch(selected, (e) => {
-  //TODO: finish search by type
+  //TODO-D: finish search by type
   //request(nameSave,authorSave,isbnSave,readySave)
 })
 onMounted(() => {
