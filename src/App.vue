@@ -27,6 +27,7 @@ const routetable: table = {
   "6": "/sign",
   "7": "/dashboard",
   "8": "/users",
+  "9": "/logs",
 };
 const reload = () => {
   spinning.value = true;
@@ -153,6 +154,7 @@ onMounted(() => {
           <a-menu-item v-if="client.isUser" key="1">History</a-menu-item>
           <a-menu-item v-if="client.isStaff" key="3">Check Out&Return</a-menu-item>
           <a-menu-item v-if="client.isStaff || client.isUser" key="0">Books</a-menu-item>
+          <a-menu-item v-if="client.isSuper" key="9">Logs</a-menu-item>
         </a-menu>
         <div class="user-data">
           <div style="width: 80%">
@@ -165,10 +167,7 @@ onMounted(() => {
             <img
               style="width: 50px; cursor: pointer"
               src="@/assets/log-out.png"
-              @click="
-                client.logout();
-                router.push('/');
-              "
+              @click="logout"
             />
           </div>
         </div>
@@ -296,4 +295,3 @@ onMounted(() => {
   height: 100%;
 }
 </style>
-<style></style>

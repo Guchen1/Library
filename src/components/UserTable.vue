@@ -4,7 +4,7 @@
       @change="resize"
       :columns="columns"
       :scroll="{ x: 'max-content', y: height - 310, visible: false }"
-      :pagination="{ position: ['bottomCenter'], pageSize: 10 }"
+      :pagination="{ position: ['bottomCenter'], pageSize: 10, showSizeChanger: false }"
       :data-source="data"
     >
       <template #bodyCell="{ column, record }">
@@ -47,6 +47,7 @@
   </div>
 </template>
 <script setup lang="ts">
+//TODO: Bind to the real data corresponding to the search
 import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
 import { useClient } from "@/stores/client";
 import type { UserDetail } from "@/types/type";
@@ -59,6 +60,18 @@ const clearList = () => {
 defineProps<{
   height: number;
 }>();
+const currentList = computed({
+  set: () => {},
+  get: () => {
+    let temp: Array<UserDetail> = [];
+    data.value.forEach((item) => {
+      if (checkList.value.indexOf(item) != -1) {
+        temp.push(item);
+      }
+    });
+    return temp;
+  },
+});
 const resize = () => {
   maxHeight.value = "unset";
   nextTick(() => {
@@ -169,6 +182,7 @@ for (let i = 0; i < 21; i++) {
 defineExpose({
   clearList,
   checkList,
+  currentList,
 });
 </script>
 <style scoped>
