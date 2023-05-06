@@ -5,7 +5,7 @@ interface ClientData {
   clientType: string
 }
 export const useClient = defineStore('client', () => {
-  const reload=ref<Function>(()=>{});
+  const reload = ref<Function>(() => {})
   const state = ref('signin')
   const loggedIn = ref(window.localStorage.getItem('loggedin') === 'true')
   console.log(window.localStorage.getItem('loggedin'))
@@ -14,7 +14,10 @@ export const useClient = defineStore('client', () => {
       window.localStorage.getItem('clientName') !== null
         ? window.localStorage.getItem('clientName')!
         : '',
-    clientType: window.localStorage.getItem('clientType') !== null ? window.localStorage.getItem('clientType')! : ''
+    clientType:
+      window.localStorage.getItem('clientType') !== null
+        ? window.localStorage.getItem('clientType')!
+        : ''
   })
   const login = (data: ClientData) => {
     loggedIn.value = true
@@ -36,7 +39,7 @@ export const useClient = defineStore('client', () => {
     return clientData.clientType === 'user' && loggedIn.value
   })
   const isAdmin = computed(() => {
-    return clientData.clientType === 'admin' && loggedIn.value
+    return clientData.clientType === 'manager' && loggedIn.value
   })
   const isStaff = computed(() => {
     return clientData.clientType === 'staff' && loggedIn.value
@@ -44,5 +47,5 @@ export const useClient = defineStore('client', () => {
   const isSuper = computed(() => {
     return clientData.clientType === 'super' && loggedIn.value
   })
-  return { loggedIn, login, logout, isUser, isAdmin, clientData, isStaff, state, isSuper,reload }
+  return { loggedIn, login, logout, isUser, isAdmin, clientData, isStaff, state, isSuper, reload }
 })

@@ -269,21 +269,7 @@ onMounted(() => {
         client.loggedIn = true
         localStorage.setItem('loggedin', 'true')
         console.log(res.data.userType)
-        // client.clientData.clientType = res.data.userType
-        switch (res.data.userType) {
-          case 0:
-            client.clientData.clientType = 'super'
-            break
-          case 1:
-            client.clientData.clientType = 'admin'
-            break
-          case 2:
-            client.clientData.clientType = 'user'
-            break
-          case 3:
-            client.clientData.clientType = 'staff'
-            break
-        }
+        client.clientData.clientType = res.data.userType
         router.replace('/')
       })
       .catch((err) => {
@@ -376,9 +362,10 @@ onMounted(() => {
 
     if (signUpFormValid) {
       axios
-        .post('/userop/register', {
+        .post('/ManagerOp/creatRole', {
           account: allSignUpFormFields[0].value,
           password: allSignUpFormFields[2].value,
+          type: 'user',
           email: allSignUpFormFields[1].value
         })
         .then((res) => {
