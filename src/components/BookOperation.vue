@@ -66,8 +66,6 @@
         <a-cascader v-model:value="book.location" :options="options" placeholder="Please select" />
       </div>
       <div class="bottom-box">
-        <div class="text">Can Use</div>
-        <a-switch v-model:checked="book.useable" />
         <div class="text" style="padding-left: 30px">Inventory</div>
         <a-input-number :precision="0" :min="0" v-model:value="book.inventory"></a-input-number>
       </div>
@@ -150,8 +148,7 @@ const book: BookModify = reactive<BookModify>({
   location: [],
   type: '',
   picObj: '',
-  inventory: 0,
-  useable: true
+  inventory: 0
 })
 const fileList = ref([])
 function getBase64(img: Blob, callback: (base64Url: string) => void) {
@@ -214,8 +211,6 @@ watch(
       book.info = bookDetail.value.bookSummary
       book.picObj = bookDetail.value.bookCover
       book.inventory = bookDetail.value.bookStock
-      // TODO: useable to be implemented
-      book.useable = true
       console.log(book.name)
     } else {
       fileList.value = []
@@ -225,7 +220,6 @@ watch(
       book.info = ''
       book.picObj = ''
       book.inventory = 0
-      book.useable = true
     }
   }
 )

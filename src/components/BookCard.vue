@@ -25,27 +25,10 @@ const computedLocation = computed(() => {
 })
 const emits = defineEmits<{
   (e: 'show', a: BookDetail): void
+  (e: 'deleteBook', a: BookDetail): void
 }>()
 const borrow = (isbn: string) => {
   //TODO: finish borrow function
-}
-const del = (isbn: BookDetail['bookIsbn']) => {
-  axios
-    .post('/StaffOp/deleteBook', {
-      isbn: isbn
-    })
-    .then((e: AxiosResponse<BackendResponse>) => {
-      console.log(e.data.msg.content)
-      if (!e.data.status) {
-        throw e.data.msg.content
-      }
-      message.info('删除成功，请按下方刷新键刷新')
-      // TODO: Father refresh
-      nextTick(() => {})
-    })
-    .catch((e: any) => {
-      message.error('Delete failed with error: ' + e)
-    })
 }
 </script>
 
@@ -75,7 +58,7 @@ const del = (isbn: BookDetail['bookIsbn']) => {
         >
       </p>
       <div v-else>
-        <a-button style="margin-right: 20px" danger @click="del(props.book.bookIsbn)"
+        <a-button style="margin-right: 20px" danger @click="emits('deleteBook', props.book)"
           >Withdraw</a-button
         >
         <a-button

@@ -30,7 +30,6 @@ export interface BookModify {
   type: string
   isbn: string
   info: string
-  useable: boolean
   inventory: number
   price: number
   picObj: string

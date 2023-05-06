@@ -9,7 +9,12 @@
     >
       <a-row>
         <a-col v-for="i in data" :key="i" span="12" :xxl="8" :xxxl="6">
-          <BookCard @show="(e) => show(e)" :book="i" style="height: 95%" />
+          <BookCard
+            @show="(e) => show(e)"
+            @delete-book="(e) => deleteBook(e)"
+            :book="i"
+            style="height: 95%"
+          />
         </a-col>
       </a-row>
     </a-layout-content>
@@ -18,10 +23,10 @@
 
 <script setup lang="ts">
 import BookCard from '@/components/BookCard.vue'
-import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import BookSearch from '@/components/BookSearch.vue'
 import { useAxios } from '@/stores/axios'
-import type { BookDetail, BookResponse } from '@/types/type'
+import type { BackendResponse, BookDetail, BookResponse } from '@/types/type'
 import BookOperation from '@/components/BookOperation.vue'
 import type { AxiosResponse } from 'axios'
 import { message } from 'ant-design-vue'
@@ -37,6 +42,26 @@ const show = (book: BookDetail | undefined) => {
     BookOperationRef.value.bookDetail = tempbook.value
     BookOperationRef.value.visible = true
   }
+}
+const deleteBook = (isbn: BookDetail) => {
+  axios
+    .post('/StaffOp/deleteBook', {
+      isbn: isbn.bookIsbn
+    })
+    .then((e: AxiosResponse<BackendResponse>) => {
+      console.log(e.data.msg.content)
+      if (!e.data.status) {
+        throw e.data.msg.content
+      }
+      message.info('删除成功')
+      // TODO-C: Father refresh
+      nextTick(() => {
+        data.splice(data.indexOf(isbn), 1)
+      })
+    })
+    .catch((e: any) => {
+      message.error('Delete failed with error: ' + e)
+    })
 }
 const isMore = ref(true)
 const page = ref(0)
@@ -76,8 +101,6 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
     .catch((err: any) => {
       message.error(`Error detected while fetching books: ${err}`)
     })
-  page.value++
-  if (page.value > 3) isMore.value = false
 }
 const search = (name: string, author: string, isbn: string, ready: boolean) => {
   data.splice(0, data.length)
