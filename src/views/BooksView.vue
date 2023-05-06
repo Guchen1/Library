@@ -33,7 +33,6 @@ const types = ref()
 const selected = ref([])
 const show = (book: BookDetail | undefined) => {
   tempbook.value = book
-
   if (BookOperationRef.value != undefined) {
     BookOperationRef.value.bookDetail = tempbook.value
     BookOperationRef.value.visible = true

@@ -50,11 +50,9 @@
             ><a-input v-model:value="book.author"></a-input> </a-form-item
           ><a-form-item style="margin-bottom: 10px" label="Type"
             ><a-select v-model:value="book.type">
-            <template v-for="item in typeList" :key="item">
-              <a-select-option v-if="item!='All'"  :value="item">{{
-                item
-              }}</a-select-option>
-            </template>
+              <template v-for="item in typeList" :key="item">
+                <a-select-option v-if="item != 'All'" :value="item">{{ item }}</a-select-option>
+              </template>
             </a-select>
           </a-form-item>
           <a-form-item style="margin-bottom: 0px" label="Info"
@@ -210,12 +208,12 @@ watch(
     console.log(bookDetail.value + String(val))
     if (val && bookDetail.value != undefined) {
       fileList.value = []
-      book.name = bookDetail.value.name
-      book.author = bookDetail.value.author
-      book.isbn = bookDetail.value.isbn
-      book.info = bookDetail.value.summary
-      book.picObj = bookDetail.value.cover
-      book.inventory = bookDetail.value.stock
+      book.name = bookDetail.value.bookName
+      book.author = bookDetail.value.bookAuthor
+      book.isbn = bookDetail.value.bookIsbn
+      book.info = bookDetail.value.bookSummary
+      book.picObj = bookDetail.value.bookCover
+      book.inventory = bookDetail.value.bookStock
       // TODO: useable to be implemented
       book.useable = true
       console.log(book.name)

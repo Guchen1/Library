@@ -4,6 +4,7 @@ import type { BackendResponse, BookDetail } from '@/types/type'
 import { useClient } from '@/stores/client'
 import { useAxios } from '@/stores/axios'
 import type { AxiosResponse } from 'axios'
+import { message } from 'ant-design-vue'
 
 const axios = useAxios().Axios
 
@@ -30,21 +31,21 @@ const borrow = (isbn: string) => {
 }
 const del = (isbn: BookDetail['bookIsbn']) => {
   axios
-    .post('managerop/deletebook', {
-      ISBN: isbn
+    .post('/StaffOp/deleteBook', {
+      isbn: isbn
     })
     .then((e: AxiosResponse<BackendResponse>) => {
       console.log(e.data.msg.content)
       if (!e.data.status) {
         throw e.data.msg.content
       }
-      alert('删除成功，请按上方刷新键刷新')
+      message.info('删除成功，请按下方刷新键刷新')
+      // TODO: Father refresh
       nextTick(() => {})
     })
     .catch((e: any) => {
-      alert('删除失败：' + e)
+      message.error('Delete failed with error: ' + e)
     })
-  // : Father refresh
 }
 </script>
 
