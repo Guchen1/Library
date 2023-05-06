@@ -5,19 +5,18 @@ export interface BookType {
   deepest: false
 }
 export interface BookDetail {
-  id: number
-  name: string
-  author: string
-  publisher: string
-  category: string
-  stock: number
-  price: number
-  type: string
-  location: string[]
-  isbn: string
-  summary: string
+  bookId: number
+  bookIsbn: string
+  bookName: string
+  bookAuthor: string
+  bookPublisher: string
+  bookSummary: string
+  bookCover: string
+  bookPrice: number
+  bookStock: number
+  bookCategoryName: string
+  bookLocation: string
   // situation: boolean
-  cover: string
 }
 export interface UserDetail {
   id: number

@@ -151,7 +151,7 @@ const switchSelected = (item: string) => {
   emit('update:selected', temp.value)
 }
 const del = (item: string) => {
-  //TODO: delete from database
+  //TODO-C: delete from database
   axios
     .post('/StaffOp/deleteCategory', {
       name: item

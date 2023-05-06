@@ -14,12 +14,10 @@ const props = defineProps<{
 }>()
 const computedLocation = computed(() => {
   let res = ''
-  if (props.book.location.length == 0) {
+  if (props.book.bookLocation.length == 0) {
     res = 'none'
   } else {
-    props.book.location.forEach((e) => {
-      res += e + '/'
-    })
+    res = props.book.bookLocation
   }
   res = res.substring(0, res.length - 1)
   return res
@@ -30,7 +28,7 @@ const emits = defineEmits<{
 const borrow = (isbn: string) => {
   //TODO: finish borrow function
 }
-const del = (isbn: BookDetail['isbn']) => {
+const del = (isbn: BookDetail['bookIsbn']) => {
   axios
     .post('managerop/deletebook', {
       ISBN: isbn
@@ -54,16 +52,16 @@ const del = (isbn: BookDetail['isbn']) => {
   <a-card :bodyStyle="{ height: '100%' }" class="card">
     <div class="upper">
       <div class="uLeft">
-        <img alt="example" :src="props.book.cover" />
+        <img alt="example" :src="props.book.bookCover" />
       </div>
       <div class="uRight">
         <div>
-          <div>Name: {{ props.book.name }}</div>
-          <div>Author: {{ props.book.author }}</div>
-          <div>Type: {{ props.book.type }}</div>
+          <div>Name: {{ props.book.bookName }}</div>
+          <div>Author: {{ props.book.bookAuthor }}</div>
+          <div>Type: {{ props.book.bookCategoryName }}</div>
           <div>Location: {{ computedLocation }}</div>
-          <div>ISBN: {{ props.book.isbn }}</div>
-          <div>Info: {{ props.book.summary }}</div>
+          <div>ISBN: {{ props.book.bookIsbn }}</div>
+          <div>Info: {{ props.book.bookSummary }}</div>
         </div>
       </div>
     </div>
@@ -71,12 +69,12 @@ const del = (isbn: BookDetail['isbn']) => {
       <p v-if="client.isUser">
         <a-button
           style="border-color: #52c41a; color: #52c41a; background-color: #f6ffed"
-          @click="borrow(props.book.isbn)"
+          @click="borrow(props.book.bookIsbn)"
           >Borrow</a-button
         >
       </p>
       <div v-else>
-        <a-button style="margin-right: 20px" danger @click="del(props.book.isbn)"
+        <a-button style="margin-right: 20px" danger @click="del(props.book.bookIsbn)"
           >Withdraw</a-button
         >
         <a-button

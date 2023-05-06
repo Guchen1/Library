@@ -1,9 +1,12 @@
 <template>
-  <div style="margin-top:20px;">
-      <BookSearch @show="show(undefined)" style="padding-left:5px" :searchFunc="search" />
-      <TypeList ref="types" style="padding:20px" v-model:selected="selected"/>
-    <BookOperation :typeList="types?.list==undefined?[]:types.list" ref="BookOperationRef" />
-    <a-layout-content  theme="light" style="background-color: white;padding-left: 20px;padding-right: 0px;">
+  <div style="margin-top: 20px">
+    <BookSearch @show="show(undefined)" style="padding-left: 5px" :searchFunc="search" />
+    <TypeList ref="types" style="padding: 20px" v-model:selected="selected" />
+    <BookOperation :typeList="types?.list == undefined ? [] : types.list" ref="BookOperationRef" />
+    <a-layout-content
+      theme="light"
+      style="background-color: white; padding-left: 20px; padding-right: 0px"
+    >
       <a-row>
         <a-col v-for="i in data" :key="i" span="12" :xxl="8" :xxxl="6">
           <BookCard @show="(e) => show(e)" :book="i" style="height: 95%" />
@@ -21,13 +24,13 @@ import { useAxios } from '@/stores/axios'
 import type { BookDetail, BookResponse } from '@/types/type'
 import BookOperation from '@/components/BookOperation.vue'
 import type { AxiosResponse } from 'axios'
+import { message } from 'ant-design-vue'
 const BookOperationRef = ref<typeof BookOperation>()
 const tempbook = ref<BookDetail>()
 const axios = useAxios().Axios
 const data = reactive<BookDetail[]>([])
-const types=ref()
-const selected=ref([
-])
+const types = ref()
+const selected = ref([])
 const show = (book: BookDetail | undefined) => {
   tempbook.value = book
 
@@ -49,10 +52,10 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
   isbnSave = isbn
   readySave = ready
   axios
-    .post('/managerop/getbook/byname', {
+    .post('/UserOp/searchBook', {
       name: name,
-      author: author,
       isbn: isbn,
+      author: author,
       page: String(page.value),
       ready: String(ready)
     })
@@ -64,239 +67,15 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
       if (resobj.length == 0) {
         isMore.value = false
       } else {
-        //TODO: ask backend to update api
+        //TODO-C: ask backend to update api
         resobj.forEach((e) => {
-          data.push({
-            author: e.author,
-            category: e.category,
-            cover: e.cover,
-            id: e.id,
-            isbn: e.isbn,
-            name: e.name,
-            location: e.location,
-            type: e.type,
-            price: e.price,
-            publisher: e.publisher,
-            stock: e.stock,
-            summary: e.summary
-            //situation: e.situation,
-          })
+          data.push(e)
         })
         page.value += 1
       }
     })
     .catch((err: any) => {
-      console.log(err)
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        name: 'Error',
-        location: ['Error'],
-        type: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        location: ['Error'],
-        type: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        location: ['Error'],
-        type: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        location: ['Error'],
-        type: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        location: ['Error'],
-        type: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        location: ['Error'],
-        type: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        location: ['Error'],
-        type: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        name: 'Error',
-        location: ['Error'],
-        type: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        name: 'Error',
-        location: ['Error'],
-        type: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        location: ['Error'],
-        type: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        location: ['Error'],
-        type: 'Error',
-        id: 1,
-        isbn: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        location: ['Error'],
-        type: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        location: ['Error'],
-        type: 'Error',
-        cover: 'Error',
-        id: 1,
-        isbn: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
-      data.push({
-        author: 'Error',
-        category: 'Error',
-        cover: 'Error',
-        location: ['Error'],
-        type: 'Error',
-        id: 1,
-        isbn: 'Error',
-        name: 'Error',
-        price: 2,
-        publisher: 'Error',
-        stock: 2,
-        summary: 'Error'
-        
-      })
+      message.error(`Error detected while fetching books: ${err}`)
     })
   page.value++
   if (page.value > 3) isMore.value = false
@@ -305,7 +84,7 @@ const search = (name: string, author: string, isbn: string, ready: boolean) => {
   data.splice(0, data.length)
   request(name, author, isbn, ready)
 }
-watch(selected,(e)=>{
+watch(selected, (e) => {
   //TODO: finish search by type
   //request(nameSave,authorSave,isbnSave,readySave)
 })
@@ -343,7 +122,7 @@ function scrollHandle() {
 .layout-top {
   padding: 0px;
   padding-top: 20px;
-  margin:0px;
+  margin: 0px;
   background-color: white;
 }
 
