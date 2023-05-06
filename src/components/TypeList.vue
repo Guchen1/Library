@@ -24,13 +24,13 @@
           </template>
         </TransitionGroup>
         <a-tag
-        v-if="client.isStaff"
+          v-if="client.isStaff"
           class="Pr"
-          @click="inInput = true;$nextTick(() => addType.focus())"
+          @click=";(inInput = true), $nextTick(() => addType.focus())"
           ><a-input
             @keyup.enter="save"
-            @blur="inInput = false;newType = ''"
-            @keyup.esc="inInput = false;newType = ''"
+            @blur=";(inInput = false), (newType = '')"
+            @keyup.esc=";(inInput = false), (newType = '')"
             ref="addType"
             style="
               border: 0px !important;
@@ -48,11 +48,15 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { message } from 'ant-design-vue'
 import 'ant-design-vue/es/message/style/css'
 import { useClient } from '@/stores/client'
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons-vue'
+import { useAxios } from '@/stores/axios'
+import type { AxiosResponse } from 'axios'
+import type { BookTypeResponse, BackendResponse } from '@/types/type'
+const axios = useAxios().Axios
 const client = useClient()
 const props = defineProps({
   selected: {
@@ -66,18 +70,8 @@ const inInput = ref(false)
 const newType = ref('')
 const addType = ref()
 const temp = ref(props.selected)
-//TODO: get from database
-const list = ref([
-  'All',
-  'Magazine',
-  'Biography',
-  'Novel',
-  'Science',
-  'History',
-  'Literature',
-  'Fantasy',
-  'Others'
-])
+//TODO-C: get from database
+const list = ref(['All'])
 defineExpose({
   list
 })
@@ -86,15 +80,45 @@ emit('update:selected', temp.value)
 const active = (item: string) => {
   return temp.value.includes(item)
 }
+onMounted(() => {
+  axios
+    .post('/getallcat', {
+      page: '1',
+      num: '999'
+    })
+    .then((e: AxiosResponse<BookTypeResponse>) => {
+      e.data.categories.forEach((e) => {
+        list.value.push(e.name)
+      })
+    })
+    .catch((e: any) => {
+      message.error(`Error detected while getting category: ${e}`)
+    })
+})
 const save = () => {
   if (inInput.value) {
     if (newType.value != '') {
       if (list.value.includes(newType.value)) {
         message.error('Type already exists')
       } else {
-        list.value.push(newType.value)
-        temp.value.push(newType.value)
-        //TODO: save to database
+        //TODO-C: save to database
+        axios
+          .post('/StaffOp/addCategory', {
+            name: newType.value,
+            uname: newType.value
+          })
+          .then((e: AxiosResponse<BackendResponse>) => {
+            if (!e.data.status) {
+              throw e.data.msg.content
+            } else {
+              list.value.push(newType.value)
+              temp.value.push(newType.value)
+              message.info('Adding Booktype Complete')
+            }
+          })
+          .catch((e: any) => {
+            message.error(`Error detected when adding booktype: ${e}`)
+          })
         emit('update:selected', temp.value)
         inInput.value = false
         newType.value = ''
@@ -127,11 +151,25 @@ const switchSelected = (item: string) => {
   emit('update:selected', temp.value)
 }
 const del = (item: string) => {
-  list.value.splice(list.value.indexOf(item), 1)
   //TODO: delete from database
-  if (temp.value.includes(item)) {
-    switchSelected(item)
-  } else if (temp.value.length == list.value.length - 1) temp.value.push('All')
+  axios
+    .post('/StaffOp/deleteCategory', {
+      name: item
+    })
+    .then((e: AxiosResponse<BackendResponse>) => {
+      if (!e.data.status) {
+        throw e.data.msg.content
+      } else {
+        list.value.splice(list.value.indexOf(item), 1)
+        if (temp.value.includes(item)) {
+          switchSelected(item)
+        } else if (temp.value.length == list.value.length - 1) {
+          temp.value.push('All')
+        }
+        message.info('Deleting Booktype Complete')
+      }
+    })
+    .catch((e: any) => message.error(`Error detected when adding booktype: ${e}`))
 }
 watch(props.selected, (newVal: String[]) => {
   temp.value = newVal
