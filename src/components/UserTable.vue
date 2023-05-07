@@ -148,6 +148,9 @@ const columns = [
     key: 'action'
   }
 ]
+const emit = defineEmits<{
+  (event: 'toRole', role: string, item?: UserDetail): boolean
+}>()
 const check = (record: UserDetail, e: boolean) => {
   if (e) {
     checkList.value.push(record)
@@ -159,7 +162,13 @@ const toRole = (record: UserDetail, role: 'user' | 'staff' | 'manager' | 'superu
   data.value?.forEach((item) => {
     //TODO: Finish toRole function
     if (item === record) {
-      item.accountType = role
+      console.log('ready to change...')
+      if (emit('toRole', role, item)) {
+        console.log('success')
+        item.accountType = role
+      } else {
+        message.error(`Change role for ${item.accountName} failed`)
+      }
     }
   })
 }
