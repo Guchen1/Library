@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="client.isAdmin"
-    style="padding-top: 20px; padding: 20px; padding-bottom: 0px"
-  >
+  <div v-if="client.isAdmin" style="padding-top: 20px; padding: 20px; padding-bottom: 0px">
     <a-typography-title :level="2" class="title">User Control</a-typography-title>
     <div class="batch-box">
       <a-input-search style="width: 400px" placeholder="Input Username">
@@ -21,37 +18,85 @@
       <a-button @click="del" class="batch" type="danger">Delete</a-button>
     </div>
     <div style="display: flex; justify-content: center">
-      <UserTable ref="table" :height="height" style="max-width: 1000px; width: 100%" />
+      <UserTable
+        ref="table"
+        @toRole="(e, f) => toRole(e, f)"
+        :height="height"
+        style="max-width: 1000px; width: 100%"
+      />
     </div>
   </div>
   <div v-else></div>
 </template>
 <script setup lang="ts">
-import UserTable from "@/components/UserTable.vue";
-import { useClient } from "@/stores/client";
-import type { UserDetail } from "@/types/type";
-import { SearchOutlined } from "@ant-design/icons-vue";
-import { computed, onMounted, ref } from "vue";
-const table = ref<typeof UserTable>();
+import UserTable from '@/components/UserTable.vue'
+import { useClient } from '@/stores/client'
+import type { BackendResponse, UserDetail } from '@/types/type'
+import { SearchOutlined, ToTopOutlined } from '@ant-design/icons-vue'
+import { message } from 'ant-design-vue'
+import type { AxiosResponse } from 'axios'
+import { useAxios } from '@/stores/axios'
+import { computed, onMounted, ref } from 'vue'
+const axios = useAxios().Axios
+const table = ref<typeof UserTable>()
 const clearList = computed(() => {
-  return table?.value?.clearList;
-});
-const toRole = (role: string) => {
-  //TODO: Finish toRole function,更新成功之后刷新页面
-  console.log(table?.value?.checkList); //这里是选中的列表;
-  client.reload(); //这行就是刷新的
-};
+  return table?.value?.clearList
+})
+const toRole = (role: string, item?: UserDetail) => {
+  console.log(role)
+  console.log(item)
+  if (item != undefined) {
+    axios
+      .post('/ManagerOp/changeAuthority', {
+        opUser: client.clientData.clientName,
+        account: item.accountName,
+        type: role
+      })
+      .then((e: AxiosResponse<BackendResponse>) => {
+        if (e.data.status) {
+          return true
+        } else {
+          throw e.data.msg
+        }
+      })
+      .catch((e: any) => {
+        message.info(`Error detected in changing the role: ${e}`)
+        return false
+      })
+  } else {
+    table?.value?.currentList.forEach((e: UserDetail) => {
+      axios
+        .post('/ManagerOp/changeAuthority', {
+          opUser: client.clientData.clientName,
+          account: e.accountName,
+          type: role
+        })
+        .then((f: AxiosResponse<BackendResponse>) => {
+          if (!f.data.status) {
+            throw f.data.msg
+          }
+        })
+        .catch((f: any) => {
+          message.info(`Error detected in changing the role of ${e.accountName}: ${f}`)
+          return false
+        })
+    })
+  }
+  //TODO-D: Finish toRole function,更新成功之后刷新页面
+  console.log(table?.value?.checkList) //这里是选中的列表;
+  client.reload() //这行就是刷新的
+}
 const del = () => {
   //TODO: Finish del function,成功之后刷新页面
-};
+}
 defineProps<{
-  width: number;
-  height: number;
-}>();
+  width: number
+  height: number
+}>()
 defineExpose({
-  clearList,
-});
-const client = useClient();
+  clearList
+})
+const client = useClient()
 </script>
 <style scoped>
 .title {

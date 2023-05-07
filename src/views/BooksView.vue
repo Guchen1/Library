@@ -26,12 +26,14 @@ import BookCard from '@/components/BookCard.vue'
 import { ref, reactive, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import BookSearch from '@/components/BookSearch.vue'
 import { useAxios } from '@/stores/axios'
-import type { BackendResponse, BookDetail, BookResponse } from '@/types/type'
+import type { BackendResponse, BookDetail, BookResponse, PictureResponse } from '@/types/type'
 import BookOperation from '@/components/BookOperation.vue'
 import type { AxiosResponse } from 'axios'
 import { message } from 'ant-design-vue'
+import { useClient } from '@/stores/client'
 const BookOperationRef = ref<typeof BookOperation>()
 const tempbook = ref<BookDetail>()
+const client = useClient()
 const axios = useAxios().Axios
 const data = reactive<BookDetail[]>([])
 const types = ref()
@@ -81,7 +83,8 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
       isbn: isbn,
       author: author,
       page: String(page.value),
-      ready: String(ready)
+      ready: String(ready),
+      opUser: client.clientData.clientName
     })
     .then((res: AxiosResponse<BookResponse>) => {
       if (!res.status) {
@@ -93,7 +96,15 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
       } else {
         //TODO-C: ask backend to update api
         resobj.forEach((e) => {
-          data.push(e)
+          axios
+            .post('/picture/download', {
+              name: e.bookCover
+            })
+            .then((f: AxiosResponse<PictureResponse>) => {
+              if (f.data.status) e.bookCover = 'data:image/jpg;base64,' + f.data.data
+              data.push(e)
+            })
+          console.log(e.bookCover)
         })
         page.value += 1
       }

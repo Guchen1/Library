@@ -4,8 +4,9 @@
       @change="resize"
       :columns="columns"
       :scroll="{ x: 'max-content', y: height - 310, visible: false }"
-      :pagination="{ position: ['bottomCenter'], pageSize: 10, showSizeChanger: false }"
       :data-source="data"
+      :loading="loading"
+      :pagination="pagination"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'selected'"
@@ -15,22 +16,25 @@
               @update:checked="check(record, $event)"
             ></a-checkbox></div
         ></template>
+        <template v-else-if="column.key == 'username'">{{ record.accountName }}</template>
         <template v-else-if="column.key == 'role'">{{
-          record.type == "user" ? "patron" : record.type
+          record.accountType == 'user' ? 'pateron' : record.accountType
         }}</template>
         <template v-else-if="column.key == 'action'">
           <div class="action" style="display: flex; justify-content: space-between">
             <div class="action" style="display: inline-flex">
-              <a-button @click="toRole(record, 'user')" v-if="record.type != 'user'"
+              <a-button @click="toRole(record, 'user')" v-if="record.accountType != 'user'"
                 >To Patron</a-button
               >
-              <a-button @click="toRole(record, 'staff')" v-if="record.type != 'staff'"
+              <a-button @click="toRole(record, 'staff')" v-if="record.accountType != 'staff'"
                 >To Staff</a-button
               >
-              <a-button @click="toRole(record, 'admin')" v-if="record.type != 'admin'"
+              <a-button @click="toRole(record, 'manager')" v-if="record.accountType != 'manager'"
                 >To Admin</a-button
               >
-              <a-button @click="toRole(record, 'super')" v-if="record.type != 'super'"
+              <a-button
+                @click="toRole(record, 'superuser')"
+                v-if="record.accountType != 'superuser'"
                 >To Superuser</a-button
               >
             </div>
@@ -54,148 +58,189 @@
 </template>
 <script setup lang="ts">
 //TODO: Bind to the real data corresponding to the search
-import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
-import { useClient } from "@/stores/client";
-import type { UserDetail } from "@/types/type";
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { useClient } from '@/stores/client'
+import type { UserDetail, UserTypeResponse } from '@/types/type'
+import { message } from 'ant-design-vue'
+import { usePagination } from 'vue-request'
+import axios, { type AxiosResponse } from 'axios'
 const newPass = ref("");
-const client = useClient();
-const checkList = ref<UserDetail[]>([]);
+const client = useClient()
+const checkList = ref<UserDetail[]>([])
 const clearList = () => {
-  checkList.value = [];
-};
+  checkList.value = []
+}
+
 defineProps<{
-  height: number;
-}>();
+  height: number
+}>()
 const currentList = computed({
   set: () => {},
   get: () => {
-    let temp: Array<UserDetail> = [];
-    data.value.forEach((item) => {
+    let temp: Array<UserDetail> = []
+    data.value?.forEach((item) => {
       if (checkList.value.indexOf(item) != -1) {
-        temp.push(item);
+        temp.push(item)
       }
-    });
-    return temp;
-  },
-});
+    })
+    return temp
+  }
+})
 const resize = () => {
-  maxHeight.value = "unset";
+  maxHeight.value = 'unset'
   nextTick(() => {
     const a = document
-      .getElementsByClassName("ant-table-body")[0]
-      .getAttribute("style")
-      ?.split(";")[1]
-      .split(":")[1];
-    const b = document.getElementsByClassName("ant-table-body")[0].clientHeight;
+      .getElementsByClassName('ant-table-body')[0]
+      .getAttribute('style')
+      ?.split(';')[1]
+      .split(':')[1]
+    const b = document.getElementsByClassName('ant-table-body')[0].clientHeight
     //a转数字
-    const c = Number(a?.split("px")[0]);
+    const c = Number(a?.split('px')[0])
     if (c != undefined) {
       if (c - b >= 20) {
-        maxHeight.value = b + 10 + "px";
+        maxHeight.value = b + 10 + 'px'
       } else {
-        maxHeight.value = c + "px";
+        maxHeight.value = c + 'px'
       }
     }
-  });
-};
-const maxHeight = ref<string>("");
+  })
+}
+const maxHeight = ref<string>('')
 onMounted(() => {
-  window.addEventListener("resize", resize);
-  resize();
-});
+  window.addEventListener('resize', resize)
+  resize()
+})
 onUnmounted(() => {
-  window.removeEventListener("resize", resize);
-});
+  window.removeEventListener('resize', resize)
+})
 const columns = [
   {
-    title: "Selected",
-    key: "selected",
+    title: 'Selected',
+    key: 'selected',
     width: 87,
-    fixed: "left",
+    fixed: 'left'
   },
   {
-    title: "Username",
-    dataIndex: "name",
-    key: "username",
-    width: 150,
+    title: 'Username',
+    dataIndex: 'name',
+    key: 'username',
+    width: 150
   },
   {
-    title: "Role",
-    key: "role",
+    title: 'Role',
+    key: 'role',
     width: 80,
     filters: [
       {
-        text: "Patron",
-        value: "user",
+        text: 'Patron',
+        value: 'user'
       },
       {
-        text: "Staff",
-        value: "staff",
+        text: 'Staff',
+        value: 'staff'
       },
       {
-        text: "Admin",
-        value: "admin",
+        text: 'Admin',
+        value: 'admin'
       },
       {
-        text: "Superuser",
-        value: "super",
-      },
+        text: 'Superuser',
+        value: 'superuser'
+      }
     ],
-    onFilter: (value: string, record: UserDetail) => record.type.indexOf(value) === 0,
+    onFilter: (value: string, record: UserDetail) => record.accountType.indexOf(value) === 0
   },
   {
-    title: "Action",
-    key: "action",
-  },
-];
+    title: 'Action',
+    key: 'action'
+  }
+]
+const emit = defineEmits<{
+  (event: 'toRole', role: string, item?: UserDetail): boolean
+}>()
 const check = (record: UserDetail, e: boolean) => {
   if (e) {
-    checkList.value.push(record);
+    checkList.value.push(record)
   } else {
-    checkList.value.splice(checkList.value.indexOf(record), 1);
+    checkList.value.splice(checkList.value.indexOf(record), 1)
   }
-};
-const toRole = (record: UserDetail, role: "user" | "staff" | "admin" | "super") => {
-  data.value.forEach((item) => {
+}
+const toRole = (record: UserDetail, role: 'user' | 'staff' | 'manager' | 'superuser') => {
+  data.value?.forEach((item) => {
     //TODO: Finish toRole function
     if (item === record) {
-      item.type = role;
+      console.log('ready to change...')
+      if (emit('toRole', role, item)) {
+        console.log('success')
+        item.accountType = role
+      } else {
+        message.error(`Change role for ${item.accountName} failed`)
+      }
     }
-  });
-};
+  })
+}
 const checked = computed({
   //可对setter和getter都传参的计算属性
   get: () => {
     return (record: UserDetail) => {
       //列表里有就返回true
       if (checkList.value.indexOf(record) != -1) {
-        return true;
+        return true
       } else {
-        return false;
+        return false
       }
-    };
+    }
   },
-  set: () => {},
-});
-const data = ref<UserDetail[]>([]);
-for (let i = 0; i < 21; i++) {
-  data.value.push({
-    id: 1,
-    name: "Chen",
-    type: "admin",
-  });
+  set: () => {}
+})
+//const data = ref<UserDetail[]>([])
+const queryData = () => {
+  return axios
+    .post<UserTypeResponse>('http://localhost:8080/SuperuserOp/userInfo', {
+      opUser: client.clientData.clientName,
+      page: '1',
+      num: '999'
+    })
+    .then((res: AxiosResponse<UserTypeResponse>) => {
+      return res.data.accounts
+    })
+    .catch((e) => {
+      message.error(`Error while fetching user data: ${e}`)
+      return [] as UserDetail[]
+    })
 }
+
 defineExpose({
   clearList,
   checkList,
-  currentList,
-});
+  currentList
+})
+
+const {
+  data: data,
+  run,
+  loading,
+  current,
+  pageSize
+} = usePagination(queryData, {
+  pagination: {
+    currentKey: 'page',
+    pageSizeKey: 'results'
+  }
+})
+
+const pagination = computed(() => ({
+  total: data.value?.length,
+  current: current.value,
+  pageSize: pageSize.value
+}))
 </script>
 <style scoped>
 .action button {
   margin-right: 10px;
 }
 :deep(.ant-table-body) {
-  height: v-bind("maxHeight");
+  height: v-bind('maxHeight');
 }
 </style>

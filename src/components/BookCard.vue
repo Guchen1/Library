@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import { computed, nextTick } from 'vue'
+import { computed } from 'vue'
 import type { BackendResponse, BookDetail } from '@/types/type'
 import { useClient } from '@/stores/client'
 import { useAxios } from '@/stores/axios'
 import type { AxiosResponse } from 'axios'
 import { message } from 'ant-design-vue'
 
-const axios = useAxios().Axios
+export interface Places {
+  value: string
+  label: string
+}
 
+const axios = useAxios().Axios
 const client = useClient()
 
 const props = defineProps<{
@@ -18,7 +22,10 @@ const computedLocation = computed(() => {
   if (props.book.bookLocation.length == 0) {
     res = 'none'
   } else {
-    res = props.book.bookLocation
+    let place: Places[] = JSON.parse(props.book.bookLocation)
+    for (let i of place) {
+      res += i.value + '-'
+    }
   }
   res = res.substring(0, res.length - 1)
   return res
@@ -27,8 +34,26 @@ const emits = defineEmits<{
   (e: 'show', a: BookDetail): void
   (e: 'deleteBook', a: BookDetail): void
 }>()
-const borrow = (isbn: string) => {
-  //TODO: finish borrow function
+const borrow = (e: BookDetail) => {
+  //TODO-C: Complete borrow book api.
+  axios
+    .post('/UserOp/borrowBook', {
+      bookId: String(e.bookId),
+      bookName: e.bookName,
+      isbn: e.bookIsbn,
+      dates: 30,
+      account: client.clientData.clientName
+    })
+    .then((e: AxiosResponse<BackendResponse>) => {
+      if (!e.data.status) {
+        throw e.data.msg.content
+      } else {
+        message.info('Borrow book completed!')
+      }
+    })
+    .catch((e: any) => {
+      message.error(`Error detected while borrowing books: ${e}`)
+    })
 }
 </script>
 
@@ -53,7 +78,7 @@ const borrow = (isbn: string) => {
       <p v-if="client.isUser">
         <a-button
           style="border-color: #52c41a; color: #52c41a; background-color: #f6ffed"
-          @click="borrow(props.book.bookIsbn)"
+          @click="borrow(props.book)"
           >Borrow</a-button
         >
       </p>
