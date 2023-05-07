@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="client.isAdmin"
-    style="padding-top: 20px; padding: 20px; padding-bottom: 0px"
-  >
+  <div v-if="client.isAdmin" style="padding-top: 20px; padding: 20px; padding-bottom: 0px">
     <a-typography-title :level="2" class="title">User Control</a-typography-title>
     <div class="batch-box">
       <a-input-search style="width: 400px" placeholder="Input Username">
@@ -27,31 +24,31 @@
   <div v-else></div>
 </template>
 <script setup lang="ts">
-import UserTable from "@/components/UserTable.vue";
-import { useClient } from "@/stores/client";
-import type { UserDetail } from "@/types/type";
-import { SearchOutlined } from "@ant-design/icons-vue";
-import { computed, onMounted, ref } from "vue";
-const table = ref<typeof UserTable>();
+import UserTable from '@/components/UserTable.vue'
+import { useClient } from '@/stores/client'
+import type { UserDetail } from '@/types/type'
+import { SearchOutlined } from '@ant-design/icons-vue'
+import { computed, onMounted, ref } from 'vue'
+const table = ref<typeof UserTable>()
 const clearList = computed(() => {
-  return table?.value?.clearList;
-});
+  return table?.value?.clearList
+})
 const toRole = (role: string) => {
   //TODO: Finish toRole function,更新成功之后刷新页面
-  console.log(table?.value?.checkList); //这里是选中的列表;
-  client.reload(); //这行就是刷新的
-};
+  console.log(table?.value?.checkList) //这里是选中的列表;
+  client.reload() //这行就是刷新的
+}
 const del = () => {
   //TODO: Finish del function,成功之后刷新页面
-};
+}
 defineProps<{
-  width: number;
-  height: number;
-}>();
+  width: number
+  height: number
+}>()
 defineExpose({
-  clearList,
-});
-const client = useClient();
+  clearList
+})
+const client = useClient()
 </script>
 <style scoped>
 .title {

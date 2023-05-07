@@ -4,8 +4,9 @@
       @change="resize"
       :columns="columns"
       :scroll="{ x: 'max-content', y: height - 310, visible: false }"
-      :pagination="{ position: ['bottomCenter'], pageSize: 10, showSizeChanger: false }"
       :data-source="data"
+      :loading="loading"
+      :pagination="pagination"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'selected'"
@@ -15,22 +16,25 @@
               @update:checked="check(record, $event)"
             ></a-checkbox></div
         ></template>
+        <template v-else-if="column.key == 'username'">{{ record.accountName }}</template>
         <template v-else-if="column.key == 'role'">{{
-          record.type == 'user' ? 'patron' : record.type
+          record.accountType == 'user' ? 'pateron' : record.accountType
         }}</template>
         <template v-else-if="column.key == 'action'">
           <div class="action" style="display: flex; justify-content: space-between">
             <div class="action" style="display: inline-flex">
-              <a-button @click="toRole(record, 'user')" v-if="record.type != 'user'"
+              <a-button @click="toRole(record, 'user')" v-if="record.accountType != 'user'"
                 >To Patron</a-button
               >
-              <a-button @click="toRole(record, 'staff')" v-if="record.type != 'staff'"
+              <a-button @click="toRole(record, 'staff')" v-if="record.accountType != 'staff'"
                 >To Staff</a-button
               >
-              <a-button @click="toRole(record, 'admin')" v-if="record.type != 'admin'"
+              <a-button @click="toRole(record, 'manager')" v-if="record.accountType != 'manager'"
                 >To Admin</a-button
               >
-              <a-button @click="toRole(record, 'super')" v-if="record.type != 'super'"
+              <a-button
+                @click="toRole(record, 'superuser')"
+                v-if="record.accountType != 'superuser'"
                 >To Superuser</a-button
               >
             </div>
@@ -48,14 +52,17 @@
 //TODO: Bind to the real data corresponding to the search
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useClient } from '@/stores/client'
-import type { UserDetail } from '@/types/type'
-import axios from 'axios'
+import type { UserDetail, UserTypeResponse } from '@/types/type'
+import { message } from 'ant-design-vue'
+import { usePagination } from 'vue-request'
+import axios, { type AxiosResponse } from 'axios'
 
 const client = useClient()
 const checkList = ref<UserDetail[]>([])
 const clearList = () => {
   checkList.value = []
 }
+
 defineProps<{
   height: number
 }>()
@@ -63,7 +70,7 @@ const currentList = computed({
   set: () => {},
   get: () => {
     let temp: Array<UserDetail> = []
-    data.value.forEach((item) => {
+    data.value?.forEach((item) => {
       if (checkList.value.indexOf(item) != -1) {
         temp.push(item)
       }
@@ -131,10 +138,10 @@ const columns = [
       },
       {
         text: 'Superuser',
-        value: 'super'
+        value: 'superuser'
       }
     ],
-    onFilter: (value: string, record: UserDetail) => record.type.indexOf(value) === 0
+    onFilter: (value: string, record: UserDetail) => record.accountType.indexOf(value) === 0
   },
   {
     title: 'Action',
@@ -148,11 +155,11 @@ const check = (record: UserDetail, e: boolean) => {
     checkList.value.splice(checkList.value.indexOf(record), 1)
   }
 }
-const toRole = (record: UserDetail, role: 'user' | 'staff' | 'admin' | 'super') => {
-  data.value.forEach((item) => {
+const toRole = (record: UserDetail, role: 'user' | 'staff' | 'manager' | 'superuser') => {
+  data.value?.forEach((item) => {
     //TODO: Finish toRole function
     if (item === record) {
-      item.type = role
+      item.accountType = role
     }
   })
 }
@@ -170,15 +177,47 @@ const checked = computed({
   },
   set: () => {}
 })
-const data = ref<UserDetail[]>([])
-onMounted(() => {
-  //axios.post("/SuperuserOp/userInfo").then((e:))
-})
+//const data = ref<UserDetail[]>([])
+const queryData = () => {
+  return axios
+    .post<UserTypeResponse>('http://localhost:8080/SuperuserOp/userInfo', {
+      opUser: client.clientData.clientName,
+      page: '1',
+      num: '999'
+    })
+    .then((res: AxiosResponse<UserTypeResponse>) => {
+      return res.data.accounts
+    })
+    .catch((e) => {
+      message.error(`Error while fetching user data: ${e}`)
+      return [] as UserDetail[]
+    })
+}
+
 defineExpose({
   clearList,
   checkList,
   currentList
 })
+
+const {
+  data: data,
+  run,
+  loading,
+  current,
+  pageSize
+} = usePagination(queryData, {
+  pagination: {
+    currentKey: 'page',
+    pageSizeKey: 'results'
+  }
+})
+
+const pagination = computed(() => ({
+  total: data.value?.length,
+  current: current.value,
+  pageSize: pageSize.value
+}))
 </script>
 <style scoped>
 .action button {

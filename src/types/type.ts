@@ -18,11 +18,6 @@ export interface BookDetail {
   bookLocation: string
   // situation: boolean
 }
-export interface UserDetail {
-  id: number
-  name: string
-  type: string
-}
 export interface BookModify {
   id: number
   name: string
@@ -44,16 +39,21 @@ export interface BookResponse {
   }
   books: BookDetail[]
 }
+
+export interface UserDetail {
+  accountName: number
+  accountPassword: string
+  accountType: string
+}
+
 export interface UserTypeResponse {
   status: boolean
   op: string
   msg: {
-    code: number
+    code: string
     content: string
   }
-  pagenum: number
-  numEachPage: number
-  categories: BookType[]
+  accounts: UserDetail[]
 }
 export interface BookTypeResponse {
   status: boolean

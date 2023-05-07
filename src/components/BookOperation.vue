@@ -109,6 +109,126 @@ const options: CascaderProps['options'] = [
               {
                 value: 'layer1',
                 label: 'Layer 1'
+              },
+              {
+                value: 'layer2',
+                label: 'Layer 2'
+              },
+              {
+                value: 'layer3',
+                label: 'Layer 3'
+              }
+            ]
+          },
+          {
+            value: 'shelf2',
+            label: 'Shelf 2',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              },
+              {
+                value: 'layer2',
+                label: 'Layer 2'
+              },
+              {
+                value: 'layer3',
+                label: 'Layer 3'
+              }
+            ]
+          },
+          {
+            value: 'shelf3',
+            label: 'Shelf 3',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              },
+              {
+                value: 'layer2',
+                label: 'Layer 2'
+              },
+              {
+                value: 'layer3',
+                label: 'Layer 3'
+              }
+            ]
+          }
+        ]
+      },
+      {
+        value: 'stack_b',
+        label: 'Stack B',
+        children: [
+          {
+            value: 'shelf1',
+            label: 'Shelf 1',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              },
+              {
+                value: 'layer2',
+                label: 'Layer 2'
+              },
+              {
+                value: 'layer3',
+                label: 'Layer 3'
+              }
+            ]
+          },
+          {
+            value: 'shelf2',
+            label: 'Shelf 2',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              },
+              {
+                value: 'layer2',
+                label: 'Layer 2'
+              },
+              {
+                value: 'layer3',
+                label: 'Layer 3'
+              }
+            ]
+          },
+          {
+            value: 'shelf3',
+            label: 'Shelf 3',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              },
+              {
+                value: 'layer2',
+                label: 'Layer 2'
+              },
+              {
+                value: 'layer3',
+                label: 'Layer 3'
+              }
+            ]
+          }
+        ]
+      },
+      {
+        value: 'stack_c',
+        label: 'Stack C',
+        children: [
+          {
+            value: 'shelf1',
+            label: 'Shelf 1',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
               }
             ]
           }
@@ -119,6 +239,290 @@ const options: CascaderProps['options'] = [
   {
     value: 'floor2',
     label: 'Floor 2',
+    children: [
+      {
+        value: 'stack_a',
+        label: 'Stack A',
+        children: [
+          {
+            value: 'shelf1',
+            label: 'Shelf 1',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              },
+              {
+                value: 'layer2',
+                label: 'Layer 2'
+              },
+              {
+                value: 'layer3',
+                label: 'Layer 3'
+              }
+            ]
+          },
+          {
+            value: 'shelf2',
+            label: 'Shelf 2',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              },
+              {
+                value: 'layer2',
+                label: 'Layer 2'
+              },
+              {
+                value: 'layer3',
+                label: 'Layer 3'
+              }
+            ]
+          },
+          {
+            value: 'shelf3',
+            label: 'Shelf 3',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              },
+              {
+                value: 'layer2',
+                label: 'Layer 2'
+              },
+              {
+                value: 'layer3',
+                label: 'Layer 3'
+              }
+            ]
+          }
+        ]
+      },
+      {
+        value: 'stack_b',
+        label: 'Stack B',
+        children: [
+          {
+            value: 'shelf1',
+            label: 'Shelf 1',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              },
+              {
+                value: 'layer2',
+                label: 'Layer 2'
+              },
+              {
+                value: 'layer3',
+                label: 'Layer 3'
+              }
+            ]
+          },
+          {
+            value: 'shelf2',
+            label: 'Shelf 2',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              },
+              {
+                value: 'layer2',
+                label: 'Layer 2'
+              },
+              {
+                value: 'layer3',
+                label: 'Layer 3'
+              }
+            ]
+          },
+          {
+            value: 'shelf3',
+            label: 'Shelf 3',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              },
+              {
+                value: 'layer2',
+                label: 'Layer 2'
+              },
+              {
+                value: 'layer3',
+                label: 'Layer 3'
+              }
+            ]
+          }
+        ]
+      },
+      {
+        value: 'stack_c',
+        label: 'Stack C',
+        children: [
+          {
+            value: 'shelf1',
+            label: 'Shelf 1',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    value: 'floor3',
+    label: 'Floor 3',
+    children: [
+      {
+        value: 'stack_a',
+        label: 'Stack A',
+        children: [
+          {
+            value: 'shelf1',
+            label: 'Shelf 1',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              },
+              {
+                value: 'layer2',
+                label: 'Layer 2'
+              },
+              {
+                value: 'layer3',
+                label: 'Layer 3'
+              }
+            ]
+          },
+          {
+            value: 'shelf2',
+            label: 'Shelf 2',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              },
+              {
+                value: 'layer2',
+                label: 'Layer 2'
+              },
+              {
+                value: 'layer3',
+                label: 'Layer 3'
+              }
+            ]
+          },
+          {
+            value: 'shelf3',
+            label: 'Shelf 3',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              },
+              {
+                value: 'layer2',
+                label: 'Layer 2'
+              },
+              {
+                value: 'layer3',
+                label: 'Layer 3'
+              }
+            ]
+          }
+        ]
+      },
+      {
+        value: 'stack_b',
+        label: 'Stack B',
+        children: [
+          {
+            value: 'shelf1',
+            label: 'Shelf 1',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              },
+              {
+                value: 'layer2',
+                label: 'Layer 2'
+              },
+              {
+                value: 'layer3',
+                label: 'Layer 3'
+              }
+            ]
+          },
+          {
+            value: 'shelf2',
+            label: 'Shelf 2',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              },
+              {
+                value: 'layer2',
+                label: 'Layer 2'
+              },
+              {
+                value: 'layer3',
+                label: 'Layer 3'
+              }
+            ]
+          },
+          {
+            value: 'shelf3',
+            label: 'Shelf 3',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              },
+              {
+                value: 'layer2',
+                label: 'Layer 2'
+              },
+              {
+                value: 'layer3',
+                label: 'Layer 3'
+              }
+            ]
+          }
+        ]
+      },
+      {
+        value: 'stack_c',
+        label: 'Stack C',
+        children: [
+          {
+            value: 'shelf1',
+            label: 'Shelf 1',
+            children: [
+              {
+                value: 'layer1',
+                label: 'Layer 1'
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    value: 'floor4',
+    label: 'Floor 4',
     children: [
       {
         value: 'stack_a',
@@ -159,7 +563,7 @@ function getBase64(img: Blob, callback: (base64Url: string) => void) {
 const handleCancel = () => {
   visible.value = false
 }
-const handleOk = (isAdd: boolean) => {
+const handleOk = async (isAdd: boolean) => {
   axios.post(isAdd ? 'managerop/addbook' : 'managerop/updatebook', {
     isbn: book.isbn,
     name: book.name,
