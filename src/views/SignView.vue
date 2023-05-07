@@ -1,6 +1,6 @@
 <template>
   <!-- Wrapper Area -->
-  <div>
+  <div class="body">
     <div class="wrapper__area" id="wrapper_Area">
       <!-- Forms Area -->
       <div class="forms__area">
@@ -18,14 +18,24 @@
           <!-- inputs Groups -->
           <div class="input__group">
             <label class="field">
-              <input type="text" name="username" placeholder="Username" id="loginUsername" />
+              <input
+                type="text"
+                name="username"
+                placeholder="Username"
+                id="loginUsername"
+              />
             </label>
             <span class="input__icon"><i class="bx bx-user"></i></span>
             <small class="input__error_message"></small>
           </div>
           <div class="input__group">
             <label class="field">
-              <input type="password" name="password" placeholder="Password" id="loginPassword" />
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                id="loginPassword"
+              />
             </label>
             <span class="input__icon"><i class="bx bx-lock"></i></span>
             <span class="showHide__Icon"><i class="bx bx-hide"></i></span>
@@ -59,14 +69,24 @@
           <!-- inputs Groups -->
           <div class="input__group">
             <label class="field">
-              <input type="text" name="username" placeholder="Username123..." id="signUpUsername" />
+              <input
+                type="text"
+                name="username"
+                placeholder="Username123..."
+                id="signUpUsername"
+              />
             </label>
             <span class="input__icon"><i class="bx bx-user"></i></span>
             <small class="input__error_message"></small>
           </div>
           <div class="input__group">
             <label class="field">
-              <input type="text" name="email" placeholder="Email@example.com" id="signUpEmail" />
+              <input
+                type="text"
+                name="email"
+                placeholder="Email@example.com"
+                id="signUpEmail"
+              />
             </label>
             <span class="input__icon"><i class="bx bx-at"></i></span>
             <small class="input__error_message"></small>
@@ -98,7 +118,9 @@
             <small class="input__error_message"></small>
           </div>
           <!-- Sign Up Button -->
-          <button type="submit" class="submit-button" id="signUpSubmitBtn">Sign Up</button>
+          <button type="submit" class="submit-button" id="signUpSubmitBtn">
+            Sign Up
+          </button>
           <!-- Alternate Login -->
         </form>
         <!-- End Sign Up Form -->
@@ -137,283 +159,296 @@
 // - - - - -  Variables - - - - - //
 
 // Wrapper Area
-import { onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import 'boxicons/css/boxicons.min.css'
-import { useAxios } from '@/stores/axios'
-import { useClient } from '@/stores/client'
-import { message } from 'ant-design-vue'
-import 'ant-design-vue/es/message/style/css'
-const axios = useAxios().Axios
-const client = useClient()
-const router = useRouter()
+import { onMounted } from "vue";
+import { useRouter } from "vue-router";
+import "boxicons/css/boxicons.min.css";
+import { useAxios } from "@/stores/axios";
+import { useClient } from "@/stores/client";
+import { message } from "ant-design-vue";
+import "ant-design-vue/es/message/style/css";
+const axios = useAxios().Axios;
+const client = useClient();
+const router = useRouter();
 //import { LeftOutlined } from '@ant-design/icons-vue'
 onMounted(() => {
-  const wrapper__Area = document.querySelector('#wrapper_Area')
+  const wrapper__Area = document.querySelector("#wrapper_Area");
 
   // Login & Sing-Up Forms
-  const loginForm = document.querySelector('#loginForm')
-  const signUpForm = document.querySelector('#signUpForm')
+  const loginForm = document.querySelector("#loginForm");
+  const signUpForm = document.querySelector("#signUpForm");
 
   // All Login And Sing-Up Forms Inputs
   const allLoginFormFields = Array.from(
-    document.querySelectorAll('#loginForm .input__group .field input')
-  )
+    document.querySelectorAll("#loginForm .input__group .field input")
+  );
   const allSignUpFormFields = Array.from(
-    document.querySelectorAll('#signUpForm .input__group:not(.confirm__group) .field input')
-  )
+    document.querySelectorAll(
+      "#signUpForm .input__group:not(.confirm__group) .field input"
+    )
+  );
 
   // Password And Confirm Password Fileds
-  const passwordField = document.querySelector('#signUpPassword')
-  const confirmPassword = document.querySelector('#signUpConfirmPassword')
+  const passwordField = document.querySelector("#signUpPassword");
+  const confirmPassword = document.querySelector("#signUpConfirmPassword");
 
   // Login % Sign-Up Submit Buttons
-  const loginFormSubmitBtn = document.querySelector('#loginSubmitBtn')
-  const signUpFormSubmitBtn = document.querySelector('#signUpSubmitBtn')
+  const loginFormSubmitBtn = document.querySelector("#loginSubmitBtn");
+  const signUpFormSubmitBtn = document.querySelector("#signUpSubmitBtn");
 
   // Show Hide Password Element
-  const showHidePassDom = Array.from(document.querySelectorAll('.showHide__Icon i'))
+  const showHidePassDom = Array.from(document.querySelectorAll(".showHide__Icon i"));
 
   // Pattrens Regex
   const patterns = {
     // All This Regex Code Is For Demo You Can Add Your Own Regex Code :)
     username: /^[a-z]+\d?/,
     email: /^[^\W\d.-_]+\w\d?@[a-z0-9]+\.([a-z0-9]{2,6})(\.[a-z0-9]{2,6})?$/,
-    password: /^[a-z0-9]+\d?/
-  }
+    password: /^[a-z0-9]+\d?/,
+  };
 
   // Aside Area
-  const aside__Area = document.querySelector('#aside_Area')
+  const aside__Area = document.querySelector("#aside_Area");
 
   // Aside Sing-Up & Sign In Buttons
-  const aside__SignUp_Button = document.querySelector('#aside_signUp_Btn')
-  const aside__SignIn_Button = document.querySelector('#aside_signIn_Btn')
+  const aside__SignUp_Button = document.querySelector("#aside_signUp_Btn");
+  const aside__SignIn_Button = document.querySelector("#aside_signIn_Btn");
 
   // - - - - -  Events - - - - - //
 
   // When Submitting On Login & Sign-Up Forms
-  loginForm.addEventListener('submit', (e) => {
+  loginForm.addEventListener("submit", (e) => {
     // Stop Form Submission
-    e.preventDefault()
+    e.preventDefault();
     // Call Login Form Validation Function
-    loginFormValidation()
-  })
-  signUpForm.addEventListener('submit', (e) => {
+    loginFormValidation();
+  });
+  signUpForm.addEventListener("submit", (e) => {
     // Stop Form Submission
-    e.preventDefault()
+    e.preventDefault();
     // Call Sign-Up Form Validation Function
-    signUpFormValidation()
-  })
+    signUpFormValidation();
+  });
 
   // Every Time Click On Aside Sign-Up & Sing-In Buttons. Call Function Chnage Form Mode
 
-  aside__Area.addEventListener('click', chnageFormMode)
-  aside__Area.addEventListener('click', chnageFormMode)
+  aside__Area.addEventListener("click", chnageFormMode);
+  aside__Area.addEventListener("click", chnageFormMode);
   // - - - - -  Functions - - - - - //
-  if (client.state == 'signup') {
-    wrapper__Area.classList.add('sign-up__Mode-active')
+  if (client.state == "signup") {
+    wrapper__Area.classList.add("sign-up__Mode-active");
   } else {
-    wrapper__Area.classList.remove('sign-up__Mode-active')
+    wrapper__Area.classList.remove("sign-up__Mode-active");
   }
   // Change Form Mode Function
   function chnageFormMode(e) {
     // Check. If The Target Element Is Aside Sign-Up Button
     if (e.target === aside__SignUp_Button) {
       // Add Class [ Sign Up Mode Active ] On Wrapper Area
-      wrapper__Area.classList.add('sign-up__Mode-active')
+      wrapper__Area.classList.add("sign-up__Mode-active");
     }
     // Check. If The Target Element Is Aside Sign-In Button
     if (e.target === aside__SignIn_Button) {
       // Remove Class [ Sign Up Mode Active ] From Wrapper Area
-      wrapper__Area.classList.remove('sign-up__Mode-active')
+      wrapper__Area.classList.remove("sign-up__Mode-active");
     }
   }
 
   // Function Show Hide Password
-  ;(function showHidePass() {
+  (function showHidePass() {
     // Loop On All The Show Hide Password Icon
     showHidePassDom.forEach((icon) => {
       // When Click On Any Show Hide Icon...
-      icon.addEventListener('click', () => {
+      icon.addEventListener("click", () => {
         // Select The Target Password Input
-        const targetAreaInput = icon.parentElement.parentElement.querySelector('.field input')
+        const targetAreaInput = icon.parentElement.parentElement.querySelector(
+          ".field input"
+        );
         // If The Target Icon Has Hide-icon
-        if (icon.className === 'bx bx-hide') {
+        if (icon.className === "bx bx-hide") {
           // Change The Target Icon Class
-          icon.className = 'bx bx-show'
+          icon.className = "bx bx-show";
           // Change The Target Input Area Type
-          targetAreaInput.setAttribute('type', 'text')
+          targetAreaInput.setAttribute("type", "text");
         } else {
           // else
           // Change The Target Icon Class
-          icon.className = 'bx bx-hide'
+          icon.className = "bx bx-hide";
           // Change The Target Input Area Type
-          targetAreaInput.setAttribute('type', 'password')
+          targetAreaInput.setAttribute("type", "password");
         }
-      })
-    })
-  })()
+      });
+    });
+  })();
 
   // Login Function
   function login(username, password) {
     axios
-      .post('login', {
+      .post("login", {
         account: username,
-        password: password
+        password: password,
       })
       .then((res) => {
         if (!res.data.status) {
-          throw res.data.msg.content
+          throw res.data.msg.content;
         }
-        console.log(res)
+        console.log(res);
         client.login({
           clientName: username,
-          clientType: res.data.userType
-        })
-        router.push('/')
+          clientType: res.data.userType,
+        });
+        router.push("/");
       })
       .catch((err) => {
-        message.error(`Login failed with error: ${err}`)
-      })
+        message.error(`Login failed with error: ${err}`);
+      });
   }
 
   // Login Form Validation Function
   function loginFormValidation() {
     // Loop On All The Inputs
-    let loginFormValid = true
+    let loginFormValid = true;
     allLoginFormFields.forEach((input) => {
       // Input Targte Field Name Value
-      const inputAttribueValueName = input.attributes.name.value
+      const inputAttribueValueName = input.attributes.name.value;
       // Input Value Without Spaces
-      const inputValue = input.value.trim()
+      const inputValue = input.value.trim();
       // Input Regex Validation Response [ True || False ] :)
-      const inputRegex = patterns[inputAttribueValueName].test(inputValue)
+      const inputRegex = patterns[inputAttribueValueName].test(inputValue);
 
       // Check If The Input Value Is Empty
-      if (inputValue === '') {
+      if (inputValue === "") {
         // Call Function Set Error For
-        loginFormValid = false
-        setErrorFor(input, `${inputAttribueValueName} is required. Please enter your response.`)
+        loginFormValid = false;
+        setErrorFor(
+          input,
+          `${inputAttribueValueName} is required. Please enter your response.`
+        );
       } else if (inputRegex === false) {
-        loginFormValid = false
+        loginFormValid = false;
         // Else If: If The InputRegext Response Is False
         // Call Function Set Error For
-        setErrorFor(input, `${inputAttribueValueName} Is Invalid .`)
+        setErrorFor(input, `${inputAttribueValueName} Is Invalid .`);
       } else {
         // Else
         // Call Function Set Success For
-        setSuccessFor(input)
+        setSuccessFor(input);
       }
-    })
+    });
     if (loginFormValid) {
-      login(allLoginFormFields[0].value, allLoginFormFields[1].value)
+      login(allLoginFormFields[0].value, allLoginFormFields[1].value);
     }
   }
 
   // Sign-Up Form Validation Function
   function signUpFormValidation() {
-    let signUpFormValid = true
+    let signUpFormValid = true;
     // Loop On All The Inputs
     allSignUpFormFields.forEach((input) => {
-      console.log(input.value)
+      console.log(input.value);
       // Password And Confirm Password Fileds Values Without Spaces
-      const passwordFieldValue = passwordField.value.trim()
-      const conifrmPassValue = confirmPassword.value.trim()
+      const passwordFieldValue = passwordField.value.trim();
+      const conifrmPassValue = confirmPassword.value.trim();
       // Input Targte Field Name Value
-      const inputAttribueValueName = input.attributes.name.value
+      const inputAttribueValueName = input.attributes.name.value;
       // Input Value Without Spaces
-      const inputValue = input.value.trim()
+      const inputValue = input.value.trim();
       // Input Regex Validation Response [ True || False ] :)
-      const inputRegex = patterns[inputAttribueValueName].test(inputValue)
+      const inputRegex = patterns[inputAttribueValueName].test(inputValue);
 
       // Check If The Input Value Is Empty
-      if (inputValue === '') {
-        signUpFormValid = false
+      if (inputValue === "") {
+        signUpFormValid = false;
         // Call Function Set Error For
-        setErrorFor(input, `${inputAttribueValueName} is required. Please enter your response.`)
+        setErrorFor(
+          input,
+          `${inputAttribueValueName} is required. Please enter your response.`
+        );
       } else if (inputRegex === false) {
-        signUpFormValid = false
+        signUpFormValid = false;
         // Else If: If The InputRegext Response Is False
         // Call Function Set Error For
-        setErrorFor(input, `${inputAttribueValueName} Is Invalid .`)
+        setErrorFor(input, `${inputAttribueValueName} Is Invalid .`);
       } else {
         // Else
         // Call Function Set Success For
-        setSuccessFor(input)
+        setSuccessFor(input);
       }
 
       // Validation The Confirm Password
-      if (conifrmPassValue === '') {
-        signUpFormValid = false
+      if (conifrmPassValue === "") {
+        signUpFormValid = false;
         // Check If The Confirm Password Value Is Empty
         // Call Function Set Error For
-        setErrorFor(confirmPassword, `Confirm password is required. Please enter your response.`)
+        setErrorFor(
+          confirmPassword,
+          `Confirm password is required. Please enter your response.`
+        );
       } else if (conifrmPassValue !== passwordFieldValue) {
-        signUpFormValid = false
+        signUpFormValid = false;
         // Check If The Confirm Password Value Is Dose Not Match The Password Filed
         // Call Function Set Error For
-        setErrorFor(confirmPassword, `Confirm password does not match`)
+        setErrorFor(confirmPassword, `Confirm password does not match`);
       } else {
         // Eles
         // Call Function Set Success For
-        setSuccessFor(confirmPassword)
+        setSuccessFor(confirmPassword);
       }
-    })
+    });
 
     if (signUpFormValid) {
       axios
-        .post('/ManagerOp/creatRole', {
+        .post("/ManagerOp/creatRole", {
           account: allSignUpFormFields[0].value,
           password: allSignUpFormFields[2].value,
-          type: 'user',
-          email: allSignUpFormFields[1].value
+          type: "user",
+          email: allSignUpFormFields[1].value,
         })
         .then((res) => {
-          console.log(res)
+          console.log(res);
           if (!res.data.status) {
-            message.error(`Sign up failed with error: ${res.data.msg.content}`)
+            message.error(`Sign up failed with error: ${res.data.msg.content}`);
           } else {
-            message.info(`Sign up success, now login with this...`)
-            console.log(allSignUpFormFields[0].value)
-            login(allSignUpFormFields[0].value, allSignUpFormFields[2].value)
+            message.info(`Sign up success, now login with this...`);
+            console.log(allSignUpFormFields[0].value);
+            login(allSignUpFormFields[0].value, allSignUpFormFields[2].value);
           }
         })
         .catch((err) => {
-          message.error(`Error detected while signing up: ${err}`)
-        })
+          message.error(`Error detected while signing up: ${err}`);
+        });
     }
   }
 
   // Set Error For Function
   function setErrorFor(input, message) {
     // Select The Target Parent Target Input Group
-    const targetParentInput = input.parentElement.parentElement
+    const targetParentInput = input.parentElement.parentElement;
     // Select The Target Input Error Message
-    const targetErrorMessage = targetParentInput.querySelector('.input__error_message')
+    const targetErrorMessage = targetParentInput.querySelector(".input__error_message");
 
     // Remove Class FormSucess From The Parent Target
-    targetParentInput.classList.remove('formSuccess')
+    targetParentInput.classList.remove("formSuccess");
     // Add Class Success On Target ParentElement
-    targetParentInput.classList.add('formError')
+    targetParentInput.classList.add("formError");
     // Set The Message Inside The Target Error Message
-    targetErrorMessage.innerHTML = message
+    targetErrorMessage.innerHTML = message;
   }
 
   // Set Success For Function
   function setSuccessFor(input) {
     // Select The Target Parent Target Input Group
-    const targetParentInput = input.parentElement.parentElement
+    const targetParentInput = input.parentElement.parentElement;
     // Select The Target Input Error Message
-    const targetErrorMessage = targetParentInput.querySelector('.input__error_message')
+    const targetErrorMessage = targetParentInput.querySelector(".input__error_message");
 
     // Remove Class FormError From The Parent Target
-    targetParentInput.classList.remove('formError')
+    targetParentInput.classList.remove("formError");
     // Add Class Success On Target ParentElement
-    targetParentInput.classList.add('formSuccess')
+    targetParentInput.classList.add("formSuccess");
     // Empty The Error Message
-    targetErrorMessage.innerHTML = ''
+    targetErrorMessage.innerHTML = "";
   }
-})
+});
 </script>
 <style>
 /* Main Css Reset */
@@ -436,9 +471,9 @@ onMounted(() => {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Poppins', Arial, sans-serif;
+  font-family: "Poppins", Arial, sans-serif;
 }
-body {
+.body {
   height: 100vh;
   background-color: var(--body-BG-color);
   display: flex;
@@ -449,6 +484,7 @@ body {
 
 /* Wrapper Area */
 .wrapper__area {
+  padding: 20px;
   position: relative;
   width: 800px;
   height: 650px;
@@ -512,7 +548,7 @@ form .input__group .field {
 }
 /* Field After ( For Border Animation Focus ) */
 form .input__group .field::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
@@ -528,8 +564,8 @@ form .input__group .field:focus-within::after {
   transform: translateX(0);
 }
 /* Text And Password Inputs */
-form .input__group input[type='text'],
-form .input__group input[type='password'] {
+form .input__group input[type="text"],
+form .input__group input[type="password"] {
   position: relative;
   outline: none;
   width: 100%;
@@ -562,8 +598,8 @@ form .input__group > span {
   color: var(--primary-light-gray);
   transition: 0.3s ease-in-out;
 }
-form .input__group input[type='text']:focus ~ span,
-form .input__group input[type='password']:focus ~ span {
+form .input__group input[type="text"]:focus ~ span,
+form .input__group input[type="password"]:focus ~ span {
   color: var(--primary-color);
 }
 /* Input Icon */
@@ -646,7 +682,7 @@ form .form__actions > div:hover {
 }
 /* Create Check Mark */
 .form__actions .remeber_me .checkmark::after {
-  content: '';
+  content: "";
   position: absolute;
   opacity: 0;
   left: 5px;
