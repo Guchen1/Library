@@ -44,6 +44,17 @@ export interface BookResponse {
   }
   books: BookDetail[]
 }
+export interface UserTypeResponse {
+  status: boolean
+  op: string
+  msg: {
+    code: number
+    content: string
+  }
+  pagenum: number
+  numEachPage: number
+  categories: BookType[]
+}
 export interface BookTypeResponse {
   status: boolean
   op: string
@@ -62,6 +73,13 @@ export interface BackendResponse {
     code: number
     content: string
   }
+}
+export interface PictureResponse {
+  status: boolean
+  op: string
+  msg: string
+  data: string
+  name: string
 }
 export interface LogInfo {
   id: string

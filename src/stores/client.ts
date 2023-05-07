@@ -45,7 +45,7 @@ export const useClient = defineStore('client', () => {
     return clientData.clientType === 'staff' && loggedIn.value
   })
   const isSuper = computed(() => {
-    return clientData.clientType === 'super' && loggedIn.value
+    return clientData.clientType === 'superuser' && loggedIn.value
   })
   return { loggedIn, login, logout, isUser, isAdmin, clientData, isStaff, state, isSuper, reload }
 })

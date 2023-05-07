@@ -92,7 +92,7 @@ import type { CascaderProps } from 'ant-design-vue'
 defineProps<{
   typeList: string[]
 }>()
-//TODO::finish location and type selection
+//TODO-D::finish location and type selection
 const options: CascaderProps['options'] = [
   {
     value: 'floor1',

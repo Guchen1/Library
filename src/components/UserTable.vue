@@ -16,7 +16,7 @@
             ></a-checkbox></div
         ></template>
         <template v-else-if="column.key == 'role'">{{
-          record.type == "user" ? "patron" : record.type
+          record.type == 'user' ? 'patron' : record.type
         }}</template>
         <template v-else-if="column.key == 'action'">
           <div class="action" style="display: flex; justify-content: space-between">
@@ -35,9 +35,7 @@
               >
             </div>
             <div style="display: inline-flex" class="action">
-              <a-button style="display: inline-block" type="primary"
-                >Change Password</a-button
-              >
+              <a-button style="display: inline-block" type="primary">Change Password</a-button>
               <a-button style="display: inline-block" type="danger">Delete</a-button>
             </div>
           </div>
@@ -48,148 +46,145 @@
 </template>
 <script setup lang="ts">
 //TODO: Bind to the real data corresponding to the search
-import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
-import { useClient } from "@/stores/client";
-import type { UserDetail } from "@/types/type";
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { useClient } from '@/stores/client'
+import type { UserDetail } from '@/types/type'
+import axios from 'axios'
 
-const client = useClient();
-const checkList = ref<UserDetail[]>([]);
+const client = useClient()
+const checkList = ref<UserDetail[]>([])
 const clearList = () => {
-  checkList.value = [];
-};
+  checkList.value = []
+}
 defineProps<{
-  height: number;
-}>();
+  height: number
+}>()
 const currentList = computed({
   set: () => {},
   get: () => {
-    let temp: Array<UserDetail> = [];
+    let temp: Array<UserDetail> = []
     data.value.forEach((item) => {
       if (checkList.value.indexOf(item) != -1) {
-        temp.push(item);
+        temp.push(item)
       }
-    });
-    return temp;
-  },
-});
+    })
+    return temp
+  }
+})
 const resize = () => {
-  maxHeight.value = "unset";
+  maxHeight.value = 'unset'
   nextTick(() => {
     const a = document
-      .getElementsByClassName("ant-table-body")[0]
-      .getAttribute("style")
-      ?.split(";")[1]
-      .split(":")[1];
-    const b = document.getElementsByClassName("ant-table-body")[0].clientHeight;
+      .getElementsByClassName('ant-table-body')[0]
+      .getAttribute('style')
+      ?.split(';')[1]
+      .split(':')[1]
+    const b = document.getElementsByClassName('ant-table-body')[0].clientHeight
     //a转数字
-    const c = Number(a?.split("px")[0]);
+    const c = Number(a?.split('px')[0])
     if (c != undefined) {
       if (c - b >= 20) {
-        maxHeight.value = b + 10 + "px";
+        maxHeight.value = b + 10 + 'px'
       } else {
-        maxHeight.value = c + "px";
+        maxHeight.value = c + 'px'
       }
     }
-  });
-};
-const maxHeight = ref<string>("");
+  })
+}
+const maxHeight = ref<string>('')
 onMounted(() => {
-  window.addEventListener("resize", resize);
-  resize();
-});
+  window.addEventListener('resize', resize)
+  resize()
+})
 onUnmounted(() => {
-  window.removeEventListener("resize", resize);
-});
+  window.removeEventListener('resize', resize)
+})
 const columns = [
   {
-    title: "Selected",
-    key: "selected",
+    title: 'Selected',
+    key: 'selected',
     width: 87,
-    fixed: "left",
+    fixed: 'left'
   },
   {
-    title: "Username",
-    dataIndex: "name",
-    key: "username",
-    width: 150,
+    title: 'Username',
+    dataIndex: 'name',
+    key: 'username',
+    width: 150
   },
   {
-    title: "Role",
-    key: "role",
+    title: 'Role',
+    key: 'role',
     width: 80,
     filters: [
       {
-        text: "Patron",
-        value: "user",
+        text: 'Patron',
+        value: 'user'
       },
       {
-        text: "Staff",
-        value: "staff",
+        text: 'Staff',
+        value: 'staff'
       },
       {
-        text: "Admin",
-        value: "admin",
+        text: 'Admin',
+        value: 'admin'
       },
       {
-        text: "Superuser",
-        value: "super",
-      },
+        text: 'Superuser',
+        value: 'super'
+      }
     ],
-    onFilter: (value: string, record: UserDetail) => record.type.indexOf(value) === 0,
+    onFilter: (value: string, record: UserDetail) => record.type.indexOf(value) === 0
   },
   {
-    title: "Action",
-    key: "action",
-  },
-];
+    title: 'Action',
+    key: 'action'
+  }
+]
 const check = (record: UserDetail, e: boolean) => {
   if (e) {
-    checkList.value.push(record);
+    checkList.value.push(record)
   } else {
-    checkList.value.splice(checkList.value.indexOf(record), 1);
+    checkList.value.splice(checkList.value.indexOf(record), 1)
   }
-};
-const toRole = (record: UserDetail, role: "user" | "staff" | "admin" | "super") => {
+}
+const toRole = (record: UserDetail, role: 'user' | 'staff' | 'admin' | 'super') => {
   data.value.forEach((item) => {
     //TODO: Finish toRole function
     if (item === record) {
-      item.type = role;
+      item.type = role
     }
-  });
-};
+  })
+}
 const checked = computed({
   //可对setter和getter都传参的计算属性
   get: () => {
     return (record: UserDetail) => {
       //列表里有就返回true
       if (checkList.value.indexOf(record) != -1) {
-        return true;
+        return true
       } else {
-        return false;
+        return false
       }
-    };
+    }
   },
-  set: () => {},
-});
-const data = ref<UserDetail[]>([]);
-for (let i = 0; i < 21; i++) {
-  data.value.push({
-    id: 1,
-    name: "Chen",
-    type: "admin",
-  });
-}
+  set: () => {}
+})
+const data = ref<UserDetail[]>([])
+onMounted(() => {
+  //axios.post("/SuperuserOp/userInfo").then((e:))
+})
 defineExpose({
   clearList,
   checkList,
-  currentList,
-});
+  currentList
+})
 </script>
 <style scoped>
 .action button {
   margin-right: 10px;
 }
 :deep(.ant-table-body) {
-  height: v-bind("maxHeight");
+  height: v-bind('maxHeight');
 }
 </style>
