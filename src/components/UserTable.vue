@@ -35,9 +35,15 @@
               >
             </div>
             <div style="display: inline-flex" class="action">
-              <a-button style="display: inline-block" type="primary"
-                >Change Password</a-button
-              >
+              <a-popover title="Please input new password" trigger="click">
+                <template #content>
+                  <a-input v-model:value="newPass"></a-input
+                  ><a-button style="display: inline-block">Submit</a-button>
+                </template>
+                <a-button style="display: inline-block" type="primary"
+                  >Change Password</a-button
+                >
+              </a-popover>
               <a-button style="display: inline-block" type="danger">Delete</a-button>
             </div>
           </div>
@@ -51,7 +57,7 @@
 import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
 import { useClient } from "@/stores/client";
 import type { UserDetail } from "@/types/type";
-
+const newPass = ref("");
 const client = useClient();
 const checkList = ref<UserDetail[]>([]);
 const clearList = () => {
