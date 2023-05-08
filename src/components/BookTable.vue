@@ -91,7 +91,7 @@
 import { computed, reactive, ref, onMounted } from 'vue'
 import { useAxios } from '@/stores/axios'
 import { useClient } from '@/stores/client'
-import type { BookDetail, BookResponse } from '@/types/type'
+import type { BackendResponse, BookDetail, BookResponse } from '@/types/type'
 import type { AxiosResponse } from 'axios'
 import { message } from 'ant-design-vue'
 import dayjs, { Dayjs } from 'dayjs'
@@ -102,6 +102,7 @@ const client = useClient()
 dayjs.extend(customParseFormat)
 interface BookInfo {
   name: string
+  bookId: string
   isbn: string
   author: string
   borrower: string | undefined
@@ -161,7 +162,28 @@ const currentList = computed({
   }
 })
 const renew = (record: BookInfo) => {
-  //TODO: Finish renew function
+  //TODO-C: Finish renew function
+  //Waiting backend to impleent 'has renewed' state
+  console.log('ready to renew')
+  axios
+    .post('/UserOp/renewBook', {
+      opUser: client.clientData.clientName,
+      account: record.borrower,
+      bookId: record.bookId,
+      time: '30'
+    })
+    .then((e: AxiosResponse<BackendResponse>) => {
+      if (!e.data.status) {
+        throw e.data.msg.content
+      }
+      message.info(`Renew book success!`)
+      data[data.indexOf(record)].duedate?.add(30, 'day')
+      data[data.indexOf(record)].returndate?.add(30, 'day')
+      client.reload()
+    })
+    .catch((e: any) => {
+      message.error(`Error detected when renewing books: ${e}`)
+    })
 }
 const checkList = ref<BookInfo[]>([])
 const check = (record: BookInfo, e: boolean) => {
@@ -189,7 +211,7 @@ const checked = computed({
   set: () => {}
 })
 const data = reactive<BookInfo[]>([])
-// TODO-E: Finish initalize data.
+//TODO-CE: Finish initalize data.
 onMounted(async () => {
   let page: number = 1
   let isMore: boolean = true
@@ -247,6 +269,7 @@ onMounted(async () => {
         if (e.bookName == whatever.bookName) {
           data.push({
             name: whatever.bookName,
+            bookId: whatever.bookId,
             isbn: whatever.bookIsbn,
             author: whatever.bookAuthor,
             borrower: e.borrowAccount,
@@ -266,6 +289,7 @@ onMounted(async () => {
     for (var i = 0; i < whatever.bookStock - count; ++i) {
       data.push({
         name: whatever.bookName,
+        bookId: whatever.bookId,
         isbn: whatever.bookIsbn,
         author: whatever.bookAuthor,
         borrower: undefined,
