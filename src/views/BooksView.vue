@@ -72,12 +72,29 @@ const page = ref(1)
 let nameSave: string = ''
 let authorSave: string = ''
 let isbnSave: string = ''
-let readySave: boolean = false
+let readySave: boolean = true
 const request = (name: string, author: string, isbn: string, ready: boolean) => {
-  nameSave = name
-  authorSave = author
-  isbnSave = isbn
-  readySave = ready
+  if (nameSave != name) {
+    nameSave = name
+    isMore.value = true
+    page.value = 0
+  }
+  if (authorSave != author) {
+    authorSave = author
+    isMore.value = true
+    page.value = 0
+  }
+  if (isbnSave != isbn) {
+    isbnSave = isbn
+    isMore.value = true
+    page.value = 0
+  }
+  if (readySave != ready) {
+    readySave = ready
+    isMore.value = true
+    page.value = 0
+  }
+
   axios
     .post('/UserOp/searchBook', {
       name: name,

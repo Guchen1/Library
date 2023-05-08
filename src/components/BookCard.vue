@@ -39,6 +39,7 @@ const borrow = (e: BookDetail) => {
   //TODO-C: Complete borrow book api.
   axios
     .post('/UserOp/borrowBook', {
+      opUser: client.clientData.clientName,
       bookId: String(e.bookId),
       bookName: e.bookName,
       isbn: e.bookIsbn,
