@@ -5,8 +5,10 @@
       <div class="top-box">
         <a-range-picker v-model:value="date" /><a-input
           style="max-width: 200px; margin-left: 10px"
+          placeholder="Operator"
+          v-model:value="searchStr"
         ></a-input>
-        <a-button style="margin-left: 10px" type="primary">Search</a-button>
+        <a-button style="margin-left: 10px" type="primary" @click="search">Search</a-button>
       </div>
       <div class="top-box" style="padding-top: 20px">
         <LogTable
@@ -22,7 +24,6 @@
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
 import type { Dayjs } from 'dayjs'
 import LogTable from '@/components/LogTable.vue'
 import LogAddon from '@/components/LogAddon.vue'
@@ -35,7 +36,9 @@ import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
 const client = useClient()
 const axios = useAxios().Axios
-const route = useRoute()
+const searchStr = ref('')
+type RangeValue = [Dayjs, Dayjs]
+const date = ref<RangeValue>()
 const toShow = ref<LogDetail>({
   opUser: '',
   opId: '',
@@ -48,7 +51,6 @@ const show = (target: LogDetail) => {
   toShow.value = target
   if (det.value != undefined) det.value.visible = true
 }
-const date = ref<Dayjs>()
 defineProps<{
   width: number
   height: number
@@ -60,6 +62,7 @@ onMounted(() => {
 })
 // TODO: get data
 const search = () => {
+  data.value.splice(0, data.value.length)
   axios
     .post('/SuperuserOp/logInfo', {
       opUser: client.clientData.clientName,
@@ -67,7 +70,22 @@ const search = () => {
       num: '999'
     })
     .then((res: AxiosResponse<LogResponse>) => {
-      res.data.logs.forEach((e) => data.value.push(e))
+      res.data.logs.forEach((e) =>
+        data.value.push({
+          opUser: e.opUser,
+          opId: e.opId,
+          opTime: dayjs(e.opTime),
+          opDo: e.opDo,
+          opInfo: e.opInfo
+        })
+      )
+      console.log(searchStr.value)
+      data.value = data.value.filter((e) => e.opUser.indexOf(searchStr.value) != -1)
+      if (date.value != undefined) {
+        data.value = data.value.filter(
+          (e) => e.opTime.isAfter(date.value?.[0]) && e.opTime.isBefore(date.value?.[1])
+        )
+      }
     })
     .catch((e: any) => message.info('Fetch log data failed ' + e))
 }

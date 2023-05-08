@@ -29,7 +29,7 @@
         <template v-if="column.key === 'id'"> {{ record.opId }} </template>
         <template v-if="column.key === 'operator'"> {{ record.opUser }} </template>
         <template v-if="column.key === 'type'"> {{ record.opDo }} </template>
-        <template v-if="column.key === 'time'"> {{ record.opTime }} </template>
+        <template v-if="column.key === 'time'"> {{ record.opTime.format('YYYY-MM-DD') }} </template>
         <template v-if="column.key === 'operation'">
           <div style="display: flex; flex-wrap: nowrap; justify-content: center; width: 100%">
             <a-button @click="show(record as LogDetail)" style="margin-right: 10px"
@@ -51,19 +51,8 @@ const props = defineProps<{
   show: (target: LogDetail) => void
 }>()
 const checkList = ref<LogDetail[]>([])
-const currentList = computed({
-  set: () => {},
-  get: () => {
-    let temp: Array<LogDetail> = []
-    props.data.forEach((item) => {
-      if (checkList.value.indexOf(item) != -1) {
-        temp.push(item)
-      }
-    })
-    return temp
-  }
-})
 //TODO: Change comparison method from object to id
+//No need to use at limited time...
 const check = (record: LogDetail, e: boolean) => {
   if (e) {
     checkList.value.push(record)
