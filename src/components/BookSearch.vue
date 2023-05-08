@@ -1,8 +1,6 @@
 <template>
   <div>
-    <a-typography-title :level="2" style="text-align: center"
-      >Search Books</a-typography-title
-    >
+    <a-typography-title :level="2" style="text-align: center">Search Books</a-typography-title>
     <a-form
       layout="inline"
       :model="formState"
@@ -18,11 +16,7 @@
       <a-form-item label="Name" name="name" style="margin-left: -15px; margin-top: 5px">
         <a-input v-model:value="formState.name" />
       </a-form-item>
-      <a-form-item
-        label="Borrower"
-        name="borrower"
-        style="margin-left: -15px; margin-top: 5px"
-      >
+      <a-form-item label="Borrower" name="borrower" style="margin-left: -15px; margin-top: 5px">
         <a-input v-model:value="formState.borrower" />
       </a-form-item>
       <a-form-item label="ISBN" name="isbn" style="margin-left: -10px; margin-top: 5px">
@@ -55,44 +49,40 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from "vue";
-import {
-  CheckOutlined,
-  CloseOutlined,
-  SearchOutlined,
-  PlusOutlined,
-} from "@ant-design/icons-vue";
-import { useClient } from "@/stores/client";
-const client = useClient();
+import { reactive, ref } from 'vue'
+import { CheckOutlined, CloseOutlined, SearchOutlined, PlusOutlined } from '@ant-design/icons-vue'
+import { useClient } from '@/stores/client'
+const client = useClient()
 const emits = defineEmits<{
-  (e: "show"): void;
-}>();
+  (e: 'show'): void
+}>()
 
 const props = defineProps<{
-  searchFunc: Function;
-}>();
+  searchFunc: Function
+}>()
 interface FormState {
-  name: string;
-  author: string;
-  isbn: string;
-  ready: boolean;
-  borrower: string;
+  name: string
+  author: string
+  isbn: string
+  ready: boolean
+  borrower: string
 }
 const formState: FormState = reactive({
-  name: "",
-  author: "",
-  isbn: "",
-  ready: false,
-  borrower: "",
-});
+  name: '',
+  author: '',
+  isbn: '',
+  ready: true,
+  borrower: ''
+})
 const ResetForm = () => {
-  formState.name = "";
-  formState.author = "";
-  formState.isbn = "";
-};
+  formState.name = ''
+  formState.author = ''
+  formState.isbn = ''
+  formState.borrower = ''
+}
 const Search = () => {
-  props.searchFunc(formState.name, formState.author, formState.isbn, formState.ready);
-};
+  props.searchFunc(formState.name, formState.author, formState.isbn, formState.borrower)
+}
 </script>
 <style scoped>
 .cardflex {

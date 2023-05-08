@@ -27,9 +27,7 @@
             <div>Username: <a-input class="" v-model:value="paName"></a-input></div>
             <div>Password: <a-input v-model:value="paPass"></a-input></div>
             <div style="width: 100%; justify-content: end; display: flex">
-              <a-button
-                type="primary"
-                style="width: 40%; margin-top: 5px; justify-self: end"
+              <a-button type="primary" style="width: 40%; margin-top: 5px; justify-self: end"
                 >Submit</a-button
               >
             </div>
@@ -39,6 +37,7 @@
       </a-popover>
     </div>
     <BookTable
+      :dataA="data"
       :width="width"
       ref="table"
       :type="'staff'"
@@ -49,115 +48,209 @@
 </template>
 
 <script setup lang="ts">
-import type { Dayjs } from "dayjs";
-import BookTable from "@/components/BookTable.vue";
-import { CloseOutlined, SearchOutlined } from "@ant-design/icons-vue";
-import { reactive, ref, computed, onMounted, watch } from "vue";
-import { useAxios } from "@/stores/axios";
-import BookSearch from "@/components/BookSearch.vue";
-const axios = useAxios().Axios;
-const visibleA = ref(false);
-const visibleB = ref(false);
-const batchName = ref("");
-const paName = ref("");
-const paPass = ref("");
-interface SearchForm {
-  name: string;
-  isbn: string;
-  date: Array<Dayjs>;
+import type { Dayjs } from 'dayjs'
+import BookTable from '@/components/BookTable.vue'
+import { reactive, ref, computed, onMounted, watch } from 'vue'
+import { useAxios } from '@/stores/axios'
+import BookSearch from '@/components/BookSearch.vue'
+import type { BookDetail, BookInfo, BookResponse, BorrowRecord, BorrowResponse } from '@/types/type'
+import { useClient } from '@/stores/client'
+import { message } from 'ant-design-vue'
+import type { AxiosResponse } from 'axios'
+import dayjs from 'dayjs'
+const axios = useAxios().Axios
+const client = useClient()
+const visibleA = ref(false)
+const visibleB = ref(false)
+const batchName = ref('')
+const paName = ref('')
+const paPass = ref('')
+const data = reactive<BookInfo[]>([])
+onMounted(() => {
+  search('', '', '', '')
+})
+const search = async (name: string, author: string, isbn: string, borrower: string) => {
+  //TODO-C: Finish search function
+  data.splice(0, data.length)
+  let page: number = 1
+  let isMore: boolean = true
+  let bookBorrowInfo: BorrowRecord[] = []
+  let bookInfo: BookDetail[] = []
+  await axios
+    .post('/StaffOp/bookAllBorrowInfo', {
+      opUser: client.clientData.clientName,
+      page: '1',
+      num: '999'
+    })
+    .then((e: AxiosResponse<BorrowResponse>) => {
+      // Do not ask me why...
+      e.data.infoList.forEach((e: BorrowRecord) => {
+        if (
+          e.bookName.indexOf(name) != -1 &&
+          e.bookAuthor.indexOf(author) != -1 &&
+          e.bookIsbn.indexOf(isbn) != -1 &&
+          e.borrowAccount.indexOf(borrower) != -1
+        ) {
+          bookBorrowInfo.push(e)
+        }
+      })
+    })
+    .catch((e: any) => {
+      message.error(e)
+    })
+  try {
+    while (isMore) {
+      await axios
+        .post('/UserOp/searchBook', {
+          opUser: client.clientData.clientName,
+          name: '',
+          isbn: '',
+          author: '',
+          page: String(page),
+          ready: true
+        })
+        .then((res: AxiosResponse<BookResponse>) => {
+          if (!res.status) {
+            isMore = false
+            throw 'Unable to get data with status code ' + res.status
+          }
+          if (res.data.books.length == 0) {
+            isMore = false
+          } else {
+            res.data.books.forEach((e: BookDetail) => {
+              if (
+                e.bookName.indexOf(name) != -1 &&
+                e.bookAuthor.indexOf(author) != -1 &&
+                e.bookIsbn.indexOf(isbn) != -1
+              ) {
+                bookInfo.push(e)
+              }
+            })
+            page += 1
+          }
+        })
+        .catch((e: any) => {
+          isMore = false
+          throw e
+        })
+    }
+  } catch (err: any) {
+    message.error(err)
+  }
+
+  bookInfo.forEach((e: any) => {
+    let whatever = e
+    let count: number = 0
+    function a(whatever: any) {
+      return (e: BorrowRecord) => {
+        if (e.bookName == whatever.bookName) {
+          data.push({
+            name: whatever.bookName,
+            bookId: whatever.bookId,
+            isbn: whatever.bookIsbn,
+            author: whatever.bookAuthor,
+            borrower: e.borrowAccount,
+            borrowdate: dayjs(e.borrowTime, 'YYYY-MM-DD'),
+            duedate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
+            returndate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
+            status: 'borrowed',
+            renewable: true,
+            visible: true
+          })
+          count++
+        }
+      }
+    }
+    bookBorrowInfo.forEach(a(whatever))
+    if (!(borrower != '' && e.borrowAccount == undefined)) {
+      for (var i = 0; i < whatever.bookStock - count; ++i) {
+        data.push({
+          name: whatever.bookName,
+          bookId: whatever.bookId,
+          isbn: whatever.bookIsbn,
+          author: whatever.bookAuthor,
+          borrower: undefined,
+          borrowdate: undefined,
+          duedate: undefined,
+          returndate: e.returndate,
+          status: 'available',
+          renewable: undefined,
+          visible: false
+        })
+      }
+    }
+  })
 }
-const search = () => {
-  //TODO: Finish search function
-};
-const table = ref<typeof BookTable>();
-const searchForm: SearchForm = reactive({
-  name: "",
-  isbn: "",
-  date: [],
-});
+const table = ref<typeof BookTable>()
 const props = defineProps<{
-  width: number;
-  height: number;
-}>();
-const ResetForm = () => {
-  searchForm.name = "";
-  searchForm.isbn = "";
-  searchForm.date = [];
-};
-const onFinish = () => {
-  axios.post("/managerop/bookBorrowInfo", {
-    name: searchForm.name,
-    isbn: searchForm.isbn,
-    date: searchForm.date,
-  });
-  console.log("Success:");
-  console.log("Success:", searchForm.date[0].format("YYYY-MM-DD"));
-};
+  width: number
+  height: number
+}>()
 const computedWidth = computed(() => {
   return {
-    first: props.width >= 1070 ? "0px" : "-14px",
-    second: props.width >= 1070 ? "0px" : "-10px",
-    third: props.width >= 1070 ? "0px" : "5px",
-  };
-});
+    first: props.width >= 1070 ? '0px' : '-14px',
+    second: props.width >= 1070 ? '0px' : '-10px',
+    third: props.width >= 1070 ? '0px' : '5px'
+  }
+})
 const allBorrowable = computed(() => {
   //遍历查看是否选中的均可借阅
   for (let i = 0; i < table.value?.currentList.length; i++) {
-    if (table.value?.currentList[i].status != "available") {
-      return false;
+    if (table.value?.currentList[i].status != 'available') {
+      return false
     }
   }
   if (table.value?.currentList.length == 0) {
-    return false;
+    return false
   }
-  return true;
-});
+  return true
+})
 const allRenewable = computed(() => {
   //遍历查看是否选中的均可续借
-  let res = true;
+  let res = true
   for (let i = 0; i < table.value?.currentList.length; i++) {
     if (!table.value?.currentList[i].renewable) {
-      res = false;
+      res = false
     }
   }
   if (table.value?.currentList.length == 0) {
-    res = false;
+    res = false
   }
-  return res;
-});
+  return res
+})
 const allReturnable = computed(() => {
   //遍历查看是否选中的均可归还
   for (let i = 0; i < table.value?.currentList.length; i++) {
     if (
-      table.value?.currentList[i].status != "borrowed" &&
-      table.value?.currentList[i].status != "overdue" &&
-      table.value?.currentList[i].status != "renewed"
+      table.value?.currentList[i].status != 'borrowed' &&
+      table.value?.currentList[i].status != 'overdue' &&
+      table.value?.currentList[i].status != 'renewed'
     ) {
-      return false;
+      return false
     }
   }
   if (table.value?.currentList.length == 0) {
-    return false;
+    return false
   }
-  return true;
-});
+  return true
+})
 const clearList = computed(() => {
-  return table?.value?.clearList;
-});
-onMounted(() => {});
+  return table?.value?.clearList
+})
+onMounted(() => {})
 defineExpose({
-  clearList,
-});
+  clearList
+})
 watch(visibleA, () => {
-  batchName.value = "";
-  paName.value = "";
-  paPass.value = "";
-});
+  batchName.value = ''
+  paName.value = ''
+  paPass.value = ''
+})
 watch(visibleB, () => {
-  batchName.value = "";
-  paName.value = "";
-  paPass.value = "";
-});
+  batchName.value = ''
+  paName.value = ''
+  paPass.value = ''
+})
 </script>
 
 <style scoped>
@@ -178,12 +271,12 @@ watch(visibleB, () => {
   font-size: 30px;
   font-weight: bold;
   display: inline-flex;
-  margin-top: v-bind("computedWidth.first");
+  margin-top: v-bind('computedWidth.first');
 }
 
 .item {
-  margin-top: v-bind("computedWidth.second");
-  margin-bottom: v-bind("computedWidth.third");
+  margin-top: v-bind('computedWidth.second');
+  margin-bottom: v-bind('computedWidth.third');
 }
 
 @media screen and (max-width: 872px) {

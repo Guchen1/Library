@@ -87,11 +87,11 @@
   </a-table>
 </template>
 <script setup lang="ts">
-//TODO: Bind to the real data corresponding to the search
-import { computed, reactive, ref, onMounted } from 'vue'
+//TODO-C: Bind to the real data corresponding to the search
+import { computed, reactive, ref, onMounted, watch } from 'vue'
 import { useAxios } from '@/stores/axios'
 import { useClient } from '@/stores/client'
-import type { BackendResponse, BookDetail, BookResponse } from '@/types/type'
+import type { BackendResponse, BookInfo, BookDetail, BookResponse } from '@/types/type'
 import type { AxiosResponse } from 'axios'
 import { message } from 'ant-design-vue'
 import dayjs, { Dayjs } from 'dayjs'
@@ -100,47 +100,18 @@ const visible = reactive<boolean[]>([])
 const axios = useAxios().Axios
 const client = useClient()
 dayjs.extend(customParseFormat)
-interface BookInfo {
-  name: string
-  bookId: string
-  isbn: string
-  author: string
-  borrower: string | undefined
-  borrowdate: Dayjs | undefined
-  duedate: Dayjs | undefined
-  returndate: Dayjs | undefined
-  status: 'available' | 'borrowed' | 'overdue' | 'returned' | 'renewed'
-  renewable: boolean | undefined
-  visible: boolean
-}
 
-interface BorrowRecord {
-  bookIsbn: string
-  bookName: string
-  bookAuthor: string
-  borrowAccount: string
-  borrowTime: string
-  borrowDuration: number
-  borrowIsOverTime: number
-}
-
-interface BorrowResponse {
-  status: boolean
-  op: string
-  msg: {
-    code: number
-    content: string
-  }
-  pageNum: number
-  numEachPage: number
-  infoList: BorrowRecord[]
-}
-
+//TODO-C: Finish initalize data.
 const props = defineProps<{
   height: number
   type: string
   width: number
+  dataA: BookInfo[]
 }>()
+watch(props.dataA, () => {
+  data.splice(0, data.length)
+  props.dataA.forEach((e) => data.push(e))
+})
 const name = ref('')
 const hide = (record: BookInfo) => {
   for (let i = 0; i < data.length; i++) {
@@ -211,101 +182,6 @@ const checked = computed({
   set: () => {}
 })
 const data = reactive<BookInfo[]>([])
-//TODO-CE: Finish initalize data.
-onMounted(async () => {
-  let page: number = 1
-  let isMore: boolean = true
-  let bookBorrowInfo: BorrowRecord[] = []
-  let bookInfo: BookDetail[] = []
-  await axios
-    .post('/StaffOp/bookAllBorrowInfo', {
-      opUser: client.clientData.clientName,
-      page: '1',
-      num: '999'
-    })
-    .then((e: AxiosResponse<BorrowResponse>) => {
-      // Do not ask me why...
-      e.data.infoList.forEach((e: any) => {
-        bookBorrowInfo.push(e)
-      })
-    })
-    .catch((e: any) => {
-      message.error(e)
-    })
-  try {
-    while (isMore) {
-      await axios
-        .post('/UserOp/searchBook', {
-          opUser: client.clientData.clientName,
-          name: '',
-          isbn: '',
-          author: '',
-          page: String(page),
-          ready: true
-        })
-        .then((res: AxiosResponse<BookResponse>) => {
-          if (!res.status) {
-            throw 'Unable to get data with status code ' + res.status
-          }
-          if (res.data.books.length == 0) {
-            isMore = false
-          } else {
-            res.data.books.forEach((element: any) => {
-              bookInfo.push(element)
-            })
-            page += 1
-          }
-        })
-    }
-  } catch (err: any) {
-    message.error(err)
-  }
-
-  bookInfo.forEach((e: any) => {
-    let whatever = e
-    let count: number = 0
-    function a(whatever: any) {
-      return (e: BorrowRecord) => {
-        if (e.bookName == whatever.bookName) {
-          data.push({
-            name: whatever.bookName,
-            bookId: whatever.bookId,
-            isbn: whatever.bookIsbn,
-            author: whatever.bookAuthor,
-            borrower: e.borrowAccount,
-            borrowdate: dayjs(e.borrowTime, 'YYYY-MM-DD'),
-            duedate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
-            returndate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
-            status: 'borrowed',
-            renewable: true,
-            visible: true
-          })
-          count++
-        }
-      }
-    }
-    bookBorrowInfo.forEach(a(whatever))
-    console.log(count)
-    for (var i = 0; i < whatever.bookStock - count; ++i) {
-      data.push({
-        name: whatever.bookName,
-        bookId: whatever.bookId,
-        isbn: whatever.bookIsbn,
-        author: whatever.bookAuthor,
-        borrower: undefined,
-        borrowdate: undefined,
-        duedate: undefined,
-        returndate: e.returndate,
-        status: 'available',
-        renewable: undefined,
-        visible: false
-      })
-    }
-  })
-  console.log(bookBorrowInfo)
-  console.log(bookInfo)
-  console.log(data)
-})
 const filter = reactive([
   {
     text: 'Borrowed',

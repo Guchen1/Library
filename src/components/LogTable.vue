@@ -4,7 +4,7 @@
       :columns="columns"
       @change="resize"
       :dataSource="data"
-      :scroll="{ x: 'max-content', y: height - 248 }"
+      :scroll="{ x: 'max-content', y: height - 258 }"
       :pagination="{ position: ['bottomCenter'], pageSize: 10, showSizeChanger: false }"
     >
       <template #headerCell="{ column }">

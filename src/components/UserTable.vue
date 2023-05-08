@@ -44,9 +44,7 @@
                   <a-input v-model:value="newPass"></a-input
                   ><a-button style="display: inline-block">Submit</a-button>
                 </template>
-                <a-button style="display: inline-block" type="primary"
-                  >Change Password</a-button
-                >
+                <a-button style="display: inline-block" type="primary">Change Password</a-button>
               </a-popover>
               <a-button style="display: inline-block" type="danger">Delete</a-button>
             </div>
@@ -58,13 +56,13 @@
 </template>
 <script setup lang="ts">
 //TODO: Bind to the real data corresponding to the search
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useClient } from '@/stores/client'
 import type { UserDetail, UserTypeResponse } from '@/types/type'
 import { message } from 'ant-design-vue'
 import { usePagination } from 'vue-request'
 import axios, { type AxiosResponse } from 'axios'
-const newPass = ref("");
+const newPass = ref('')
 const client = useClient()
 const checkList = ref<UserDetail[]>([])
 const clearList = () => {
@@ -109,7 +107,6 @@ const resize = () => {
 const maxHeight = ref<string>('')
 onMounted(() => {
   window.addEventListener('resize', resize)
-  resize()
 })
 onUnmounted(() => {
   window.removeEventListener('resize', resize)
@@ -229,7 +226,9 @@ const {
     pageSizeKey: 'results'
   }
 })
-
+watch(data, () => {
+  resize()
+})
 const pagination = computed(() => ({
   total: data.value?.length,
   current: current.value,
