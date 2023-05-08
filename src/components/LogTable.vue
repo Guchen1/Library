@@ -42,7 +42,7 @@
   </div>
 </template>
 <script setup lang="ts">
-//TODO-D: Bind to the real data corresponding to the search
+//TODO: Bind to the real data corresponding to the search
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import type { LogInfo } from '@/types/type'
 const props = defineProps<{
@@ -62,7 +62,7 @@ const currentList = computed({
     return temp
   }
 })
-//TODO-D: Change comparison method from object to id
+//TODO: Change comparison method from object to id
 const check = (record: LogInfo, e: boolean) => {
   if (e) {
     checkList.value.push(record)

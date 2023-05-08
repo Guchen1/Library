@@ -82,7 +82,7 @@ const toRole = (role: string, item?: UserDetail) => {
         })
     })
   }
-  //TODO-D: Finish toRole function,更新成功之后刷新页面
+  //TODO: Finish toRole function,更新成功之后刷新页面
   console.log(table?.value?.checkList) //这里是选中的列表;
   client.reload() //这行就是刷新的
 }

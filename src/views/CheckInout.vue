@@ -211,7 +211,7 @@ const newPateron = async () => {
       })
   }
 }
-//TODO: Batch Op, Checkout Return Renew
+//TODO-C: Batch Op, Checkout Return Renew
 const batchOp = (optype: number) => {
   if (optype == 1) {
     table.value?.checkList.forEach((e: any) => table.value?.borrow(e, batchName.value))

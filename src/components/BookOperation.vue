@@ -49,7 +49,7 @@
           ><a-form-item style="margin-bottom: 10px" label="Author"
             ><a-input v-model:value="book.author"></a-input> </a-form-item
           ><a-form-item style="margin-bottom: 10px" label="Type"
-            ><a-select v-model:value="book.type">
+            ><a-select v-model:value="book.type" @change="changeType">
               <template v-for="item in typeList" :key="item">
                 <a-select-option v-if="item != 'All'" :value="item">{{ item }}</a-select-option>
               </template>
@@ -67,7 +67,12 @@
       </div>
       <div class="bottom-box">
         <div class="text" style="padding-left: 30px">Inventory</div>
-        <a-input-number :precision="0" :min="0" v-model:value="book.inventory"></a-input-number>
+        <a-input-number
+          :precision="0"
+          :min="0"
+          v-model:value="book.inventory"
+          @change="(e:number) => (book.inventory = e)"
+        ></a-input-number>
       </div>
     </div>
     <div class="padding bottom-box">
@@ -82,17 +87,18 @@
 import { reactive, ref, watch } from 'vue'
 import { PlusOutlined, LoadingOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons-vue'
 import { message, type UploadChangeParam } from 'ant-design-vue'
-import type { BookModify, BookDetail } from '@/types/type'
+import type { BookModify, BookDetail, BackendResponse } from '@/types/type'
 import { useAxios } from '@/stores/axios'
 import { useClient } from '@/stores/client'
-import { formToJSON, type AxiosResponse } from 'axios'
+import type { AxiosResponse } from 'axios'
 //引入message样式
 import 'ant-design-vue/es/message/style/css'
 import type { CascaderProps } from 'ant-design-vue'
 defineProps<{
   typeList: string[]
 }>()
-//TODO-D::finish location and type selection
+const client = useClient()
+//TODO-C: finish location and type selection
 const options: CascaderProps['options'] = [
   {
     value: 'floor1',
@@ -542,6 +548,8 @@ const axios = useAxios().Axios
 const visible = ref<boolean>(false)
 const loading = ref<boolean>(false)
 const bookDetail = ref<BookDetail | undefined>(undefined)
+const picChanged = ref<boolean>(false)
+const picName = ref<string>('')
 const book: BookModify = reactive<BookModify>({
   id: 0,
   name: '',
@@ -552,7 +560,8 @@ const book: BookModify = reactive<BookModify>({
   location: [],
   type: '',
   picObj: '',
-  inventory: 0
+  inventory: 0,
+  cover: ''
 })
 const fileList = ref([])
 function getBase64(img: Blob, callback: (base64Url: string) => void) {
@@ -563,31 +572,109 @@ function getBase64(img: Blob, callback: (base64Url: string) => void) {
 const handleCancel = () => {
   visible.value = false
 }
+//TODO-C: Add Book info
+//TODO-C: Change Book info
 const handleOk = async (isAdd: boolean) => {
-  axios.post(isAdd ? 'managerop/addbook' : 'managerop/updatebook', {
-    isbn: book.isbn,
-    name: book.name,
-    author: book.author,
-    publisher: '',
-    summary: book.info,
-    cover: 'https://imgbed.link/file/23947',
-    price: String(1),
-    stock: String(book.inventory),
-    category: 'novel'
-  })
+  if (picChanged.value) {
+    await axios
+      .post('/picture/upload', {
+        data: book.picObj.substring(23),
+        name: picName.value
+      })
+      .then((e: AxiosResponse<BackendResponse>) => {
+        if (e.data.status) {
+          book.cover = picName.value
+        } else {
+          message.info('Upload picture failed.')
+        }
+        picChanged.value = !picChanged.value
+        picName.value = ''
+      })
+      .catch(() => message.info('Pic not uploaded.'))
+  }
+  if (!isAdd) {
+    console.log('change book')
+    axios
+      .post('/StaffOp/updateBook', {
+        opUser: client.clientData.clientName,
+        isbn: book.isbn,
+        name: book.name,
+        author: book.author,
+        publisher: 'BenderBlog Record',
+        summer: book.info,
+        cover: book.cover,
+        stock: String(book.inventory),
+        category: String(book.type),
+        price: String(book.price),
+        location: book.location
+      })
+      .then((e: AxiosResponse<BackendResponse>) => {
+        if (e.data.status) {
+          message.info('change completed')
+        } else {
+          throw e.data.msg.content
+        }
+      })
+      .catch((e: any) => {
+        console.log(e)
+        message.warning('change failed')
+      })
+  } else {
+    console.log('add book')
+    axios
+      .post('/StaffOp/addBook', {
+        opUser: client.clientData.clientName,
+        isbn: book.isbn,
+        name: book.name,
+        author: book.author,
+        publisher: 'BenderBlog Record',
+        summary: book.info,
+        cover: book.cover,
+        stock: String(book.inventory),
+        category: String(book.type),
+        price: String(book.price),
+        location: book.location
+      })
+      .then((e: AxiosResponse<BackendResponse>) => {
+        if (e.data.status) {
+          message.info('change completed')
+        } else {
+          throw e.data.msg.content
+        }
+      })
+      .catch((e: any) => {
+        console.log(e)
+        message.warning('change failed')
+      })
+  }
+
   visible.value = false
+}
+const changeType = (t: string) => {
+  book.type = t
+}
+const changePosition = (t: any) => {
+  console.log(t)
+  t.forEach((e: any) => {
+    book.location.push(e.value)
+  })
 }
 const handleChange = (info: UploadChangeParam) => {
   if (info.file.status === 'uploading' && info.file.originFileObj != undefined) {
     getBase64(info.file.originFileObj, (base64Url: string) => {
       if (book != undefined) book.picObj = base64Url
+      picChanged.value = true
+      picName.value = info.file.name
       loading.value = false
     })
   }
   if (info.file.status === 'done' && info.file.originFileObj != undefined) {
     // Get this url from response in real world.
     getBase64(info.file.originFileObj, (base64Url: string) => {
+      if (book != undefined) book.picObj = base64Url
       //.value = base64Url
+      picChanged.value = true
+      picName.value = info.file.name
       loading.value = false
     })
   }
@@ -612,9 +699,11 @@ watch(
       book.name = bookDetail.value.bookName
       book.author = bookDetail.value.bookAuthor
       book.isbn = bookDetail.value.bookIsbn
+      book.type = bookDetail.value.bookCategoryName
       book.info = bookDetail.value.bookSummary
       book.picObj = bookDetail.value.bookCover
       book.inventory = bookDetail.value.bookStock
+      book.cover = bookDetail.value.bookCoverName
       console.log(book.name)
     } else {
       fileList.value = []
@@ -623,6 +712,7 @@ watch(
       book.isbn = ''
       book.info = ''
       book.picObj = ''
+      book.cover = ''
       book.inventory = 0
     }
   }

@@ -18,6 +18,7 @@ export interface BookDetail {
   bookStock: number
   bookCategoryName: string
   bookLocation: string
+  bookCoverName: string
   // situation: boolean
 }
 export interface BookModify {
@@ -30,7 +31,8 @@ export interface BookModify {
   inventory: number
   price: number
   picObj: string
-  location: string[]
+  location: String[]
+  cover: string
 }
 export interface BookResponse {
   status: boolean

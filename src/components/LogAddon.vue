@@ -28,7 +28,7 @@ const data = reactive<LogDetail>({
   detail: 'Patron s was deleted and all his/her records were deleted. '
 })
 axios.get('/api/log/' + props.id).then((res: AxiosResponse<LogDetail>) => {
-  //TODO-D: Refactor this
+  //TODO: Refactor this
   console.log(res.data)
   visible.value = true
 })

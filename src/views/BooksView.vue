@@ -48,7 +48,8 @@ const show = (book: BookDetail | undefined) => {
 const deleteBook = (isbn: BookDetail) => {
   axios
     .post('/StaffOp/deleteBook', {
-      isbn: isbn.bookIsbn
+      isbn: isbn.bookIsbn,
+      opUser: client.clientData.clientName
     })
     .then((e: AxiosResponse<BackendResponse>) => {
       console.log(e.data.msg.content)
@@ -96,6 +97,7 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
       } else {
         //TODO-C: ask backend to update api
         resobj.forEach((e) => {
+          e.bookCoverName = e.bookCover
           axios
             .post('/picture/download', {
               name: e.bookCover
@@ -118,7 +120,7 @@ const search = (name: string, author: string, isbn: string, ready: boolean) => {
   request(name, author, isbn, ready)
 }
 watch(selected, (e) => {
-  //TODO-D: finish search by type
+  //TODO: finish search by type
   //request(nameSave,authorSave,isbnSave,readySave)
 })
 onMounted(() => {

@@ -134,7 +134,7 @@ const currentList = computed({
   }
 })
 const returnBook = (record: BookInfo) => {
-  //TODO-D: Return books
+  //TODO: Return books
   axios
     .post('/StaffOp/returnBook', {
       opUser: client.clientData.clientName,

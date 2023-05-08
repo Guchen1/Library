@@ -19,6 +19,7 @@ const props = defineProps<{
 }>()
 const computedLocation = computed(() => {
   let res = ''
+  console.log(props.book.bookLocation)
   if (props.book.bookLocation.length == 0) {
     res = 'none'
   } else {
