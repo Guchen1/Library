@@ -184,7 +184,7 @@ const search = async (name: string, author: string, isbn: string, borrower: stri
     }
   })
 }
-//TODO: Create Pateron
+//TODO-C: Create Pateron
 const newPateron = async () => {
   if (paName.value.length == 0 || paPass.value.length == 0) {
     message.error('Pleace fulfill all info.')
@@ -210,6 +210,8 @@ const newPateron = async () => {
       })
   }
 }
+//TODO: Batch Op, Checkout Return Renew
+const batchOp = (optype: string) => {}
 const table = ref<typeof BookTable>()
 const props = defineProps<{
   width: number

@@ -59,7 +59,7 @@
         >
           <template #content>
             <a-input v-model:value="name"></a-input
-            ><a-button style="display: inline-block">Submit</a-button>
+            ><a-button style="display: inline-block" @click="borrow(record)">Submit</a-button>
           </template>
           <a style="font-size: 10px; white-space: nowrap" type="primary" size="small">Check Out</a>
         </a-popover>
@@ -69,6 +69,7 @@
           type="primary"
           style="font-size: 10px; white-space: nowrap"
           size="small"
+          @click="returnBook(record)"
           >Return</a
         >
         <div style="display: inline-block">
@@ -132,10 +133,60 @@ const currentList = computed({
     return temp
   }
 })
+const returnBook = (record: BookInfo) => {
+  //TODO-D: Return books
+  axios
+    .post('/StaffOp/returnBook', {
+      opUser: client.clientData.clientName,
+      bookId: record.bookId,
+      isDamaged: false,
+      account: record.borrower,
+      borrowId: ''
+    })
+    .then((e: AxiosResponse<BackendResponse>) => {
+      if (!e.data.status) {
+        throw e.data.msg.content
+      }
+      message.info(`Return book success!`)
+      data[data.indexOf(record)].borrowdate = undefined
+      data[data.indexOf(record)].borrower = undefined
+      data[data.indexOf(record)].duedate = undefined
+      data[data.indexOf(record)].returndate = undefined
+      data[data.indexOf(record)].status = 'available'
+      client.reload()
+    })
+    .catch((e: any) => {
+      message.error(`Error detected when returing books: ${e}`)
+    })
+}
+const borrow = (record: BookInfo) => {
+  //TODO-C: Borrow books
+  axios
+    .post('/StaffOp/borrowBook', {
+      opUser: client.clientData.clientName,
+      bookId: record.bookId,
+      userAccount: name.value,
+      dates: '30'
+    })
+    .then((e: AxiosResponse<BackendResponse>) => {
+      if (!e.data.status) {
+        throw e.data.msg.content
+      }
+      message.info(`Borrow book success!`)
+      data[data.indexOf(record)].borrowdate = dayjs()
+      data[data.indexOf(record)].borrower = name.value
+      data[data.indexOf(record)].duedate = dayjs().add(30, 'day')
+      data[data.indexOf(record)].returndate = dayjs().add(30, 'day')
+      data[data.indexOf(record)].status = 'borrowed'
+      client.reload()
+    })
+    .catch((e: any) => {
+      message.error(`Error detected when borrowing books: ${e}`)
+    })
+}
 const renew = (record: BookInfo) => {
   //TODO-C: Finish renew function
   //Waiting backend to impleent 'has renewed' state
-  console.log('ready to renew')
   axios
     .post('/UserOp/renewBook', {
       opUser: client.clientData.clientName,
@@ -413,6 +464,9 @@ if (props.type == 'user') {
 }
 defineExpose({
   clearList,
+  renew,
+  returnBook,
+
   checkList,
   currentList
 })
