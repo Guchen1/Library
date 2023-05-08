@@ -27,7 +27,10 @@
             <div>Username: <a-input class="" v-model:value="paName"></a-input></div>
             <div>Password: <a-input v-model:value="paPass"></a-input></div>
             <div style="width: 100%; justify-content: end; display: flex">
-              <a-button type="primary" style="width: 40%; margin-top: 5px; justify-self: end"
+              <a-button
+                type="primary"
+                style="width: 40%; margin-top: 5px; justify-self: end"
+                @click="newPateron()"
                 >Submit</a-button
               >
             </div>
@@ -180,6 +183,32 @@ const search = async (name: string, author: string, isbn: string, borrower: stri
       }
     }
   })
+}
+//TODO: Create Pateron
+const newPateron = async () => {
+  if (paName.value.length == 0 || paPass.value.length == 0) {
+    message.error('Pleace fulfill all info.')
+  } else {
+    await axios
+      .post('/ManagerOp/creatRole', {
+        opUser: client.clientData.clientName,
+        account: paName.value,
+        password: paPass.value,
+        type: 'user',
+        email: 'default@example.com'
+      })
+      .then((res: any) => {
+        console.log(res)
+        if (!res.data.status) {
+          throw res.data.msg.content
+        } else {
+          message.info(`Create pateron complete`)
+        }
+      })
+      .catch((err: any) => {
+        message.error(`Error detected while creating pateron: ${err}`)
+      })
+  }
 }
 const table = ref<typeof BookTable>()
 const props = defineProps<{
