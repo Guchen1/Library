@@ -16,11 +16,6 @@
             ></a-checkbox>
           </div>
         </template>
-        <template v-if="column.key === 'operation'">
-          <div style="display: flex; flex-wrap: nowrap; justify-content: center">
-            <a-button type="danger" :disabled="currentList.length == 0">Delete Selected</a-button>
-          </div>
-        </template>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'selected'">
@@ -31,10 +26,15 @@
             ></a-checkbox>
           </div>
         </template>
+        <template v-if="column.key === 'id'"> {{ record.opId }} </template>
+        <template v-if="column.key === 'operator'"> {{ record.opUser }} </template>
+        <template v-if="column.key === 'type'"> {{ record.opDo }} </template>
+        <template v-if="column.key === 'time'"> {{ record.opTime }} </template>
         <template v-if="column.key === 'operation'">
           <div style="display: flex; flex-wrap: nowrap; justify-content: center; width: 100%">
-            <a-button @click="show(record as LogInfo)" style="margin-right: 10px">Detail</a-button>
-            <a-button type="danger">Delete</a-button>
+            <a-button @click="show(record as LogDetail)" style="margin-right: 10px"
+              >Detail</a-button
+            >
           </div>
         </template>
       </template>
@@ -44,17 +44,18 @@
 <script setup lang="ts">
 //TODO: Bind to the real data corresponding to the search
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
-import type { LogInfo } from '@/types/type'
+import type { LogDetail } from '@/types/type'
 const props = defineProps<{
   height: number
-  show: (target: LogInfo) => void
+  data: LogDetail[]
+  show: (target: LogDetail) => void
 }>()
-const checkList = ref<LogInfo[]>([])
+const checkList = ref<LogDetail[]>([])
 const currentList = computed({
   set: () => {},
   get: () => {
-    let temp: Array<LogInfo> = []
-    data.value.forEach((item) => {
+    let temp: Array<LogDetail> = []
+    props.data.forEach((item) => {
       if (checkList.value.indexOf(item) != -1) {
         temp.push(item)
       }
@@ -63,7 +64,7 @@ const currentList = computed({
   }
 })
 //TODO: Change comparison method from object to id
-const check = (record: LogInfo, e: boolean) => {
+const check = (record: LogDetail, e: boolean) => {
   if (e) {
     checkList.value.push(record)
   } else {
@@ -72,13 +73,13 @@ const check = (record: LogInfo, e: boolean) => {
 }
 const checkAll = (e: boolean) => {
   if (e) {
-    data.value.forEach((item) => {
+    props.data.forEach((item) => {
       if (checkList.value.indexOf(item) == -1) {
         checkList.value.push(item)
       }
     })
   } else {
-    data.value.forEach((item) => {
+    props.data.forEach((item) => {
       if (checkList.value.indexOf(item) != -1) {
         checkList.value.splice(checkList.value.indexOf(item), 1)
       }
@@ -88,7 +89,7 @@ const checkAll = (e: boolean) => {
 const checked = computed({
   //可对setter和getter都传参的计算属性
   get: () => {
-    return (record: LogInfo) => {
+    return (record: LogDetail) => {
       //列表里有就返回true
       if (checkList.value.indexOf(record) != -1) {
         return true
@@ -163,22 +164,7 @@ const columns = ref<Array<any>>([
     width: 200
   }
 ])
-const data = ref<Array<LogInfo>>([
-  {
-    id: '1',
-    operator: 'admin',
-    type: 'login',
-    time: '2021-10-10'
-  }
-])
-for (let i = 0; i < 10; i++) {
-  data.value.push({
-    id: '1',
-    operator: 'admin',
-    type: 'login',
-    time: '2021-10-10'
-  })
-}
+
 defineExpose({
   checkList
 })

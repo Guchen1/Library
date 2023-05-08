@@ -95,7 +95,7 @@ import { useClient } from '@/stores/client'
 import type { BackendResponse, BookInfo, BookDetail, BookResponse } from '@/types/type'
 import type { AxiosResponse } from 'axios'
 import { message } from 'ant-design-vue'
-import dayjs, { Dayjs } from 'dayjs'
+import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 const visible = reactive<boolean[]>([])
 const axios = useAxios().Axios
@@ -134,14 +134,14 @@ const currentList = computed({
   }
 })
 const returnBook = (record: BookInfo) => {
-  //TODO: Return books
+  //TODO-C: Return books
   axios
     .post('/StaffOp/returnBook', {
       opUser: client.clientData.clientName,
       bookId: record.bookId,
       isDamaged: false,
       account: record.borrower,
-      borrowId: ''
+      borrowId: record.borrowId
     })
     .then((e: AxiosResponse<BackendResponse>) => {
       if (!e.data.status) {

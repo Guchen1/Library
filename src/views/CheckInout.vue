@@ -51,7 +51,6 @@
 </template>
 
 <script setup lang="ts">
-import type { Dayjs } from 'dayjs'
 import BookTable from '@/components/BookTable.vue'
 import { reactive, ref, computed, onMounted, watch } from 'vue'
 import { useAxios } from '@/stores/axios'
@@ -61,6 +60,7 @@ import { useClient } from '@/stores/client'
 import { message } from 'ant-design-vue'
 import type { AxiosResponse } from 'axios'
 import dayjs from 'dayjs'
+import 'ant-design-vue/es/message/style/css'
 const axios = useAxios().Axios
 const client = useClient()
 const visibleA = ref(false)
@@ -157,9 +157,11 @@ const search = async (name: string, author: string, isbn: string, borrower: stri
             borrowdate: dayjs(e.borrowTime, 'YYYY-MM-DD'),
             duedate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
             returndate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
-            status: 'borrowed',
-            renewable: true,
-            visible: true
+            status:
+              e.borrowIsOverTime == 1 ? 'overdue' : e.borrowIsrenew == 1 ? 'renewed' : 'borrowed',
+            renewable: e.borrowIsrenew == 0,
+            visible: true,
+            borrowId: e.borrowId
           })
           count++
         }
@@ -179,7 +181,8 @@ const search = async (name: string, author: string, isbn: string, borrower: stri
           returndate: e.returndate,
           status: 'available',
           renewable: undefined,
-          visible: false
+          visible: false,
+          borrowId: undefined
         })
       }
     }

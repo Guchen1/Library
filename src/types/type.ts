@@ -1,3 +1,4 @@
+import type dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
 
 export interface BookType {
@@ -45,7 +46,7 @@ export interface BookResponse {
 }
 
 export interface UserDetail {
-  accountName: number
+  accountName: string
   accountPassword: string
   accountType: string
 }
@@ -85,13 +86,6 @@ export interface PictureResponse {
   data: string
   name: string
 }
-export interface LogInfo {
-  id: string
-  operator: string
-  type: string
-  time: string
-}
-
 export interface BookInfo {
   name: string
   bookId: string
@@ -104,6 +98,7 @@ export interface BookInfo {
   status: 'available' | 'borrowed' | 'overdue' | 'returned' | 'renewed'
   renewable: boolean | undefined
   visible: boolean
+  borrowId: number | undefined
 }
 
 export interface BorrowRecord {
@@ -113,7 +108,9 @@ export interface BorrowRecord {
   borrowAccount: string
   borrowTime: string
   borrowDuration: number
+  borrowIsrenew: number
   borrowIsOverTime: number
+  borrowId: number
 }
 
 export interface BorrowResponse {
@@ -126,4 +123,22 @@ export interface BorrowResponse {
   pageNum: number
   numEachPage: number
   infoList: BorrowRecord[]
+}
+
+export interface LogDetail {
+  opUser: string
+  opId: string
+  opTime: Dayjs
+  opDo: string
+  opInfo: string
+}
+
+export interface LogResponse {
+  status: boolean
+  op: string
+  msg: {
+    code: number
+    content: string
+  }
+  logs: LogDetail[]
 }

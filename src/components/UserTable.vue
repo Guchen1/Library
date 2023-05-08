@@ -42,11 +42,20 @@
               <a-popover title="Please input new password" trigger="click">
                 <template #content>
                   <a-input v-model:value="newPass"></a-input
-                  ><a-button style="display: inline-block">Submit</a-button>
+                  ><a-button
+                    style="display: inline-block"
+                    @click="emit('changepass', record, newPass)"
+                    >Submit</a-button
+                  >
                 </template>
                 <a-button style="display: inline-block" type="primary">Change Password</a-button>
               </a-popover>
-              <a-button style="display: inline-block" type="danger">Delete</a-button>
+              <a-button
+                style="display: inline-block"
+                type="danger"
+                @click="() => emit('delete', record)"
+                >Delete</a-button
+              >
             </div>
           </div>
         </template>
@@ -155,6 +164,8 @@ const columns = [
 ]
 const emit = defineEmits<{
   (event: 'toRole', role: string, item?: UserDetail): boolean
+  (event: 'delete', item?: UserDetail): void
+  (event: 'changepass', item: UserDetail, pass: string): void
 }>()
 const check = (record: UserDetail, e: boolean) => {
   if (e) {
@@ -192,7 +203,8 @@ const checked = computed({
   set: () => {}
 })
 //const data = ref<UserDetail[]>([])
-const queryData = () => {
+const queryData = (name: string) => {
+  console.log(name)
   return axios
     .post<UserTypeResponse>('http://localhost:8080/SuperuserOp/userInfo', {
       opUser: client.clientData.clientName,
@@ -200,7 +212,11 @@ const queryData = () => {
       num: '999'
     })
     .then((res: AxiosResponse<UserTypeResponse>) => {
-      return res.data.accounts
+      if (name == '') {
+        return res.data.accounts
+      } else {
+        return res.data.accounts.filter((e) => e.accountName == name)
+      }
     })
     .catch((e) => {
       message.error(`Error while fetching user data: ${e}`)
@@ -211,7 +227,8 @@ const queryData = () => {
 defineExpose({
   clearList,
   checkList,
-  currentList
+  currentList,
+  queryData
 })
 
 const {
