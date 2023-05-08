@@ -25,6 +25,17 @@
       <template v-if="column.key === 'name'">
         {{ record.name }}
       </template>
+      <template v-if="column.key === 'borrowdate'">
+        {{ record.borrowdate === undefined ? '' : record.borrowdate.format('YYYY-MM-DD') }}
+      </template>
+      <template v-if="column.key === 'duedate'">
+        {{ record.duedate === undefined ? '' : record.duedate.format('YYYY-MM-DD') }} </template
+      ><template v-if="column.key === 'returndate'">
+        {{ record.returndate === undefined ? '' : record.returndate.format('YYYY-MM-DD') }}
+      </template>
+      <template v-if="column.key === 'name'">
+        {{ record.name }}
+      </template>
       <template v-else-if="column.key === 'selected'"
         ><div style="display: flex; justify-content: center">
           <a-checkbox
@@ -82,20 +93,21 @@ import { useAxios } from '@/stores/axios'
 import { useClient } from '@/stores/client'
 import type { BookDetail, BookResponse } from '@/types/type'
 import type { AxiosResponse } from 'axios'
-import type { NumberOutlinedIconType } from '@ant-design/icons-vue/lib/icons/NumberOutlined'
 import { message } from 'ant-design-vue'
+import dayjs, { Dayjs } from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
 const visible = reactive<boolean[]>([])
 const axios = useAxios().Axios
 const client = useClient()
-
+dayjs.extend(customParseFormat)
 interface BookInfo {
   name: string
   isbn: string
   author: string
   borrower: string | undefined
-  borrowdate: string | undefined
-  duedate: string | undefined
-  returndate: string | undefined
+  borrowdate: Dayjs | undefined
+  duedate: Dayjs | undefined
+  returndate: Dayjs | undefined
   status: 'available' | 'borrowed' | 'overdue' | 'returned' | 'renewed'
   renewable: boolean | undefined
   visible: boolean
@@ -187,7 +199,7 @@ onMounted(async () => {
     .post('/StaffOp/bookAllBorrowInfo', {
       opUser: client.clientData.clientName,
       page: '1',
-      pagenum: '999'
+      num: '999'
     })
     .then((e: AxiosResponse<BorrowResponse>) => {
       // Do not ask me why...
@@ -231,17 +243,16 @@ onMounted(async () => {
     let whatever = e
     let count: number = 0
     function a(whatever: any) {
-      return (e: any) => {
+      return (e: BorrowRecord) => {
         if (e.bookName == whatever.bookName) {
           data.push({
             name: whatever.bookName,
             isbn: whatever.bookIsbn,
             author: whatever.bookAuthor,
-            // TODO: add borrowid
             borrower: e.borrowAccount,
-            borrowdate: e.borrowTime,
-            duedate: e.borrowDuration,
-            returndate: e.returndate,
+            borrowdate: dayjs(e.borrowTime, 'YYYY-MM-DD'),
+            duedate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
+            returndate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
             status: 'borrowed',
             renewable: true,
             visible: true
@@ -257,7 +268,6 @@ onMounted(async () => {
         name: whatever.bookName,
         isbn: whatever.bookIsbn,
         author: whatever.bookAuthor,
-        //borrowid: undefined,
         borrower: undefined,
         borrowdate: undefined,
         duedate: undefined,
@@ -268,175 +278,10 @@ onMounted(async () => {
       })
     }
   })
-  let count: number = 0
-  /*
-  data.forEach((e) => {
-    e.id = count
-    dataFiltered.push(e)
-    count += 1
-  })*/
   console.log(bookBorrowInfo)
   console.log(bookInfo)
   console.log(data)
 })
-/*
-data.push({
-  name: 'Harry Potter',
-  isbn: '123456789',
-  author: 'J.K. Rowling',
-  borrower: 'John',
-  borrowdate: '2021-01-01',
-  duedate: '2021-01-31',
-  returndate: '2021-01-31',
-  status: 'borrowed',
-  renewable: true,
-  visible: false
-})
-data.push({
-  name: 'Harry Potter',
-  isbn: '123456789',
-  author: 'J.K. Rowling',
-  borrower: 'John',
-  borrowdate: '2021-01-01',
-  returndate: '2021-01-31',
-  duedate: '2021-01-31',
-  status: 'renewed',
-  renewable: false,
-  visible: false
-})
-data.push({
-  name: 'Harry Potter',
-  isbn: '123456789',
-  author: 'J.K. Rowling',
-  borrower: 'John',
-  borrowdate: '2021-01-01',
-  returndate: '2021-01-31',
-  duedate: '2021-01-31',
-  status: 'borrowed',
-  renewable: true,
-  visible: false
-})
-data.push({
-  name: 'Harry Potter',
-  isbn: '123456789',
-  author: 'J.K. Rowling',
-  borrower: 'John',
-  borrowdate: '2021-01-01',
-  returndate: '2021-01-31',
-  duedate: '2021-01-31',
-  status: 'borrowed',
-  renewable: true,
-  visible: false
-})
-data.push({
-  name: 'Harry Potter',
-  isbn: '123456789',
-  author: 'J.K. Rowling',
-  borrower: 'John',
-  borrowdate: '2021-01-01',
-  returndate: '2021-01-31',
-  duedate: '2021-01-31',
-  status: 'borrowed',
-  renewable: true,
-  visible: false
-})
-data.push({
-  name: 'Harry Potter',
-  isbn: '123456789',
-  author: 'J.K. Rowling',
-  borrower: 'John',
-  borrowdate: '2021-01-01',
-  returndate: '2021-01-31',
-  duedate: '2021-01-31',
-  status: 'borrowed',
-  renewable: true,
-  visible: false
-})
-data.push({
-  name: 'Harry Potter',
-  isbn: '123456789',
-  author: 'J.K. Rowling',
-  borrower: 'John',
-  borrowdate: '2021-01-01',
-  returndate: '2021-01-31',
-  duedate: '2021-01-31',
-  status: 'borrowed',
-  renewable: true,
-  visible: false
-})
-data.push({
-  name: 'Harry Potter',
-  isbn: '123456789',
-  author: 'J.K. Rowling',
-  borrower: 'John',
-  borrowdate: '2021-01-01',
-  returndate: '2021-01-31',
-  duedate: '2021-01-31',
-  status: 'borrowed',
-  renewable: true,
-  visible: false
-})
-data.push({
-  name: 'Harry Potter',
-  isbn: '123456789',
-  author: 'J.K. Rowling',
-  borrower: 'John',
-  borrowdate: '2021-01-01',
-  returndate: '2021-01-31',
-  duedate: '2021-01-31',
-  status: 'borrowed',
-  renewable: true,
-  visible: false
-})
-data.push({
-  name: 'Harry Potter',
-  isbn: '123456789',
-  author: 'J.K. Rowling',
-  borrower: 'John',
-  borrowdate: '2021-01-01',
-  returndate: '2021-01-31',
-  duedate: '2021-01-31',
-  status: 'borrowed',
-  renewable: true,
-  visible: false
-})
-data.push({
-  name: 'Harry Potter',
-  isbn: '123456789',
-  author: 'J.K. Rowling',
-  borrower: 'John',
-  borrowdate: '2021-01-01',
-  returndate: '2021-01-31',
-  duedate: '2021-01-31',
-  status: 'borrowed',
-  renewable: true,
-  visible: false
-})
-data.push({
-  name: 'One Piece',
-  isbn: '987654321',
-  author: 'Eiichiro Oda',
-  borrower: undefined,
-  borrowdate: undefined,
-  returndate: undefined,
-  duedate: undefined,
-  status: 'available',
-  renewable: undefined,
-  visible: false
-})
-data.push({
-  name: 'The Lord of the Rings',
-  isbn: '123456789',
-  author: 'J.R.R. Tolkien',
-  borrower: 'John',
-  borrowdate: '2021-12-01',
-  duedate: '2021-12-31',
-  returndate: undefined,
-  status: 'overdue',
-  renewable: false,
-  visible: false
-})
-*/
 const filter = reactive([
   {
     text: 'Borrowed',
@@ -461,14 +306,6 @@ if (props.type != 'user') {
     value: 'available'
   })
 }
-const sortFunc = (a: BookInfo, b: BookInfo) => {
-  //TODO: sorter with backend
-  if (a.isbn > b.isbn) {
-    return true
-  } else {
-    return false
-  }
-}
 const columns = [
   {
     name: 'Selected',
@@ -481,7 +318,15 @@ const columns = [
     name: 'ISBN',
     dataIndex: 'isbn',
     key: 'isbn',
-    sorter: sortFunc,
+    sorter: (a: BookInfo, b: BookInfo) => {
+      //TODO-C: sorter with backend
+      //Just in frontend, well...
+      if (a.isbn > b.isbn) {
+        return true
+      } else {
+        return false
+      }
+    },
     customHeaderCell: () => {
       return {
         style: {
@@ -494,7 +339,7 @@ const columns = [
     name: 'Name',
     dataIndex: 'name',
     key: 'name',
-    title: 'Name'
+    title: 'BookName'
   },
   {
     name: 'Author',
@@ -514,14 +359,11 @@ const columns = [
     key: 'borrowdate',
     title: 'Borrow Date',
     sorter: (a: BookInfo, b: BookInfo) => {
-      //TODO: sorter with backend
+      //TODO-C: filter with backend
+      //Just let it in frontend, well...
       if (a.borrowdate === undefined) return false
       if (b.borrowdate === undefined) return true
-      if (a.borrowdate > b.borrowdate) {
-        return true
-      } else {
-        return false
-      }
+      return a.borrowdate.isAfter(b.borrowdate)
     },
     filters: [
       {
@@ -538,40 +380,11 @@ const columns = [
       }
     ],
     onFilter: (value: string, record: BookInfo) => {
-      //TODO: filter with backend
-      if (value === '14') {
-        if (record.borrowdate === undefined) return false
-        const date = new Date()
-        date.setDate(date.getDate() - 14)
-        const date2 = new Date(record.borrowdate)
-        if (date2 > date) {
-          return true
-        } else {
-          return false
-        }
-      } else if (value === '30') {
-        if (record.borrowdate === undefined) return false
-        const date = new Date()
-        date.setDate(date.getDate() - 30)
-        const date2 = new Date(record.borrowdate)
-        if (date2 > date) {
-          return true
-        } else {
-          return false
-        }
-      } else if (value === '90') {
-        if (record.borrowdate === undefined) return false
-        const date = new Date()
-        date.setDate(date.getDate() - 90)
-        const date2 = new Date(record.borrowdate)
-        if (date2 > date) {
-          return true
-        } else {
-          return false
-        }
-      } else {
-        return false
-      }
+      //TODO-C: filter with backend
+      //Just let it in frontend, well...
+      if (record.borrowdate === undefined) return false
+      let nowfilter = dayjs().add(-1 * Number(value), 'day')
+      return record.borrowdate.isAfter(nowfilter)
     }
   },
   {
@@ -580,63 +393,36 @@ const columns = [
     key: 'duedate',
     title: 'Due Date',
     sorter: (a: BookInfo, b: BookInfo) => {
-      //TODO: sorter with backend
+      //TODO-C: filter with backend
+      //Just let it in frontend, well...
       if (a.duedate === undefined) return false
       if (b.duedate === undefined) return true
-      if (a.duedate > b.duedate) {
-        return true
-      } else {
-        return false
-      }
+      return a.duedate.isAfter(b.duedate)
     },
     filters: [
       {
-        text: 'Recent 14 days',
-        value: '14'
+        text: 'Due in 3 days',
+        value: '3'
       },
       {
-        text: 'Recent 30 days',
-        value: '30'
+        text: 'Due in 7 days',
+        value: '7'
       },
       {
-        text: 'Recent 90 days',
-        value: '90'
+        text: 'Is due.',
+        value: '0'
       }
     ],
     onFilter: (value: string, record: BookInfo) => {
-      //TODO: filter with backend
-      if (value === '14') {
-        if (record.duedate === undefined) return false
-        const date = new Date()
-        date.setDate(date.getDate() - 14)
-        const date2 = new Date(record.duedate)
-        if (date2 > date) {
-          return true
-        } else {
-          return false
-        }
-      } else if (value === '30') {
-        if (record.duedate === undefined) return false
-        const date = new Date()
-        date.setDate(date.getDate() - 30)
-        const date2 = new Date(record.duedate)
-        if (date2 > date) {
-          return true
-        } else {
-          return false
-        }
-      } else if (value === '90') {
-        if (record.duedate === undefined) return false
-        const date = new Date()
-        date.setDate(date.getDate() - 90)
-        const date2 = new Date(record.duedate)
-        if (date2 > date) {
-          return true
-        } else {
-          return false
-        }
+      //TODO-C: filter with backend
+      //Just let it in frontend, well...
+      if (record.duedate === undefined) return false
+      let number: number = Number(value)
+      let nowfilter = dayjs().add(1 * Number(value), 'day')
+      if (number > 0) {
+        return record.duedate.isAfter(dayjs()) && record.duedate.isBefore(nowfilter)
       } else {
-        return false
+        return record.duedate.isBefore(dayjs())
       }
     }
   },
@@ -646,63 +432,36 @@ const columns = [
     key: 'returndate',
     title: 'Return Date',
     sorter: (a: BookInfo, b: BookInfo) => {
-      //TODO: sorter with backend
+      //TODO-C: filter with backend
+      //Just let it in frontend, well...
       if (a.returndate === undefined) return false
       if (b.returndate === undefined) return true
-      if (a.returndate > b.returndate) {
-        return true
-      } else {
-        return false
-      }
+      return a.returndate.isAfter(b.returndate)
     },
     filters: [
       {
-        text: 'Recent 14 days',
+        text: 'Recent 7 days',
+        value: '7'
+      },
+      {
+        text: 'Recent 15 days',
         value: '14'
       },
       {
-        text: 'Recent 30 days',
-        value: '30'
-      },
-      {
-        text: 'Recent 90 days',
-        value: '90'
+        text: 'Not returned',
+        value: '0'
       }
     ],
     onFilter: (value: string, record: BookInfo) => {
-      //TODO: filter with backend
-      if (value == '14') {
-        if (record.returndate === undefined) return false
-        const date = new Date()
-        date.setDate(date.getDate() - 14)
-        const date2 = new Date(record.returndate)
-        if (date2 > date) {
-          return true
-        } else {
-          return false
-        }
-      } else if (value == '30') {
-        if (record.returndate === undefined) return false
-        const date = new Date()
-        date.setDate(date.getDate() - 30)
-        const date2 = new Date(record.returndate)
-        if (date2 > date) {
-          return true
-        } else {
-          return false
-        }
-      } else if (value == '90') {
-        if (record.returndate === undefined) return false
-        const date = new Date()
-        date.setDate(date.getDate() - 90)
-        const date2 = new Date(record.returndate)
-        if (date2 > date) {
-          return true
-        } else {
-          return false
-        }
+      //TODO-C: filter with backend
+      //Just let it in frontend, well...
+      let number: number = Number(value)
+      if (number == 0) {
+        if (record.returndate === undefined) return true
       } else {
-        return false
+        if (record.returndate === undefined) return false
+        let nowfilter = dayjs().add(-1 * Number(value), 'day')
+        return record.returndate.isAfter(nowfilter) && record.returndate.isBefore(dayjs())
       }
     }
   },
@@ -713,7 +472,8 @@ const columns = [
     title: 'Status',
     filters: filter,
     onFilter: (value: string, record: BookInfo) => {
-      //TODO: filter with backend
+      //TODO-C: filter with backend
+      //Just let it in frontend, well...
       return record.status === value
     }
   },
