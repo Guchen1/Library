@@ -59,7 +59,7 @@
         >
           <template #content>
             <a-input v-model:value="name"></a-input
-            ><a-button style="display: inline-block" @click="borrow(record)">Submit</a-button>
+            ><a-button style="display: inline-block" @click="borrow(record, name)">Submit</a-button>
           </template>
           <a style="font-size: 10px; white-space: nowrap" type="primary" size="small">Check Out</a>
         </a-popover>
@@ -159,13 +159,13 @@ const returnBook = (record: BookInfo) => {
       message.error(`Error detected when returing books: ${e}`)
     })
 }
-const borrow = (record: BookInfo) => {
+const borrow = (record: BookInfo, person: string) => {
   //TODO-C: Borrow books
   axios
     .post('/StaffOp/borrowBook', {
       opUser: client.clientData.clientName,
       bookId: record.bookId,
-      userAccount: name.value,
+      userAccount: person,
       dates: '30'
     })
     .then((e: AxiosResponse<BackendResponse>) => {
@@ -466,7 +466,7 @@ defineExpose({
   clearList,
   renew,
   returnBook,
-
+  borrow,
   checkList,
   currentList
 })

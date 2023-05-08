@@ -10,12 +10,12 @@
       >
         <template #content>
           <a-input v-model:value="batchName"></a-input
-          ><a-button style="display: inline-block">Submit</a-button>
+          ><a-button style="display: inline-block" @click="batchOp(1)">Submit</a-button>
         </template>
         <a-button :disabled="!allBorrowable" class="batch">Batch Check Out</a-button>
       </a-popover>
-      <a-button :disabled="!allReturnable" class="batch">Batch Return</a-button
-      ><a-button :disabled="!allRenewable" class="batch">Batch Renew</a-button>
+      <a-button :disabled="!allReturnable" class="batch" @click="batchOp(2)">Batch Return</a-button
+      ><a-button :disabled="!allRenewable" class="batch" @click="batchOp(3)">Batch Renew</a-button>
       <a-popover
         placement="bottom"
         v-model:visible="visibleB"
@@ -69,6 +69,7 @@ const batchName = ref('')
 const paName = ref('')
 const paPass = ref('')
 const data = reactive<BookInfo[]>([])
+const table = ref<typeof BookTable>()
 onMounted(() => {
   search('', '', '', '')
 })
@@ -211,8 +212,15 @@ const newPateron = async () => {
   }
 }
 //TODO: Batch Op, Checkout Return Renew
-const batchOp = (optype: string) => {}
-const table = ref<typeof BookTable>()
+const batchOp = (optype: number) => {
+  if (optype == 1) {
+    table.value?.checkList.forEach((e: any) => table.value?.borrow(e, batchName.value))
+  } else if (optype == 2) {
+    table.value?.checkList.forEach((e: any) => table.value?.returnBook(e))
+  } else {
+    table.value?.checkList.forEach((e: any) => table.value?.renew(e))
+  }
+}
 const props = defineProps<{
   width: number
   height: number
