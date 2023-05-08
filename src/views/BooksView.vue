@@ -138,6 +138,7 @@ const search = (name: string, author: string, isbn: string, ready: boolean) => {
 }
 watch(selected, (e) => {
   //TODO: finish search by type
+  //Time so little, delayed
   //request(nameSave,authorSave,isbnSave,readySave)
 })
 onMounted(() => {

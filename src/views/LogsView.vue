@@ -60,7 +60,7 @@ const data = ref<LogDetail[]>([])
 onMounted(() => {
   search()
 })
-// TODO: get data
+// TODO-C: get data
 const search = () => {
   data.value.splice(0, data.value.length)
   axios
