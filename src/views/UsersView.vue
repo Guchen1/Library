@@ -2,7 +2,11 @@
   <div v-if="client.isAdmin" style="padding-top: 20px; padding: 20px; padding-bottom: 0px">
     <a-typography-title :level="2" class="title">User Control</a-typography-title>
     <div class="batch-box">
-      <a-input-search style="width: 400px" placeholder="Input Username" @value="searchString">
+      <a-input-search
+        style="width: 400px"
+        placeholder="Input Username"
+        v-model:value="searchString"
+      >
         <template #enterButton>
           <a-button type="primary" @click="() => search()">
             <template #icon> <SearchOutlined /> </template>Search</a-button
@@ -11,15 +15,16 @@
       </a-input-search>
     </div>
     <div class="batch-box">
-      <a-button @click="toRole('staff')" class="batch">To Staff</a-button
+      <a-button @click="table!.value.toRole('staff')" class="batch">To Staff</a-button
       ><a-button @click="toRole('user')" class="batch">To Patron</a-button>
       <a-button @click="toRole('super')" class="batch">To Superuser</a-button>
       <a-button @click="toRole('admin')" class="batch">To Admin</a-button>
-      <a-button @click="del" class="batch" type="danger">Delete</a-button>
+      <a-button @click="del(undefined)" class="batch" type="danger">Delete</a-button>
     </div>
     <div style="display: flex; justify-content: center">
       <UserTable
         ref="table"
+        :data="data"
         @toRole="(e, f) => toRole(e, f)"
         @delete="(e) => del(e)"
         @changepass="(e, f) => changePass(e, f)"
@@ -38,7 +43,7 @@ import { SearchOutlined, ToTopOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import type { AxiosResponse } from 'axios'
 import { useAxios } from '@/stores/axios'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import 'ant-design-vue/es/message/style/css'
 const client = useClient()
 const axios = useAxios().Axios
@@ -47,6 +52,46 @@ const table = ref<typeof UserTable>()
 const clearList = computed(() => {
   return table?.value?.clearList
 })
+//WARNING: ONLY FOR DEMO! MUST BE REPLACED
+const toRole = (role: string, item?: UserDetail) => {
+  if (item != undefined) {
+    data.value.forEach((e) => {
+      //TODO: Finish toRole function
+      //For DEMO ONLY!
+      if (item === e) {
+        //console.log('ready to change...')
+        //if (emit('toRole', role, item)) {
+        //if (true) {
+        //  console.log('success')
+        item.accountType = role
+        //} else {
+        //  message.error(`Change role for ${item.accountName} failed`)
+        //}
+      }
+    })
+  } else {
+    table?.value?.currentList.forEach((e: any) => {
+      e.accountType = role
+    })
+  }
+}
+//WARNING: ONLY FOR DEMO! MUST BE REPLACED
+const del = (item?: UserDetail) => {
+  if (item != undefined) {
+    data.value.splice(data.value.indexOf(item), 1)
+  } else {
+    console.log(table?.value?.currentList)
+    table?.value?.currentList.forEach((e: any) => {
+      data.value.splice(data.value.indexOf(e), 1)
+    })
+  }
+}
+
+//WARNING: ONLY FOR DEMO! MUST BE REPLACED
+const changePass = (item: UserDetail, pass: string) => {
+  message.info(`Change password successfully`)
+}
+/*
 const toRole = (role: string, item?: UserDetail) => {
   console.log(role)
   console.log(item)
@@ -94,6 +139,7 @@ const toRole = (role: string, item?: UserDetail) => {
 const del = (item?: UserDetail) => {
   //TODO: Finish del function,成功之后刷新页面
   //Ask api tomorrow
+
   if (item != undefined) {
     console.log('start del')
     axios
@@ -161,11 +207,28 @@ const changePass = (item: UserDetail, pass: string) => {
       })
   }
 }
-//TODO: Search formula.
+*/
+//TODO-C: Search formula.
+const data = ref<UserDetail[]>([])
 const search = () => {
-  console.log('search is: ' + searchString.value)
-  //table!.value!.queryData(searchString.value)
+  axios
+    .post('http://localhost:8080/SuperuserOp/userInfo', {
+      opUser: client.clientData.clientName,
+      page: '1',
+      num: '999'
+    })
+    .then((res: AxiosResponse<UserTypeResponse>) => {
+      console.log('searchStr' + searchString.value)
+      data.value = res.data.accounts.filter((e) => e.accountName.indexOf(searchString.value) != -1)
+    })
+    .catch((e: any) => {
+      message.error(`Error while fetching user data: ${e}`)
+      data.value = []
+    })
 }
+onMounted(() => {
+  search()
+})
 defineProps<{
   width: number
   height: number

@@ -4,9 +4,7 @@
       @change="resize"
       :columns="columns"
       :scroll="{ x: 'max-content', y: height - 310, visible: false }"
-      :data-source="data"
-      :loading="loading"
-      :pagination="pagination"
+      :data-source="props.data"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'selected'"
@@ -23,17 +21,21 @@
         <template v-else-if="column.key == 'action'">
           <div class="action" style="display: flex; justify-content: space-between">
             <div class="action" style="display: inline-flex">
-              <a-button @click="toRole(record, 'user')" v-if="record.accountType != 'user'"
+              <a-button @click="emit('toRole', 'user', record)" v-if="record.accountType != 'user'"
                 >To Patron</a-button
               >
-              <a-button @click="toRole(record, 'staff')" v-if="record.accountType != 'staff'"
+              <a-button
+                @click="emit('toRole', 'staff', record)"
+                v-if="record.accountType != 'staff'"
                 >To Staff</a-button
               >
-              <a-button @click="toRole(record, 'manager')" v-if="record.accountType != 'manager'"
+              <a-button
+                @click="emit('toRole', 'manager', record)"
+                v-if="record.accountType != 'manager'"
                 >To Admin</a-button
               >
               <a-button
-                @click="toRole(record, 'superuser')"
+                @click="emit('toRole', 'superuser', record)"
                 v-if="record.accountType != 'superuser'"
                 >To Superuser</a-button
               >
@@ -50,10 +52,7 @@
                 </template>
                 <a-button style="display: inline-block" type="primary">Change Password</a-button>
               </a-popover>
-              <a-button
-                style="display: inline-block"
-                type="danger"
-                @click="() => emit('delete', record)"
+              <a-button style="display: inline-block" type="danger" @click="emit('delete', record)"
                 >Delete</a-button
               >
             </div>
@@ -77,15 +76,15 @@ const checkList = ref<UserDetail[]>([])
 const clearList = () => {
   checkList.value = []
 }
-
-defineProps<{
+const props = defineProps<{
   height: number
+  data: UserDetail[]
 }>()
 const currentList = computed({
   set: () => {},
   get: () => {
     let temp: Array<UserDetail> = []
-    data.value?.forEach((item) => {
+    props.data.forEach((item) => {
       if (checkList.value.indexOf(item) != -1) {
         temp.push(item)
       }
@@ -174,20 +173,24 @@ const check = (record: UserDetail, e: boolean) => {
     checkList.value.splice(checkList.value.indexOf(record), 1)
   }
 }
+/*
 const toRole = (record: UserDetail, role: 'user' | 'staff' | 'manager' | 'superuser') => {
-  data.value?.forEach((item) => {
+  props.data.forEach((item) => {
     //TODO: Finish toRole function
+    //For DEMO ONLY!
     if (item === record) {
       console.log('ready to change...')
-      if (emit('toRole', role, item)) {
-        console.log('success')
-        item.accountType = role
-      } else {
-        message.error(`Change role for ${item.accountName} failed`)
-      }
+      //if (emit('toRole', role, item)) {
+      //if (true) {
+      //  console.log('success')
+      item.accountType = role
+      //} else {
+      //  message.error(`Change role for ${item.accountName} failed`)
+      //}
     }
   })
 }
+*/
 const checked = computed({
   //可对setter和getter都传参的计算属性
   get: () => {
@@ -203,54 +206,16 @@ const checked = computed({
   set: () => {}
 })
 //const data = ref<UserDetail[]>([])
-const queryData = (name: string) => {
-  console.log(name)
-  return axios
-    .post<UserTypeResponse>('http://localhost:8080/SuperuserOp/userInfo', {
-      opUser: client.clientData.clientName,
-      page: '1',
-      num: '999'
-    })
-    .then((res: AxiosResponse<UserTypeResponse>) => {
-      if (name == '') {
-        return res.data.accounts
-      } else {
-        return res.data.accounts.filter((e) => e.accountName == name)
-      }
-    })
-    .catch((e) => {
-      message.error(`Error while fetching user data: ${e}`)
-      return [] as UserDetail[]
-    })
-}
 
 defineExpose({
   clearList,
   checkList,
-  currentList,
-  queryData
+  currentList
 })
 
-const {
-  data: data,
-  run,
-  loading,
-  current,
-  pageSize
-} = usePagination(queryData, {
-  pagination: {
-    currentKey: 'page',
-    pageSizeKey: 'results'
-  }
-})
-watch(data, () => {
+watch(props.data, () => {
   resize()
 })
-const pagination = computed(() => ({
-  total: data.value?.length,
-  current: current.value,
-  pageSize: pageSize.value
-}))
 </script>
 <style scoped>
 .action button {
