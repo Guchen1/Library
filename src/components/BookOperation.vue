@@ -587,6 +587,7 @@ const handleOk = async (isAdd: boolean) => {
         } else {
           message.info('Upload picture failed.')
         }
+        book.cover = picName.value
         picChanged.value = !picChanged.value
         picName.value = ''
       })

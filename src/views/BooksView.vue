@@ -67,7 +67,7 @@ const deleteBook = (isbn: BookDetail) => {
     })
 }
 const isMore = ref(true)
-const page = ref(0)
+const page = ref(1)
 // Save the stat
 let nameSave: string = ''
 let authorSave: string = ''
