@@ -89,8 +89,9 @@ const save = () => {
         //TODO-C: save to database
         axios
           .post('/StaffOp/addCategory', {
+            opUser: client.clientData.clientName,
             name: newType.value,
-            uname: newType.value
+            pname: 'null'
           })
           .then((e: AxiosResponse<BackendResponse>) => {
             if (!e.data.status) {

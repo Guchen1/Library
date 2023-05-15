@@ -141,7 +141,7 @@ const search = (name: string, author: string, isbn: string, ready: boolean) => {
   request(name, author, isbn, ready)
 }
 watch(selected, (e: string[]) => {
-  //TODO: finish search by type
+  //TODO-C: finish search by type
   //Time so little, delayed
   //request(nameSave,authorSave,isbnSave,readySave)
 
