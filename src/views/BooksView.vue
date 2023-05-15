@@ -35,9 +35,11 @@ const BookOperationRef = ref<typeof BookOperation>()
 const tempbook = ref<BookDetail>()
 const client = useClient()
 const axios = useAxios().Axios
-const data = reactive<BookDetail[]>([])
+const store = reactive<BookDetail[]>([])
+// Actually toShow
+const data = ref<BookDetail[]>([])
 const types = ref()
-const selected = ref([])
+const selected = ref<string[]>([])
 const show = (book: BookDetail | undefined) => {
   tempbook.value = book
   if (BookOperationRef.value != undefined) {
@@ -59,7 +61,7 @@ const deleteBook = (isbn: BookDetail) => {
       message.info('删除成功')
       //TODO-C: Father refresh
       nextTick(() => {
-        data.splice(data.indexOf(isbn), 1)
+        data.value.splice(data.value.indexOf(isbn), 1)
       })
     })
     .catch((e: any) => {
@@ -121,7 +123,8 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
             })
             .then((f: AxiosResponse<PictureResponse>) => {
               if (f.data.status) e.bookCover = 'data:image/jpg;base64,' + f.data.data
-              data.push(e)
+              store.push(e)
+              data.value.push(e)
             })
           console.log(e.bookCover)
         })
@@ -133,13 +136,24 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
     })
 }
 const search = (name: string, author: string, isbn: string, ready: boolean) => {
-  data.splice(0, data.length)
+  store.splice(0, data.value.length)
+  data.value.splice(0, data.value.length)
   request(name, author, isbn, ready)
 }
-watch(selected, (e) => {
+watch(selected, (e: string[]) => {
   //TODO: finish search by type
   //Time so little, delayed
   //request(nameSave,authorSave,isbnSave,readySave)
+
+  data.value = store.filter((f) => {
+    if (e.length == 0) return true
+    for (var i of e) {
+      if (f.bookCategoryName == i) return true
+    }
+    return false
+  })
+
+  console.log(data.value)
 })
 onMounted(() => {
   search('', '', '', false)

@@ -80,21 +80,6 @@ emit('update:selected', temp.value)
 const active = (item: string) => {
   return temp.value.includes(item)
 }
-onMounted(() => {
-  axios
-    .post('/getallcat', {
-      page: '1',
-      num: '999'
-    })
-    .then((e: AxiosResponse<BookTypeResponse>) => {
-      e.data.categories.forEach((e) => {
-        list.value.push(e.name)
-      })
-    })
-    .catch((e: any) => {
-      message.error(`Error detected while getting category: ${e}`)
-    })
-})
 const save = () => {
   if (inInput.value) {
     if (newType.value != '') {
@@ -147,8 +132,8 @@ const switchSelected = (item: string) => {
     temp.value.push(item)
     if (temp.value.length == list.value.length - 1) temp.value.push('All')
   }
-
-  emit('update:selected', temp.value)
+  console.log(temp.value)
+  emit('update:selected', JSON.parse(JSON.stringify(temp.value)))
 }
 const del = (item: string) => {
   //TODO-C: delete from database
@@ -174,6 +159,19 @@ const del = (item: string) => {
 watch(props.selected, (newVal: String[]) => {
   temp.value = newVal
 })
+axios
+  .post('/getallcat', {
+    page: '1',
+    num: '999'
+  })
+  .then((e: AxiosResponse<BookTypeResponse>) => {
+    e.data.categories.forEach((e) => {
+      list.value.push(e.name)
+    })
+  })
+  .catch((e: any) => {
+    message.error(`Error detected while getting category: ${e}`)
+  })
 </script>
 <style scoped>
 #outBox :deep(.ant-tag) {
