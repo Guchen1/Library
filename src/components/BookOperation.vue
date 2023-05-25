@@ -43,7 +43,7 @@
           style="width: 100%; height: 178px; font-size: 20px !important"
           ><a-form-item style="margin-bottom: 10px" label="ISBN"
             ><a-input style="width: 60%; margin-right: 13px" v-model:value="book.isbn"></a-input
-            ><a-button>Check</a-button> </a-form-item
+            ><a-button :onclick="isbnFill">Check</a-button> </a-form-item
           ><a-form-item style="margin-bottom: 10px" label="Name"
             ><a-input v-model:value="book.name"></a-input> </a-form-item
           ><a-form-item style="margin-bottom: 10px" label="Author"
@@ -572,6 +572,31 @@ function getBase64(img: Blob, callback: (base64Url: string) => void) {
 const handleCancel = () => {
   visible.value = false
 }
+//TODO: Check isbn
+const isbnFill = async () => {
+  console.log(book.isbn)
+  book.cover = await axios
+    .get('https://isbn.dovetham.com/api/volumes?q=isbn:' + book.isbn)
+    .then((e: AxiosResponse) => e.data.imgurl)
+
+  await axios
+    .get('https://isbn.dovetham.com/api/volumes?q=isbn:' + book.isbn)
+    .then((e: AxiosResponse) => {
+      let data = e.data
+      if (data.totalItems != 0) {
+        let item = data.items[0]
+        console.log(item.volumeInfo.title)
+        console.log(item.volumeInfo.authors[0])
+        book.name = item.volumeInfo.title
+        book.author = item.volumeInfo.authors[0]
+      } else {
+        message.info('We have not found the book with this isbn.')
+      }
+    })
+
+  console.log(book.cover)
+}
+
 //TODO-C: Add Book info
 //TODO-C: Change Book info
 const handleOk = async (isAdd: boolean) => {
