@@ -29,9 +29,13 @@
         <template v-if="column.key === 'id'"> {{ record.opId }} </template>
         <template v-if="column.key === 'operator'"> {{ record.opUser }} </template>
         <template v-if="column.key === 'type'"> {{ record.opDo }} </template>
-        <template v-if="column.key === 'time'"> {{ record.opTime.format('YYYY-MM-DD') }} </template>
+        <template v-if="column.key === 'time'">
+          {{ record.opTime.format("YYYY-MM-DD") }}
+        </template>
         <template v-if="column.key === 'operation'">
-          <div style="display: flex; flex-wrap: nowrap; justify-content: center; width: 100%">
+          <div
+            style="display: flex; flex-wrap: nowrap; justify-content: center; width: 100%"
+          >
             <a-button @click="show(record as LogDetail)" style="margin-right: 10px"
               >Detail</a-button
             >
@@ -43,123 +47,131 @@
 </template>
 <script setup lang="ts">
 //TODO-C: Bind to the real data corresponding to the search
-import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
-import type { LogDetail } from '@/types/type'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import type { LogDetail } from "@/types/type";
 const props = defineProps<{
-  height: number
-  data: LogDetail[]
-  show: (target: LogDetail) => void
-}>()
-const checkList = ref<LogDetail[]>([])
+  height: number;
+  data: LogDetail[];
+  show: (target: LogDetail) => void;
+}>();
+const checkList = ref<LogDetail[]>([]);
 //TODO: Change comparison method from object to id
 //No need to use at limited time...Time delayed
 const check = (record: LogDetail, e: boolean) => {
   if (e) {
-    checkList.value.push(record)
+    checkList.value.push(record);
   } else {
-    checkList.value.splice(checkList.value.indexOf(record), 1)
+    checkList.value.splice(checkList.value.indexOf(record), 1);
   }
-}
+};
 const checkAll = (e: boolean) => {
   if (e) {
     props.data.forEach((item) => {
       if (checkList.value.indexOf(item) == -1) {
-        checkList.value.push(item)
+        checkList.value.push(item);
       }
-    })
+    });
   } else {
     props.data.forEach((item) => {
       if (checkList.value.indexOf(item) != -1) {
-        checkList.value.splice(checkList.value.indexOf(item), 1)
+        checkList.value.splice(checkList.value.indexOf(item), 1);
       }
-    })
+    });
   }
-}
+};
 const checked = computed({
   //可对setter和getter都传参的计算属性
   get: () => {
     return (record: LogDetail) => {
       //列表里有就返回true
       if (checkList.value.indexOf(record) != -1) {
-        return true
+        return true;
       } else {
-        return false
+        return false;
       }
-    }
+    };
   },
-  set: () => {}
-})
+  set: () => {},
+});
+watch(
+  () => props.data,
+  () => {
+    nextTick(() => {
+      resize();
+    });
+  }
+);
 const resize = () => {
-  maxHeight.value = 'unset'
+  maxHeight.value = "unset";
   nextTick(() => {
     const a = document
-      .getElementsByClassName('ant-table-body')[0]
-      .getAttribute('style')
-      ?.split(';')[1]
-      .split(':')[1]
-    const b = document.getElementsByClassName('ant-table-body')[0].clientHeight
+      .getElementsByClassName("ant-table-body")[0]
+      .getAttribute("style")
+      ?.split(";")[1]
+      .split(":")[1];
+    const b = document.getElementsByClassName("ant-table-body")[0].clientHeight;
     //a转数字
-    const c = Number(a?.split('px')[0])
+    const c = Number(a?.split("px")[0]);
     if (c != undefined) {
       if (c - b >= 20) {
-        maxHeight.value = b + 10 + 'px'
+        maxHeight.value = b + 10 + "px";
       } else {
-        maxHeight.value = c + 'px'
+        maxHeight.value = c + "px";
       }
     }
-  })
-}
-const maxHeight = ref<string>('')
+  });
+};
+const maxHeight = ref<string>("");
 onMounted(() => {
-  window.addEventListener('resize', resize)
-  resize()
-})
+  window.addEventListener("resize", resize);
+  resize();
+});
 onUnmounted(() => {
-  window.removeEventListener('resize', resize)
-})
+  window.removeEventListener("resize", resize);
+});
 const columns = ref<Array<any>>([
   {
-    key: 'selected',
+    key: "selected",
     width: 50,
-    fixed: 'left'
+    fixed: "left",
   },
   {
-    title: 'Id',
-    dataIndex: 'id',
-    key: 'id',
-    width: 100
+    title: "Id",
+    dataIndex: "id",
+    key: "id",
+    width: 100,
   },
   {
-    title: 'Operator',
-    dataIndex: 'operator',
-    key: 'operator',
-    width: 150
+    title: "Operator",
+    dataIndex: "operator",
+    key: "operator",
+    width: 150,
   },
   {
-    title: 'Type',
-    dataIndex: 'type',
-    key: 'type',
-    width: 150
+    title: "Type",
+    dataIndex: "type",
+    key: "type",
+    width: 150,
   },
   {
-    title: 'Time',
-    dataIndex: 'time',
-    key: 'time',
-    width: 200
+    title: "Time",
+    dataIndex: "time",
+    key: "time",
+    width: 200,
   },
   {
-    title: 'Operation',
-    key: 'operation',
-    width: 200
-  }
-])
+    title: "Operation",
+    key: "operation",
+    width: 200,
+  },
+]);
 
 defineExpose({
-  checkList
-})
+  checkList,
+});
 </script>
 <style scoped>
 :deep(.ant-table-body) {
-  height: v-bind('maxHeight');
+  height: v-bind("maxHeight");
 }
 </style>

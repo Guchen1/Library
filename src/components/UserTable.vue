@@ -16,12 +16,14 @@
         ></template>
         <template v-else-if="column.key == 'username'">{{ record.accountName }}</template>
         <template v-else-if="column.key == 'role'">{{
-          record.accountType == 'user' ? 'pateron' : record.accountType
+          record.accountType == "user" ? "pateron" : record.accountType
         }}</template>
         <template v-else-if="column.key == 'action'">
           <div class="action" style="display: flex; justify-content: space-between">
             <div class="action" style="display: inline-flex">
-              <a-button @click="emit('toRole', 'user', record)" v-if="record.accountType != 'user'"
+              <a-button
+                @click="emit('toRole', 'user', record)"
+                v-if="record.accountType != 'user'"
                 >To Patron</a-button
               >
               <a-button
@@ -50,9 +52,14 @@
                     >Submit</a-button
                   >
                 </template>
-                <a-button style="display: inline-block" type="primary">Change Password</a-button>
+                <a-button style="display: inline-block" type="primary"
+                  >Change Password</a-button
+                >
               </a-popover>
-              <a-button style="display: inline-block" type="danger" @click="emit('delete', record)"
+              <a-button
+                style="display: inline-block"
+                type="danger"
+                @click="emit('delete', record)"
                 >Delete</a-button
               >
             </div>
@@ -119,6 +126,14 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', resize)
 })
+watch(
+  () => props.data,
+  () => {
+    nextTick(() => {
+      resize()
+    })
+  }
+)
 const columns = [
   {
     title: 'Selected',
@@ -222,6 +237,6 @@ watch(props.data, () => {
   margin-right: 10px;
 }
 :deep(.ant-table-body) {
-  height: v-bind('maxHeight');
+  height: v-bind("maxHeight");
 }
 </style>
