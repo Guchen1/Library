@@ -5,7 +5,7 @@ import axios from 'axios'
 export const useAxios = defineStore('axios', () => {
   const Axios = ref()
   Axios.value = axios.create({
-    baseURL: 'http://10.194.31.131:8080'
+    baseURL: 'http://server.superbart.xyz:8080'
     // withCredentials:true,
   })
 

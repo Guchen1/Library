@@ -43,7 +43,6 @@ declare module '@vue/runtime-core' {
     BookPreview: typeof import('./src/components/BookPreview.vue')['default']
     BookSearch: typeof import('./src/components/BookSearch.vue')['default']
     BookTable: typeof import('./src/components/BookTable.vue')['default']
-    EchartsLiquid: typeof import('./src/components/EchartsLiquid.vue')['default']
     HomeSlider: typeof import('./src/components/HomeSlider.vue')['default']
     IconCommunity: typeof import('./src/components/icons/IconCommunity.vue')['default']
     IconDocumentation: typeof import('./src/components/icons/IconDocumentation.vue')['default']
