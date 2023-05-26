@@ -17,7 +17,8 @@ import VChart, { THEME_KEY } from "vue-echarts";
 import { ref, reactive, onMounted, onUnmounted, watch, nextTick, provide } from "vue";
 provide(THEME_KEY, "light");
 // 注册必须的组件
-
+const out = ref<Array<Number>>([]);
+const in_ = ref<Array<Number>>([]);
 use([
   CanvasRenderer,
   LineChart,
