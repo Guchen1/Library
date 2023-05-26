@@ -16,17 +16,12 @@
         ></template>
         <template v-else-if="column.key == 'username'">{{ record.accountName }}</template>
         <template v-else-if="column.key == 'role'">{{
-          record.accountType == "user" ? "patron" : record.accountType
+          record.accountType == 'user' ? 'patron' : record.accountType
         }}</template>
         <template v-else-if="column.key == 'action'">
           <div class="action" style="display: flex; justify-content: space-between">
             <div class="action" style="display: inline-flex">
               <div v-if="record.accountType != 'user'">
-                <a-button
-                  @click="emit('toRole', 'user', record)"
-                  v-if="record.accountType != 'user'"
-                  >To Patron</a-button
-                >
                 <a-button
                   @click="emit('toRole', 'staff', record)"
                   v-if="record.accountType != 'staff'"
@@ -54,14 +49,9 @@
                     >Submit</a-button
                   >
                 </template>
-                <a-button style="display: inline-block" type="primary"
-                  >Change Password</a-button
-                >
+                <a-button style="display: inline-block" type="primary">Change Password</a-button>
               </a-popover>
-              <a-button
-                style="display: inline-block"
-                type="danger"
-                @click="emit('delete', record)"
+              <a-button style="display: inline-block" type="danger" @click="emit('delete', record)"
                 >Delete</a-button
               >
             </div>
@@ -239,6 +229,6 @@ watch(props.data, () => {
   margin-right: 10px;
 }
 :deep(.ant-table-body) {
-  height: v-bind("maxHeight");
+  height: v-bind('maxHeight');
 }
 </style>

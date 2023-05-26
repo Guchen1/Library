@@ -30,7 +30,7 @@
               <a-button
                 type="primary"
                 style="width: 40%; margin-top: 5px; justify-self: end"
-                @click="newPateron()"
+                @click="newPatron()"
                 >Submit</a-button
               >
             </div>
@@ -189,8 +189,8 @@ const search = async (name: string, author: string, isbn: string, borrower: stri
     }
   })
 }
-//TODO-C: Create Pateron
-const newPateron = async () => {
+//TODO-C: Create Patron
+const newPatron = async () => {
   if (paName.value.length == 0 || paPass.value.length == 0) {
     message.error('Pleace fulfill all info.')
   } else {
@@ -207,11 +207,11 @@ const newPateron = async () => {
         if (!res.data.status) {
           throw res.data.msg.content
         } else {
-          message.info(`Create pateron complete`)
+          message.info(`Create patron complete`)
         }
       })
       .catch((err: any) => {
-        message.error(`Error detected while creating pateron: ${err}`)
+        message.error(`Error detected while creating patron: ${err}`)
       })
   }
 }
