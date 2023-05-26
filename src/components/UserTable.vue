@@ -21,26 +21,28 @@
         <template v-else-if="column.key == 'action'">
           <div class="action" style="display: flex; justify-content: space-between">
             <div class="action" style="display: inline-flex">
-              <a-button
-                @click="emit('toRole', 'user', record)"
-                v-if="record.accountType != 'user'"
-                >To Patron</a-button
-              >
-              <a-button
-                @click="emit('toRole', 'staff', record)"
-                v-if="record.accountType != 'staff'"
-                >To Staff</a-button
-              >
-              <a-button
-                @click="emit('toRole', 'manager', record)"
-                v-if="record.accountType != 'manager'"
-                >To Admin</a-button
-              >
-              <a-button
-                @click="emit('toRole', 'superuser', record)"
-                v-if="record.accountType != 'superuser'"
-                >To Superuser</a-button
-              >
+              <div v-if="record.accountType != 'user'">
+                <a-button
+                  @click="emit('toRole', 'user', record)"
+                  v-if="record.accountType != 'user'"
+                  >To Patron</a-button
+                >
+                <a-button
+                  @click="emit('toRole', 'staff', record)"
+                  v-if="record.accountType != 'staff'"
+                  >To Staff</a-button
+                >
+                <a-button
+                  @click="emit('toRole', 'manager', record)"
+                  v-if="record.accountType != 'manager'"
+                  >To Admin</a-button
+                >
+                <a-button
+                  @click="emit('toRole', 'superuser', record)"
+                  v-if="record.accountType != 'superuser'"
+                  >To Superuser</a-button
+                >
+              </div>
             </div>
             <div style="display: inline-flex" class="action">
               <a-popover title="Please input new password" trigger="click">
