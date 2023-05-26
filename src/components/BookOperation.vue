@@ -573,13 +573,11 @@ const handleCancel = () => {
   visible.value = false
 }
 //TODO: Check isbn
-const isbnFill = async () => {
+const isbnFill = () => {
   console.log(book.isbn)
-  book.cover = await axios
-    .get('https://isbn.dovetham.com/api/volumes?q=isbn:' + book.isbn)
-    .then((e: AxiosResponse) => e.data.imgurl)
 
-  await axios
+  // First get the book info.
+  axios
     .get('https://isbn.dovetham.com/api/volumes?q=isbn:' + book.isbn)
     .then((e: AxiosResponse) => {
       let data = e.data
@@ -591,6 +589,21 @@ const isbnFill = async () => {
         book.author = item.volumeInfo.authors[0]
       } else {
         message.info('We have not found the book with this isbn.')
+      }
+    })
+
+  // Then the picture
+  axios
+    .get('https://isbn.dovetham.com/api/volumes?q=isbn:' + book.isbn)
+    .then((e: AxiosResponse) => {
+      book.cover = e.data.imgurl
+    })
+    .catch(() => {
+      book.cover = ''
+    })
+    .finally(async () => {
+      if (book.cover != '') {
+        book.picObj = await axios.get(book.cover).then((e: AxiosResponse) => e.data)
       }
     })
 
