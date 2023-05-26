@@ -79,22 +79,22 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
   if (nameSave != name) {
     nameSave = name
     isMore.value = true
-    page.value = 0
+    page.value = 1
   }
   if (authorSave != author) {
     authorSave = author
     isMore.value = true
-    page.value = 0
+    page.value = 1
   }
   if (isbnSave != isbn) {
     isbnSave = isbn
     isMore.value = true
-    page.value = 0
+    page.value = 1
   }
   if (readySave != ready) {
     readySave = ready
     isMore.value = true
-    page.value = 0
+    page.value = 1
   }
 
   axios
@@ -165,13 +165,6 @@ onUnmounted(() => {
 function scrollHandle() {
   if (!isMore.value) return
   window.onscroll = () => {
-    console.log(
-      Math.abs(
-        document.documentElement.scrollHeight -
-          document.documentElement.clientHeight -
-          document.documentElement.scrollTop
-      )
-    )
     let bottom =
       Math.abs(
         document.documentElement.scrollHeight -
@@ -179,6 +172,7 @@ function scrollHandle() {
           document.documentElement.scrollTop
       ) < 1
     if (bottom && isMore.value) {
+      console.log(page.value)
       request(nameSave, authorSave, isbnSave, readySave)
     }
   }
