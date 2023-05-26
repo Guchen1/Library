@@ -16,7 +16,7 @@
         ></template>
         <template v-else-if="column.key == 'username'">{{ record.accountName }}</template>
         <template v-else-if="column.key == 'role'">{{
-          record.accountType == "user" ? "pateron" : record.accountType
+          record.accountType == "user" ? "patron" : record.accountType
         }}</template>
         <template v-else-if="column.key == 'action'">
           <div class="action" style="display: flex; justify-content: space-between">

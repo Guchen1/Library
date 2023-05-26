@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onMounted, ref, watch } from "vue";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
 import { useClient } from "./stores/client";
 import { useRouter, useRoute } from "vue-router";
 import {
@@ -95,6 +95,20 @@ onMounted(() => {
     width.value = window.innerWidth;
   };
 });
+const name = computed(() => {
+  switch (client.clientData.clientType) {
+    case "user":
+      return "Patron";
+    case "staff":
+      return "Staff";
+    case "manager":
+      return "Admin";
+    case "superuser":
+      return "Superuser";
+    default:
+      return "Visitor";
+  }
+});
 </script>
 
 <template>
@@ -161,7 +175,7 @@ onMounted(() => {
             <div style="font-size: 30px; font-weight: 700">
               {{ client.clientData.clientName }}
             </div>
-            <div style="font-size: 16px">{{ client.clientData.clientType }}</div>
+            <div style="font-size: 16px">{{ name }}</div>
           </div>
           <div style="display: flex; align-items: center">
             <img
