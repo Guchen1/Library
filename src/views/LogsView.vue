@@ -8,7 +8,9 @@
           placeholder="Operator"
           v-model:value="searchStr"
         ></a-input>
-        <a-button style="margin-left: 10px" type="primary" @click="search">Search</a-button>
+        <a-button style="margin-left: 10px" type="primary" @click="search"
+          >Search</a-button
+        >
       </div>
       <div class="top-box" style="padding-top: 20px">
         <LogTable
@@ -23,51 +25,47 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import type { Dayjs } from 'dayjs'
-import LogTable from '@/components/LogTable.vue'
-import LogAddon from '@/components/LogAddon.vue'
-import type { LogDetail, LogResponse } from '@/types/type'
-import { useAxios } from '@/stores/axios'
-import { useClient } from '@/stores/client'
-import type { AxiosResponse } from 'axios'
-import type {} from '@/types/type'
-import { message } from 'ant-design-vue'
-import dayjs from 'dayjs'
-const client = useClient()
-const axios = useAxios().Axios
-const searchStr = ref('')
-type RangeValue = [Dayjs, Dayjs]
-const date = ref<RangeValue>()
+import { onMounted, ref } from "vue";
+import type { Dayjs } from "dayjs";
+import LogTable from "@/components/LogTable.vue";
+import LogAddon from "@/components/LogAddon.vue";
+import type { LogDetail, LogResponse } from "@/types/type";
+import { useAxios } from "@/stores/axios";
+import { useClient } from "@/stores/client";
+import type { AxiosResponse } from "axios";
+import type {} from "@/types/type";
+import { message } from "ant-design-vue";
+import dayjs from "dayjs";
+const client = useClient();
+const axios = useAxios().Axios;
+const searchStr = ref("");
+type RangeValue = [Dayjs, Dayjs];
+const date = ref<RangeValue>();
 const toShow = ref<LogDetail>({
-  opUser: '',
-  opId: '',
+  opUser: "",
+  opId: "",
   opTime: dayjs(),
-  opDo: '',
-  opInfo: ''
-})
-const det = ref<typeof LogAddon>()
+  opDo: "",
+  opInfo: "",
+});
+const det = ref<typeof LogAddon>();
 const show = (target: LogDetail) => {
-  toShow.value = target
-  if (det.value != undefined) det.value.visible = true
-}
+  toShow.value = target;
+  if (det.value != undefined) det.value.visible = true;
+};
 defineProps<{
-  width: number
-  height: number
-}>()
-const data = ref<LogDetail[]>([])
-
-onMounted(() => {
-  search()
-})
+  width: number;
+  height: number;
+}>();
+const data = ref<LogDetail[]>([]);
 // TODO-C: get data
 const search = () => {
-  data.value.splice(0, data.value.length)
+  data.value.splice(0, data.value.length);
   axios
-    .post('/SuperuserOp/logInfo', {
+    .post("/SuperuserOp/logInfo", {
       opUser: client.clientData.clientName,
-      page: '1',
-      num: '999'
+      page: "1",
+      num: "999",
     })
     .then((res: AxiosResponse<LogResponse>) => {
       res.data.logs.forEach((e) =>
@@ -76,19 +74,20 @@ const search = () => {
           opId: e.opId,
           opTime: dayjs(e.opTime),
           opDo: e.opDo,
-          opInfo: e.opInfo
+          opInfo: e.opInfo,
         })
-      )
-      console.log(searchStr.value)
-      data.value = data.value.filter((e) => e.opUser.indexOf(searchStr.value) != -1)
+      );
+      console.log(searchStr.value);
+      data.value = data.value.filter((e) => e.opUser.indexOf(searchStr.value) != -1);
       if (date.value != undefined) {
         data.value = data.value.filter(
           (e) => e.opTime.isAfter(date.value?.[0]) && e.opTime.isBefore(date.value?.[1])
-        )
+        );
       }
     })
-    .catch((e: any) => message.info('Fetch log data failed ' + e))
-}
+    .catch((e: any) => message.info("Fetch log data failed " + e));
+};
+search();
 </script>
 <style scoped>
 .title {
