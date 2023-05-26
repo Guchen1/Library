@@ -23,11 +23,6 @@
             <div class="action" style="display: inline-flex">
               <div v-if="record.accountType != 'user'">
                 <a-button
-                  @click="emit('toRole', 'user', record)"
-                  v-if="record.accountType != 'user'"
-                  >To Patron</a-button
-                >
-                <a-button
                   @click="emit('toRole', 'staff', record)"
                   v-if="record.accountType != 'staff'"
                   >To Staff</a-button
