@@ -569,6 +569,19 @@ function getBase64(img: Blob, callback: (base64Url: string) => void) {
   reader.addEventListener('load', () => callback(reader.result as string))
   reader.readAsDataURL(img)
 }
+function convertBinaryImageToBase64(binaryImage: any) {
+  return new Promise((resolve, reject) => {
+    var reader = new FileReader()
+    reader.onloadend = function () {
+      var base64 = reader.result
+      resolve(base64)
+    }
+    reader.onerror = function (error) {
+      reject(error)
+    }
+    reader.readAsDataURL(binaryImage)
+  })
+}
 const handleCancel = () => {
   visible.value = false
 }
@@ -594,20 +607,42 @@ const isbnFill = () => {
 
   // Then the picture
   axios
-    .get('https://isbn.dovetham.com/api/volumes?q=isbn:' + book.isbn)
+    .get('https://isbn.dovetham.com/getimg.php?isbn=' + book.isbn)
     .then((e: AxiosResponse) => {
-      book.cover = e.data.imgurl
+      book.cover = e.data.imgUrl
     })
     .catch(() => {
       book.cover = ''
     })
     .finally(async () => {
+      console.log('Cover address is ' + book.cover)
       if (book.cover != '') {
-        book.picObj = await axios.get(book.cover).then((e: AxiosResponse) => e.data)
+        axios
+          .get(book.cover, { responseType: 'blob' })
+          .then((response: any) => {
+            // 获取 Blob 对象
+            const blob = response.data
+
+            // 创建 FileReader 对象
+            const fileReader = new FileReader()
+
+            // 当 FileReader 完成读取时，将调用该回调函数
+            fileReader.onloadend = function () {
+              // 获取转换后的 Base64 编码字符串
+              const base64String = fileReader.result
+
+              // 在这里使用转换后的 Base64 编码字符串
+              book.picObj = base64String as string
+            }
+
+            // 读取 Blob 对象并进行转换
+            fileReader.readAsDataURL(blob)
+          })
+          .catch((error: any) => {
+            console.error('Error:', error)
+          })
       }
     })
-
-  console.log(book.cover)
 }
 
 //TODO-C: Add Book info
