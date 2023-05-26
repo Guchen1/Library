@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="client.isAdmin"
-    style="padding-top: 20px; padding: 20px; padding-bottom: 0px"
-  >
+  <div v-if="client.isAdmin" style="padding-top: 20px; padding: 20px; padding-bottom: 0px">
     <a-typography-title :level="2" class="title">User Control</a-typography-title>
     <div class="batch-box">
       <a-input-search
@@ -19,7 +16,7 @@
       </a-input-search>
     </div>
     <div class="batch-box">
-      <a-button @click="table!.value.toRole('staff')" class="batch">To Staff</a-button
+      <a-button @click="toRole('staff')" class="batch">To Staff</a-button
       ><a-button @click="toRole('user')" class="batch">To Patron</a-button>
       <a-button @click="toRole('super')" class="batch">To Superuser</a-button>
       <a-button @click="toRole('admin')" class="batch">To Admin</a-button>
@@ -40,22 +37,22 @@
   <div v-else></div>
 </template>
 <script setup lang="ts">
-import UserTable from "@/components/UserTable.vue";
-import { useClient } from "@/stores/client";
-import type { BackendResponse, UserDetail, UserTypeResponse } from "@/types/type";
-import { SearchOutlined, ToTopOutlined } from "@ant-design/icons-vue";
-import { message } from "ant-design-vue";
-import type { AxiosResponse } from "axios";
-import { useAxios } from "@/stores/axios";
-import { computed, onMounted, reactive, ref } from "vue";
-import "ant-design-vue/es/message/style/css";
-const client = useClient();
-const axios = useAxios().Axios;
-const searchString = ref("");
-const table = ref<typeof UserTable>();
+import UserTable from '@/components/UserTable.vue'
+import { useClient } from '@/stores/client'
+import type { BackendResponse, UserDetail, UserTypeResponse } from '@/types/type'
+import { SearchOutlined, ToTopOutlined } from '@ant-design/icons-vue'
+import { message } from 'ant-design-vue'
+import type { AxiosResponse } from 'axios'
+import { useAxios } from '@/stores/axios'
+import { computed, onMounted, reactive, ref } from 'vue'
+import 'ant-design-vue/es/message/style/css'
+const client = useClient()
+const axios = useAxios().Axios
+const searchString = ref('')
+const table = ref<typeof UserTable>()
 const clearList = computed(() => {
-  return table?.value?.clearList;
-});
+  return table?.value?.clearList
+})
 //WARNING: ONLY FOR DEMO! MUST BE REPLACED
 const toRole = (role: string, item?: UserDetail) => {
   if (item != undefined) {
@@ -67,34 +64,34 @@ const toRole = (role: string, item?: UserDetail) => {
         //if (emit('toRole', role, item)) {
         //if (true) {
         //  console.log('success')
-        item.accountType = role;
+        item.accountType = role
         //} else {
         //  message.error(`Change role for ${item.accountName} failed`)
         //}
       }
-    });
+    })
   } else {
     table?.value?.currentList.forEach((e: any) => {
-      e.accountType = role;
-    });
+      e.accountType = role
+    })
   }
-};
+}
 //WARNING: ONLY FOR DEMO! MUST BE REPLACED
 const del = (item?: UserDetail) => {
   if (item != undefined) {
-    data.value.splice(data.value.indexOf(item), 1);
+    data.value.splice(data.value.indexOf(item), 1)
   } else {
-    console.log(table?.value?.currentList);
+    console.log(table?.value?.currentList)
     table?.value?.currentList.forEach((e: any) => {
-      data.value.splice(data.value.indexOf(e), 1);
-    });
+      data.value.splice(data.value.indexOf(e), 1)
+    })
   }
-};
+}
 
 //WARNING: ONLY FOR DEMO! MUST BE REPLACED
 const changePass = (item: UserDetail, pass: string) => {
-  message.info(`Change password successfully`);
-};
+  message.info(`Change password successfully`)
+}
 /*
 const toRole = (role: string, item?: UserDetail) => {
   console.log(role)
@@ -213,35 +210,33 @@ const changePass = (item: UserDetail, pass: string) => {
 }
 */
 //TODO-C: Search formula.
-const data = ref<UserDetail[]>([]);
+const data = ref<UserDetail[]>([])
 const searchx = () => {
   axios
-    .post("SuperuserOp/userInfo", {
+    .post('SuperuserOp/userInfo', {
       opUser: client.clientData.clientName,
-      page: "1",
-      num: "999",
+      page: '1',
+      num: '999'
     })
     .then((res: AxiosResponse<UserTypeResponse>) => {
-      console.log("searchStr" + searchString.value);
-      data.value = res.data.accounts.filter(
-        (e) => e.accountName.indexOf(searchString.value) != -1
-      );
+      console.log('searchStr' + searchString.value)
+      data.value = res.data.accounts.filter((e) => e.accountName.indexOf(searchString.value) != -1)
     })
     .catch((e: any) => {
-      message.error(`Error while fetching user data: ${e}`);
-      data.value = [];
-    });
-};
+      message.error(`Error while fetching user data: ${e}`)
+      data.value = []
+    })
+}
 onMounted(() => {
-  searchx();
-});
+  searchx()
+})
 defineProps<{
-  width: number;
-  height: number;
-}>();
+  width: number
+  height: number
+}>()
 defineExpose({
-  clearList,
-});
+  clearList
+})
 </script>
 <style scoped>
 .title {

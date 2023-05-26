@@ -20,10 +20,7 @@
         }}</template>
         <template v-else-if="column.key == 'action'">
           <div class="action" style="display: flex; justify-content: space-between">
-            <div class="action" style="display: inline-flex">
-              <a-button @click="emit('toRole', 'user', record)" v-if="record.accountType != 'user'"
-                >To Patron</a-button
-              >
+            <div class="action" style="display: inline-flex" v-if="record.accountType != 'user'">
               <a-button
                 @click="emit('toRole', 'staff', record)"
                 v-if="record.accountType != 'staff'"
