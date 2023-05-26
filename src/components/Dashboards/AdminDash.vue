@@ -1,8 +1,36 @@
 <template>
   <div style="padding-top: 20px">
+    <a-modal
+      v-model:visible="visible"
+      :centered="true"
+      :closable="false"
+      title="Settings"
+    >
+      <a-form-item label="Fine per book overdue">
+        <a-input-number
+          v-model:value="fine"
+          :min="0"
+          :step="0.01"
+          style="width: 100%"
+        ></a-input-number>
+      </a-form-item>
+      <a-form-item label="Book borrow time limit" style="margin-bottom: 0px">
+        <a-input-number
+          v-model:value="limit"
+          :min="0"
+          :step="1"
+          style="width: 100%"
+        ></a-input-number>
+      </a-form-item>
+    </a-modal>
     <v-chart
       :option="option2"
-      style="height: 400px; width: 100%; display: inline-block"
+      style="height: 400px; width: 50%; display: inline-block"
+      autoresize
+    ></v-chart>
+    <v-chart
+      :option="option1"
+      style="height: 400px; width: 50%; display: inline-block"
       autoresize
     ></v-chart>
     <v-chart
@@ -31,11 +59,14 @@ import {
   TooltipComponent,
   LegendComponent,
   GridComponent,
+  ToolboxComponent,
 } from "echarts/components";
 import "echarts-liquidfill";
 import VChart, { THEME_KEY } from "vue-echarts";
 import { ref, reactive, onMounted, onUnmounted, watch, nextTick, provide } from "vue";
 provide(THEME_KEY, "light");
+const fine = ref(0);
+const limit = ref(0);
 // 注册必须的组件
 use([
   CanvasRenderer,
@@ -46,7 +77,9 @@ use([
   TooltipComponent,
   LegendComponent,
   GridComponent,
+  ToolboxComponent,
 ]);
+const visible = ref(false);
 const option = reactive({
   title: {
     text: "Daily Active Patrons: Today",
@@ -135,6 +168,71 @@ optionsy.value.series[0].backgroundStyle.color = "#e5f7e5";
 //change outline color corresponding to color
 optionsy.value.series[0].outline.itemStyle.borderColor = "#5cb85c";
 optionsy.value.title.text = "Daily Active Patrons: Month";
+const option1 = reactive({
+  title: {
+    text: "Fine Statistics",
+    left: "center",
+  },
+  tooltip: {
+    trigger: "item",
+  },
+  xAxis: {
+    type: "category",
+    data: [
+      "Januaray",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ],
+  },
+  yAxis: {
+    type: "value",
+    //标注单位，仅一个
+    //向左移动
+    name: "Dollar",
+  },
+  //add tool box
+  toolbox: {
+    //整体向左移动
+    left: "90%",
+    show: true,
+    feature: {
+      //自定义，弹出框
+      myTool1: {
+        show: true,
+        title: "Customize",
+        icon:
+          "path://M512 0C229.248 0 0 229.248 0 512s229.248 512 512 512 512-229.248 512-512S794.752 0 512 0zM512 960C264.576 960 64 759.424 64 512S264.576 64 512 64s448 200.576 448 448S759.424 960 512 960z m0-832C316.288 128 160 284.288 160 480s156.288 352 352 352 352-156.288 352-352S707.712 128 512 128z m0 640c-141.376 0-256-114.624-256-256s114.624-256 256-256 256 114.624 256 256-114.624 256-256 256z",
+        onclick: function () {
+          visible.value = true;
+        },
+      },
+      //save as image
+    },
+  },
+  series: [
+    {
+      type: "line",
+      radius: "50%",
+      data: [{ value: 1000 }, { value: 7 }, { value: 10 }, { value: 50 }],
+      emphasis: {
+        itemStyle: {
+          shadowBlur: 10,
+          shadowOffsetX: 0,
+          shadowColor: "rgba(0, 0, 0, 0.5)",
+        },
+      },
+    },
+  ],
+});
 const option2 = reactive({
   title: {
     text: "Patron Count",
