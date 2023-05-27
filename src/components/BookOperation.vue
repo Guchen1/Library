@@ -559,7 +559,9 @@ const isbnCheck = () => {
     }
   }
   let check = 10 - sum % 10
-  if (check == parseInt(book.isbn[12])) {
+  //is 9787544766500 valid?
+
+  if (check == parseInt(book.isbn[12])||check==10&&parseInt(book.isbn[12])==0) {
     return true
   } else {
     return false
