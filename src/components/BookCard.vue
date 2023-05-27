@@ -113,6 +113,7 @@ const borrow = (e: BookDetail) => {
 
 .card .upper .uLeft {
   width: 40%;
+  max-width:100px;
   align-items: center;
   display: inline-flex;
 }

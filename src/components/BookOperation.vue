@@ -586,9 +586,36 @@ const handleCancel = () => {
   visible.value = false
 }
 //TODO: Check isbn
+const isbnCheck=()=>{
+  /*方法1
+
+(1) 用1分别乘书号的前12位中的奇数位, 用3乘以偶数位:(位数从左到右为13位到2位）
+(2) 将各乘积相加，求出总和 ；
+(3) 将总和除以10，得出余数；
+(4) 将10减去余数后即为校验位。如相减后的数值为10,校验位则为0。*/
+  let sum=0
+  for(let i=0;i<12;i++){
+    if(i%2==0){
+      sum+=parseInt(book.isbn[i])*1
+    }else{
+      sum+=parseInt(book.isbn[i])*3
+    }
+  }
+  let check=10-sum%10
+  if(check==parseInt(book.isbn[12])){
+    return true
+  }else{
+    return false
+  }
+}
 const isbnFill = () => {
   console.log(book.isbn)
+  if(book.isbn.length != 13||!isbnCheck()){
+    message.info('Invalid ISBN. ISBN should be 13 digits.')
+    //ISBN format check
 
+    return
+  }
   // First get the book info.
   axios
     .get('https://isbn.dovetham.com/api/volumes?q=isbn:' + book.isbn)
