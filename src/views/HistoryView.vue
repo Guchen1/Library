@@ -128,7 +128,9 @@ const search = async (name: string, author: string, isbn: string) => {
             renewable: e.borrowIsrenew == 0,
             visible: true,
             borrowId: e.borrowId,
+            fine:0,
           });
+          //TODO-C: Add fine
           count++;
         }
       };
@@ -149,6 +151,7 @@ const search = async (name: string, author: string, isbn: string) => {
           renewable: undefined,
           visible: false,
           borrowId: undefined,
+          fine:0,
         });
       }
     }

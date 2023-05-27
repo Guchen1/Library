@@ -28,6 +28,7 @@ const routetable: table = {
   "7": "/dashboard",
   "8": "/users",
   "9": "/logs",
+  "10":'/state'
 };
 const reload = () => {
   spinning.value = true;
@@ -112,7 +113,8 @@ const name = computed(() => {
 </script>
 
 <template>
-  <a-layout theme="light">
+  <RouterView v-if="route.path=='/state'"></RouterView>
+  <a-layout v-else theme="light">
     <a-button
       style="position: fixed; bottom: 60px; right: 50px; z-index: 900"
       @click="reload()"

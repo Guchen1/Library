@@ -1,120 +1,96 @@
 <template>
-  <a-table
-    :scroll="{
+  <div>
+    <a-table :scroll="{
       y:
         $route.path == '/history'
           ? width > 1380
             ? props.height - 320 + 'px'
             : props.height - 360 + 'px'
           : width > 1576
-          ? props.height - 310 + 'px'
-          : props.height - 365 + 'px',
+            ? props.height - 310 + 'px'
+            : props.height - 365 + 'px',
       visible: false,
-    }"
-    :columns="columns"
-    :pagination="{ position: ['bottomCenter'], pageSize: 12, showSizeChanger: false }"
-    :data-source="data"
-  >
-    <template #headerCell="{ column }">
-      <template v-if="column.key === 'isbn'">
-        <span style="color: #1d39c4"> ISBN </span>
+    }" :columns="columns" :pagination="{ position: ['bottomCenter'], pageSize: 12, showSizeChanger: false }"
+      :data-source="data">
+      <template #headerCell="{ column }">
+        <template v-if="column.key === 'isbn'">
+          <span style="color: #1d39c4"> ISBN </span>
+        </template>
+        <template v-else-if="column.key === 'status'">
+          <a-badge status="success" />Status
+        </template>
       </template>
-      <template v-else-if="column.key === 'status'">
-        <a-badge status="success" />Status
-      </template>
-    </template>
-    <template #bodyCell="{ column, record }">
-      <template v-if="column.key === 'name'">
-        {{ record.name }}
-      </template>
-      <template v-if="column.key === 'borrowdate'">
-        {{
-          record.borrowdate === undefined ? "" : record.borrowdate.format("YYYY-MM-DD")
-        }}
-      </template>
-      <template v-if="column.key === 'duedate'">
-        {{
-          record.duedate === undefined ? "" : record.duedate.format("YYYY-MM-DD")
-        }} </template
-      ><template v-if="column.key === 'returndate'">
-        {{
-          record.returndate === undefined ? "" : record.returndate.format("YYYY-MM-DD")
-        }}
-      </template>
-      <template v-if="column.key === 'name'">
-        {{ record.name }}
-      </template>
-      <template v-else-if="column.key === 'selected'"
-        ><div style="display: flex; justify-content: center">
-          <a-checkbox
-            :checked="checked(record)"
-            @update:checked="check(record, $event)"
-          ></a-checkbox></div
-      ></template>
-      <template v-else-if="column.key === 'status'">
-        <a-tag v-if="record.status == 'available'" class="tag" color="green"
-          >Available</a-tag
-        >
-        <a-tag v-else-if="record.status == 'returned'" class="tag" color="green"
-          >Returned</a-tag
-        >
-        <a-tag v-else-if="record.status == 'borrowed'" class="tag" color="blue"
-          >Borrowed</a-tag
-        >
-        <a-tag v-else-if="record.status == 'renewed'" class="tag" color="yellow"
-          >Renewed</a-tag
-        >
-        <a-tag v-else color="red" class="tag">Overdue</a-tag>
-      </template>
-      <template v-else-if="column.key === 'action'">
-        <a-popover
-          placement="left"
-          v-if="record.status == 'available' && props.type != 'user'"
-          v-model:open="record.visible"
-          title="Please input patron name"
-          trigger="click"
-        >
-          <template #content>
-            <a-input v-model:value="name"></a-input
-            ><a-button style="display: inline-block" @click="borrow(record, name)"
-              >Submit</a-button
-            >
-          </template>
-          <a style="font-size: 10px; white-space: nowrap" type="primary" size="small"
-            >Check Out</a
-          >
-        </a-popover>
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'name'">
+          {{ record.name }}
+        </template>
+        <template v-if="column.key === 'borrowdate'">
+          {{
+            record.borrowdate === undefined ? "" : record.borrowdate.format("YYYY-MM-DD")
+          }}
+        </template>
+        <template v-if="column.key === 'duedate'">
+          {{
+            record.duedate === undefined ? "" : record.duedate.format("YYYY-MM-DD")
+          }} </template><template v-if="column.key === 'returndate'">
+          {{
+            record.returndate === undefined ? "" : record.returndate.format("YYYY-MM-DD")
+          }}
+        </template>
+        <template v-if="column.key === 'name'">
+          {{ record.name }}
+        </template>
+        <template v-else-if="column.key === 'selected'">
+          <div style="display: flex; justify-content: center">
+            <a-checkbox :checked="checked(record)" @update:checked="check(record, $event)"></a-checkbox>
+          </div>
+        </template>
+        <template v-else-if="column.key === 'status'">
+          <a-tag v-if="record.status == 'available'" class="tag" color="green">Available</a-tag>
+          <a-tag v-else-if="record.status == 'returned'" class="tag" color="green">Returned</a-tag>
+          <a-tag v-else-if="record.status == 'borrowed'" class="tag" color="blue">Borrowed</a-tag>
+          <a-tag v-else-if="record.status == 'renewed'" class="tag" color="yellow">Renewed</a-tag>
+          <a-tag v-else color="red" class="tag">Overdue</a-tag>
+        </template>
+        <template v-else-if="column.key === 'action'">
+          <a-popover placement="left" v-if="record.status == 'available' && props.type != 'user'"
+            v-model:open="record.visible" title="Please input patron name" trigger="click">
+            <template #content>
+              <a-input v-model:value="name"></a-input><a-button style="display: inline-block"
+                @click="borrow(record, name)">Submit</a-button>
+            </template>
+            <a style="font-size: 10px; white-space: nowrap" type="primary" size="small">Check Out</a>
+          </a-popover>
 
-        <a
-          v-else-if="props.type != 'user'"
-          type="primary"
-          style="font-size: 10px; white-space: nowrap"
-          size="small"
-          @click="returnBook(record)"
-          >Return</a
-        >
-        <div style="display: inline-block">
-          <a
-            :disabled="record.renewable == false ? 'disabled' : null"
-            v-if="record.status != 'available' && record.status != 'Returned'"
-            style="
+          <a v-else-if="props.type != 'user'" type="primary" style="font-size: 10px; white-space: nowrap" size="small"
+            @click="returnBook(record)">Return</a>
+          <div style="display: inline-block">
+            <a :disabled="record.renewable == false ? 'disabled' : null"
+              v-if="record.status != 'available' && record.status != 'Returned'" style="
               padding-left: 5px;
               font-size: 10px;
               word-wrap: break-word;
               word-break: keep-all;
-            "
-            type="primary"
-            size="small"
-            @click="renew(record)"
-            >Renew</a
-          >
-        </div>
+            " type="primary" size="small" @click="renew(record)">Renew</a>
+
+          </div>
+          <div style="display:inline-block">
+            <a v-if="record.status == 'overdue' && props.type == 'user' && record.fine != 0" style="
+              padding-left: 5px;
+              font-size: 10px;
+              word-wrap: break-word;
+              word-break: keep-all;
+            " type="error" size="small" @click="fine(record)">Pay the fine</a>
+          </div>
+        </template>
       </template>
-    </template>
-  </a-table>
+    </a-table>
+    <PayAddon @success="(e)=>success(e)" v-if="ready" :record="record" />
+  </div>
 </template>
 <script setup lang="ts">
 //TODO-C: Bind to the real data corresponding to the search
+import PayAddon from "./PayAddon.vue";
 import { computed, reactive, ref, onMounted, watch } from "vue";
 import { useAxios } from "@/stores/axios";
 import { useClient } from "@/stores/client";
@@ -127,7 +103,8 @@ const visible = reactive<boolean[]>([]);
 const axios = useAxios().Axios;
 const client = useClient();
 dayjs.extend(customParseFormat);
-
+const record = ref()
+const ready = ref(false);
 //TODO-C: Finish initalize data.
 const props = defineProps<{
   height: number;
@@ -147,8 +124,12 @@ const hide = (record: BookInfo) => {
     }
   }
 };
+const fine = (recordx: BookInfo) => {
+  record.value = recordx
+  ready.value = true
+}
 const currentList = computed({
-  set: () => {},
+  set: () => { },
   get: () => {
     let temp: Array<BookInfo> = [];
     data.forEach((item) => {
@@ -256,8 +237,12 @@ const checked = computed({
       }
     };
   },
-  set: () => {},
+  set: () => { },
 });
+const success=(e:any)=>{
+  message.success(e.success)
+  ready.value=false
+}
 const data = reactive<BookInfo[]>([]);
 const filter = reactive([
   {

@@ -162,7 +162,9 @@ const search = async (name: string, author: string, isbn: string, borrower: stri
               e.borrowIsOverTime == 1 ? 'overdue' : e.borrowIsrenew == 1 ? 'renewed' : 'borrowed',
             renewable: e.borrowIsrenew == 0,
             visible: true,
-            borrowId: e.borrowId
+            borrowId: e.borrowId,
+            fine: 0
+            //TODO-C: Add fine
           })
           count++
         }
@@ -183,7 +185,9 @@ const search = async (name: string, author: string, isbn: string, borrower: stri
           status: 'available',
           renewable: undefined,
           visible: false,
-          borrowId: undefined
+          borrowId: undefined,
+          fine:0
+          //TODO-C: Add fine
         })
       }
     }

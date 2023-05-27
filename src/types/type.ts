@@ -99,6 +99,7 @@ export interface BookInfo {
   renewable: boolean | undefined
   visible: boolean
   borrowId: number | undefined
+  fine:Number
 }
 
 export interface BorrowRecord {
