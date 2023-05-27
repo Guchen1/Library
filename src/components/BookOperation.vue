@@ -1,35 +1,14 @@
 <template>
-  <a-modal
-    :maskClosable="false"
-    v-model:visible="visible"
-    :title="null"
-    centered
-    :footer="null"
-    destroyOnClose
-    :closable="false"
-    :bodyStyle="{}"
-  >
+  <a-modal :maskClosable="false" v-model:visible="visible" :title="null" centered :footer="null" destroyOnClose
+    :closable="false" :bodyStyle="{}">
     <a-typography-title style="text-align: center; padding-top: 20px" :level="2">{{
       bookDetail == undefined ? 'Add a Book' : 'Modify Book'
     }}</a-typography-title>
     <a-spin :spinning="spinning">
       <div class="padding">
-        <a-upload
-          v-model:file-list="fileList"
-          name="avatar"
-          list-type="picture-card"
-          class="avatar-uploader"
-          :show-upload-list="false"
-          :customRequest="customRequest"
-          accept="image/*"
-          @change="handleChange"
-        >
-          <img
-            style="max-height: 170px; max-width: 170px"
-            v-if="book?.picObj"
-            :src="book?.picObj"
-            alt="avatar"
-          />
+        <a-upload v-model:file-list="fileList" name="avatar" list-type="picture-card" class="avatar-uploader"
+          :show-upload-list="false" :customRequest="customRequest" accept="image/*" @change="handleChange">
+          <img style="max-height: 170px; max-width: 170px" v-if="book?.picObj" :src="book?.picObj" alt="avatar" />
           <div v-else>
             <loading-outlined v-if="loading"></loading-outlined>
             <plus-outlined v-else></plus-outlined>
@@ -37,28 +16,21 @@
           </div>
         </a-upload>
         <div style="display: inline-flex; padding-left: 20px">
-          <a-form
-            :label-col="{ span: 6 }"
-            :wrapper-col="{ span: 18 }"
-            :model="book"
-            style="width: 100%; height: 178px; font-size: 20px !important"
-            ><a-form-item style="margin-bottom: 10px" label="ISBN"
-              ><a-input style="width: 60%; margin-right: 13px" v-model:value="book.isbn"></a-input
-              ><a-button :onclick="isbnFill">Check</a-button> </a-form-item
-            ><a-form-item style="margin-bottom: 10px" label="Name"
-              ><a-input v-model:value="book.name"></a-input> </a-form-item
-            ><a-form-item style="margin-bottom: 10px" label="Author"
-              ><a-input v-model:value="book.author"></a-input> </a-form-item
-            ><a-form-item style="margin-bottom: 10px" label="Type"
-              ><a-select v-model:value="book.type" @change="changeType">
+          <a-form :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }" :model="book"
+            style="width: 100%; height: 178px; font-size: 20px !important"><a-form-item style="margin-bottom: 10px"
+              label="ISBN"><a-input style="width: 60%; margin-right: 13px" v-model:value="book.isbn"></a-input><a-button
+                :onclick="isbnFill">Check</a-button> </a-form-item><a-form-item style="margin-bottom: 10px"
+              label="Name"><a-input v-model:value="book.name"></a-input> </a-form-item><a-form-item
+              style="margin-bottom: 10px" label="Author"><a-input v-model:value="book.author"></a-input>
+            </a-form-item><a-form-item style="margin-bottom: 10px" label="Type"><a-select v-model:value="book.type"
+                @change="changeType">
                 <template v-for="item in typeList" :key="item">
                   <a-select-option v-if="item != 'All'" :value="item">{{ item }}</a-select-option>
                 </template>
               </a-select>
             </a-form-item>
-            <a-form-item style="margin-bottom: 0px" label="Info"
-              ><a-input v-model:value="book.info"></a-input> </a-form-item
-          ></a-form>
+            <a-form-item style="margin-bottom: 0px" label="Info"><a-input v-model:value="book.info"></a-input>
+            </a-form-item></a-form>
         </div>
       </div>
     </a-spin>
@@ -69,12 +41,8 @@
       </div>
       <div class="bottom-box">
         <div class="text" style="padding-left: 30px">Inventory</div>
-        <a-input-number
-          :precision="0"
-          :min="0"
-          v-model:value="book.inventory"
-          @change="(e: number) => (book.inventory = e)"
-        ></a-input-number>
+        <a-input-number :precision="0" :min="0" v-model:value="book.inventory"
+          @change="(e: number) => (book.inventory = e)"></a-input-number>
       </div>
     </div>
     <div class="padding bottom-box">
@@ -639,6 +607,17 @@ const isbnFill = () => {
             dataURL = canvas.toDataURL('image/png')
           } else dataURL = canvas.toDataURL('image/jpeg')
           book.picObj = dataURL
+          count++
+          if (count == 2) {
+            spinning.value = false
+          }
+        }
+        img.onerror = () => {
+          book.cover = ''
+          count++
+          if (count == 2) {
+            spinning.value = false
+          }
         }
       }
     })
@@ -797,7 +776,7 @@ watch(
 )
 </script>
 <style>
-.avatar-uploader > .ant-upload {
+.avatar-uploader>.ant-upload {
   width: 170px;
   height: 170px;
   border-radius: 10px;
