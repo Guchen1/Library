@@ -4,34 +4,37 @@
     <a-typography-title style="text-align: center; padding-top: 20px" :level="2">{{
       bookDetail == undefined ? 'Add a Book' : 'Modify Book'
     }}</a-typography-title>
-    <div class="padding">
-      <a-upload v-model:file-list="fileList" name="avatar" list-type="picture-card" class="avatar-uploader"
-        :show-upload-list="false" :customRequest="customRequest" accept="image/*" @change="handleChange">
-        <img style="max-height: 170px; max-width: 170px" v-if="book?.picObj" :src="book?.picObj" alt="avatar" />
-        <div v-else>
-          <loading-outlined v-if="loading"></loading-outlined>
-          <plus-outlined v-else></plus-outlined>
-          <div class="ant-upload-text">Upload</div>
+    <a-spin :spinning="spinning">
+      <div class="padding">
+        <a-upload v-model:file-list="fileList" name="avatar" list-type="picture-card" class="avatar-uploader"
+          :show-upload-list="false" :customRequest="customRequest" accept="image/*" @change="handleChange">
+          <img style="max-height: 170px; max-width: 170px" v-if="book?.picObj" :src="book?.picObj" alt="avatar" />
+          <div v-else>
+            <loading-outlined v-if="loading"></loading-outlined>
+            <plus-outlined v-else></plus-outlined>
+            <div class="ant-upload-text">Upload</div>
+          </div>
+        </a-upload>
+        <div style="display: inline-flex; padding-left: 20px">
+          <a-form :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }" :model="book"
+            style="width: 100%; height: 178px; font-size: 20px !important"><a-form-item style="margin-bottom: 10px"
+              label="ISBN"><a-input style="width: 60%; margin-right: 13px" v-model:value="book.isbn"></a-input><a-button
+                :onclick="isbnFill">Check</a-button> </a-form-item><a-form-item style="margin-bottom: 10px"
+              label="Name"><a-input v-model:value="book.name"></a-input> </a-form-item><a-form-item
+              style="margin-bottom: 10px" label="Author"><a-input v-model:value="book.author"></a-input>
+            </a-form-item><a-form-item style="margin-bottom: 10px" label="Type"><a-select v-model:value="book.type"
+                @change="changeType">
+                <template v-for="item in typeList" :key="item">
+                  <a-select-option v-if="item != 'All'" :value="item">{{ item }}</a-select-option>
+                </template>
+              </a-select>
+            </a-form-item>
+            <a-form-item style="margin-bottom: 0px" label="Info"><a-input v-model:value="book.info"></a-input>
+            </a-form-item></a-form>
         </div>
-      </a-upload>
-      <div style="display: inline-flex; padding-left: 20px">
-        <a-form :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }" :model="book"
-          style="width: 100%; height: 178px; font-size: 20px !important"><a-form-item style="margin-bottom: 10px"
-            label="ISBN"><a-input style="width: 60%; margin-right: 13px" v-model:value="book.isbn"></a-input><a-button
-              :onclick="isbnFill">Check</a-button> </a-form-item><a-form-item style="margin-bottom: 10px"
-            label="Name"><a-input v-model:value="book.name"></a-input> </a-form-item><a-form-item
-            style="margin-bottom: 10px" label="Author"><a-input v-model:value="book.author"></a-input>
-          </a-form-item><a-form-item style="margin-bottom: 10px" label="Type"><a-select v-model:value="book.type"
-              @change="changeType">
-              <template v-for="item in typeList" :key="item">
-                <a-select-option v-if="item != 'All'" :value="item">{{ item }}</a-select-option>
-              </template>
-            </a-select>
-          </a-form-item>
-          <a-form-item style="margin-bottom: 0px" label="Info"><a-input v-model:value="book.info"></a-input>
-          </a-form-item></a-form>
+
       </div>
-    </div>
+    </a-spin>
     <div class="padding bottom-box">
       <div style="width: 100%; padding-bottom: 20px" class="bottom-box">
         <div class="text">Location</div>
@@ -67,6 +70,7 @@ import type { CascaderProps } from 'ant-design-vue'
 defineProps<{
   typeList: string[]
 }>()
+const spinning = ref(false)
 const client = useClient()
 //TODO-C: finish location and type selection
 const options: CascaderProps['options'] = [
@@ -561,7 +565,7 @@ const isbnCheck = () => {
   let check = 10 - sum % 10
   //is 9787544766500 valid?
 
-  if (check == parseInt(book.isbn[12])||check==10&&parseInt(book.isbn[12])==0) {
+  if (check == parseInt(book.isbn[12]) || check == 10 && parseInt(book.isbn[12]) == 0) {
     return true
   } else {
     return false
@@ -569,10 +573,11 @@ const isbnCheck = () => {
 }
 const isbnFill = () => {
   console.log(book.isbn)
+  spinning.value = true
+  let count = 0
   if (book.isbn.length != 13 || !isbnCheck()) {
     message.info('Invalid ISBN. ISBN should be 13 digits.')
     //ISBN format check
-
     return
   }
   // First get the book info.
@@ -588,6 +593,10 @@ const isbnFill = () => {
         book.author = item.volumeInfo.authors[0]
       } else {
         message.info('We have not found the book with this isbn.')
+      }
+      count++
+      if (count == 2) {
+        spinning.value = false
       }
     })
 
@@ -620,9 +629,20 @@ const isbnFill = () => {
           } else
             dataURL = canvas.toDataURL('image/jpeg')
           book.picObj = dataURL
+          count++
+          if (count == 2) {
+            spinning.value = false
+          }
+          img.onerror = () => {
+            book.cover = ''
+            count++
+            if (count == 2) {
+              spinning.value = false
+            }
+          }
         }
-
       }
+
     })
 }
 
