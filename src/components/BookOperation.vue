@@ -569,19 +569,6 @@ function getBase64(img: Blob, callback: (base64Url: string) => void) {
   reader.addEventListener('load', () => callback(reader.result as string))
   reader.readAsDataURL(img)
 }
-function convertBinaryImageToBase64(binaryImage: any) {
-  return new Promise((resolve, reject) => {
-    var reader = new FileReader()
-    reader.onloadend = function () {
-      var base64 = reader.result
-      resolve(base64)
-    }
-    reader.onerror = function (error) {
-      reject(error)
-    }
-    reader.readAsDataURL(binaryImage)
-  })
-}
 const handleCancel = () => {
   visible.value = false
 }
@@ -644,8 +631,11 @@ const isbnFill = () => {
     .finally(async () => {
       console.log('Cover address is ' + book.cover)
       if (book.cover != '') {
-        axios
-          .get(book.cover, { responseType: 'blob' })
+        axios({
+          method: 'get',
+          url: book.cover,
+          headers: { responseType: 'blob' }
+        })
           .then((response: any) => {
             // 获取 Blob 对象
             const blob = response.data

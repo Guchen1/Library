@@ -12,43 +12,38 @@
 </template>
 
 <script setup lang="ts">
-import BookSearch from "@/components/BookSearch.vue";
-import BookTable from "@/components/BookTable.vue";
-import type {
-  BookDetail,
-  BookInfo,
-  BookResponse,
-  BorrowRecord,
-  BorrowResponse,
-} from "@/types/type";
-import { useAxios } from "@/stores/axios";
-import { useClient } from "@/stores/client";
-import { onMounted, reactive } from "vue";
-import dayjs from "dayjs";
-import type { AxiosResponse } from "axios";
-import message from "ant-design-vue/lib/message";
+import BookSearch from '@/components/BookSearch.vue'
+import BookTable from '@/components/BookTable.vue'
+import type { BookDetail, BookInfo, BookResponse, BorrowRecord, BorrowResponse } from '@/types/type'
+import { useAxios } from '@/stores/axios'
+import { useClient } from '@/stores/client'
+import { onMounted, reactive } from 'vue'
+import dayjs from 'dayjs'
+import type { AxiosResponse } from 'axios'
+import message from 'ant-design-vue/lib/message'
 const props = defineProps<{
-  width: number;
-  height: number;
-}>();
-const data = reactive<BookInfo[]>([]);
-const axios = useAxios().Axios;
-const client = useClient();
+  width: number
+  height: number
+}>()
+const data = reactive<BookInfo[]>([])
+const axios = useAxios().Axios
+const client = useClient()
 
 const search = async (name: string, author: string, isbn: string) => {
   //TODO-C: Finish search function
-  data.splice(0, data.length);
-  let page: number = 1;
-  let isMore: boolean = true;
-  let bookBorrowInfo: BorrowRecord[] = [];
-  let bookInfo: BookDetail[] = [];
+  data.splice(0, data.length)
+  let page: number = 1
+  let isMore: boolean = true
+  let bookBorrowInfo: BorrowRecord[] = []
+  let bookInfo: BookDetail[] = []
   await axios
-    .post("/StaffOp/bookAllBorrowInfo", {
+    .post('/StaffOp/bookAllBorrowInfo', {
       opUser: client.clientData.clientName,
-      page: "1",
-      num: "999",
+      page: '1',
+      num: '999'
     })
     .then((e: AxiosResponse<BorrowResponse>) => {
+      console.log(e)
       // Do not ask me why...
       e.data.infoList.forEach((e: BorrowRecord) => {
         if (
@@ -57,31 +52,31 @@ const search = async (name: string, author: string, isbn: string) => {
           e.bookIsbn.indexOf(isbn) != -1 &&
           e.borrowAccount == client.clientData.clientName
         ) {
-          bookBorrowInfo.push(e);
+          bookBorrowInfo.push(e)
         }
-      });
+      })
     })
     .catch((e: any) => {
-      message.error(e);
-    });
+      message.error(e)
+    })
   try {
     while (isMore) {
       await axios
-        .post("/UserOp/searchBook", {
+        .post('/UserOp/searchBook', {
           opUser: client.clientData.clientName,
-          name: "",
-          isbn: "",
-          author: "",
+          name: '',
+          isbn: '',
+          author: '',
           page: String(page),
-          ready: true,
+          ready: true
         })
         .then((res: AxiosResponse<BookResponse>) => {
           if (!res.status) {
-            isMore = false;
-            throw "Unable to get data with status code " + res.status;
+            isMore = false
+            throw 'Unable to get data with status code ' + res.status
           }
           if (res.data.books.length == 0) {
-            isMore = false;
+            isMore = false
           } else {
             res.data.books.forEach((e: BookDetail) => {
               if (
@@ -89,24 +84,24 @@ const search = async (name: string, author: string, isbn: string) => {
                 e.bookAuthor.indexOf(author) != -1 &&
                 e.bookIsbn.indexOf(isbn) != -1
               ) {
-                bookInfo.push(e);
+                bookInfo.push(e)
               }
-            });
-            page += 1;
+            })
+            page += 1
           }
         })
         .catch((e: any) => {
-          isMore = false;
-          throw e;
-        });
+          isMore = false
+          throw e
+        })
     }
   } catch (err: any) {
-    message.error(err);
+    message.error(err)
   }
 
   bookInfo.forEach((e: any) => {
-    let whatever = e;
-    let count: number = 0;
+    let whatever = e
+    let count: number = 0
     function a(whatever: any) {
       return (e: BorrowRecord) => {
         if (e.bookName == whatever.bookName) {
@@ -116,26 +111,22 @@ const search = async (name: string, author: string, isbn: string) => {
             isbn: whatever.bookIsbn,
             author: whatever.bookAuthor,
             borrower: e.borrowAccount,
-            borrowdate: dayjs(e.borrowTime, "YYYY-MM-DD"),
-            duedate: dayjs(e.borrowTime, "YYYY-MM-DD").add(e.borrowDuration, "day"),
-            returndate: dayjs(e.borrowTime, "YYYY-MM-DD").add(e.borrowDuration, "day"),
+            borrowdate: dayjs(e.borrowTime, 'YYYY-MM-DD'),
+            duedate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
+            returndate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
             status:
-              e.borrowIsOverTime == 1
-                ? "overdue"
-                : e.borrowIsrenew == 1
-                ? "renewed"
-                : "borrowed",
+              e.borrowIsOverTime == 1 ? 'overdue' : e.borrowIsrenew == 1 ? 'renewed' : 'borrowed',
             renewable: e.borrowIsrenew == 0,
             visible: true,
             borrowId: e.borrowId,
-            fine:0,
-          });
+            fine: 0
+          })
           //TODO-C: Add fine
-          count++;
+          count++
         }
-      };
+      }
     }
-    bookBorrowInfo.forEach(a(whatever));
+    bookBorrowInfo.forEach(a(whatever))
     if (e.borrowAccount != undefined) {
       for (var i = 0; i < whatever.bookStock - count; ++i) {
         data.push({
@@ -147,17 +138,17 @@ const search = async (name: string, author: string, isbn: string) => {
           borrowdate: undefined,
           duedate: undefined,
           returndate: e.returndate,
-          status: "available",
+          status: 'available',
           renewable: undefined,
           visible: false,
           borrowId: undefined,
-          fine:0,
-        });
+          fine: 0
+        })
       }
     }
-  });
-};
-search("", "", "");
+  })
+}
+search('', '', '')
 </script>
 
 <style scoped></style>
