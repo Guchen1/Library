@@ -27,4 +27,3 @@ coverage
 *.sln
 *.sw?
 components.d.ts
-.VSCodeCounter
