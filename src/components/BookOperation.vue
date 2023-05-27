@@ -1,34 +1,13 @@
 <template>
-  <a-modal
-    :maskClosable="false"
-    v-model:visible="visible"
-    :title="null"
-    centered
-    :footer="null"
-    destroyOnClose
-    :closable="false"
-    :bodyStyle="{}"
-  >
+  <a-modal :maskClosable="false" v-model:visible="visible" :title="null" centered :footer="null" destroyOnClose
+    :closable="false" :bodyStyle="{}">
     <a-typography-title style="text-align: center; padding-top: 20px" :level="2">{{
       bookDetail == undefined ? 'Add a Book' : 'Modify Book'
     }}</a-typography-title>
     <div class="padding">
-      <a-upload
-        v-model:file-list="fileList"
-        name="avatar"
-        list-type="picture-card"
-        class="avatar-uploader"
-        :show-upload-list="false"
-        :customRequest="customRequest"
-        accept="image/*"
-        @change="handleChange"
-      >
-        <img
-          style="max-height: 170px; max-width: 170px"
-          v-if="book?.picObj"
-          :src="book?.picObj"
-          alt="avatar"
-        />
+      <a-upload v-model:file-list="fileList" name="avatar" list-type="picture-card" class="avatar-uploader"
+        :show-upload-list="false" :customRequest="customRequest" accept="image/*" @change="handleChange">
+        <img style="max-height: 170px; max-width: 170px" v-if="book?.picObj" :src="book?.picObj" alt="avatar" />
         <div v-else>
           <loading-outlined v-if="loading"></loading-outlined>
           <plus-outlined v-else></plus-outlined>
@@ -36,28 +15,21 @@
         </div>
       </a-upload>
       <div style="display: inline-flex; padding-left: 20px">
-        <a-form
-          :label-col="{ span: 6 }"
-          :wrapper-col="{ span: 18 }"
-          :model="book"
-          style="width: 100%; height: 178px; font-size: 20px !important"
-          ><a-form-item style="margin-bottom: 10px" label="ISBN"
-            ><a-input style="width: 60%; margin-right: 13px" v-model:value="book.isbn"></a-input
-            ><a-button :onclick="isbnFill">Check</a-button> </a-form-item
-          ><a-form-item style="margin-bottom: 10px" label="Name"
-            ><a-input v-model:value="book.name"></a-input> </a-form-item
-          ><a-form-item style="margin-bottom: 10px" label="Author"
-            ><a-input v-model:value="book.author"></a-input> </a-form-item
-          ><a-form-item style="margin-bottom: 10px" label="Type"
-            ><a-select v-model:value="book.type" @change="changeType">
+        <a-form :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }" :model="book"
+          style="width: 100%; height: 178px; font-size: 20px !important"><a-form-item style="margin-bottom: 10px"
+            label="ISBN"><a-input style="width: 60%; margin-right: 13px" v-model:value="book.isbn"></a-input><a-button
+              :onclick="isbnFill">Check</a-button> </a-form-item><a-form-item style="margin-bottom: 10px"
+            label="Name"><a-input v-model:value="book.name"></a-input> </a-form-item><a-form-item
+            style="margin-bottom: 10px" label="Author"><a-input v-model:value="book.author"></a-input>
+          </a-form-item><a-form-item style="margin-bottom: 10px" label="Type"><a-select v-model:value="book.type"
+              @change="changeType">
               <template v-for="item in typeList" :key="item">
                 <a-select-option v-if="item != 'All'" :value="item">{{ item }}</a-select-option>
               </template>
             </a-select>
           </a-form-item>
-          <a-form-item style="margin-bottom: 0px" label="Info"
-            ><a-input v-model:value="book.info"></a-input> </a-form-item
-        ></a-form>
+          <a-form-item style="margin-bottom: 0px" label="Info"><a-input v-model:value="book.info"></a-input>
+          </a-form-item></a-form>
       </div>
     </div>
     <div class="padding bottom-box">
@@ -67,19 +39,17 @@
       </div>
       <div class="bottom-box">
         <div class="text" style="padding-left: 30px">Inventory</div>
-        <a-input-number
-          :precision="0"
-          :min="0"
-          v-model:value="book.inventory"
-          @change="(e:number) => (book.inventory = e)"
-        ></a-input-number>
+        <a-input-number :precision="0" :min="0" v-model:value="book.inventory"
+          @change="(e: number) => (book.inventory = e)"></a-input-number>
       </div>
     </div>
     <div class="padding bottom-box">
-      <a-button style="margin-right: 20px" @click="handleCancel"><CloseOutlined />Cancel</a-button>
-      <a-button type="primary" @click="handleOk(bookDetail == undefined)"
-        ><CheckOutlined />OK</a-button
-      >
+      <a-button style="margin-right: 20px" @click="handleCancel">
+        <CloseOutlined />Cancel
+      </a-button>
+      <a-button type="primary" @click="handleOk(bookDetail == undefined)">
+        <CheckOutlined />OK
+      </a-button>
     </div>
   </a-modal>
 </template>
@@ -573,31 +543,31 @@ const handleCancel = () => {
   visible.value = false
 }
 //TODO: Check isbn
-const isbnCheck=()=>{
+const isbnCheck = () => {
   /*方法1
 
 (1) 用1分别乘书号的前12位中的奇数位, 用3乘以偶数位:(位数从左到右为13位到2位）
 (2) 将各乘积相加，求出总和 ；
 (3) 将总和除以10，得出余数；
 (4) 将10减去余数后即为校验位。如相减后的数值为10,校验位则为0。*/
-  let sum=0
-  for(let i=0;i<12;i++){
-    if(i%2==0){
-      sum+=parseInt(book.isbn[i])*1
-    }else{
-      sum+=parseInt(book.isbn[i])*3
+  let sum = 0
+  for (let i = 0; i < 12; i++) {
+    if (i % 2 == 0) {
+      sum += parseInt(book.isbn[i]) * 1
+    } else {
+      sum += parseInt(book.isbn[i]) * 3
     }
   }
-  let check=10-sum%10
-  if(check==parseInt(book.isbn[12])){
+  let check = 10 - sum % 10
+  if (check == parseInt(book.isbn[12])) {
     return true
-  }else{
+  } else {
     return false
   }
 }
 const isbnFill = () => {
   console.log(book.isbn)
-  if(book.isbn.length != 13||!isbnCheck()){
+  if (book.isbn.length != 13 || !isbnCheck()) {
     message.info('Invalid ISBN. ISBN should be 13 digits.')
     //ISBN format check
 
@@ -631,33 +601,25 @@ const isbnFill = () => {
     .finally(async () => {
       console.log('Cover address is ' + book.cover)
       if (book.cover != '') {
-        axios({
-          method: 'get',
-          url: book.cover,
-          headers: { responseType: 'blob' }
-        })
-          .then((response: any) => {
-            // 获取 Blob 对象
-            const blob = response.data
+        const img = new Image()
+        img.src = book.cover
+        img.crossOrigin = 'anonymous'
+        //imgtoBlob
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          const ctx = canvas.getContext('2d')
+          canvas.width = img.width
+          canvas.height = img.height
+          ctx?.drawImage(img, 0, 0, img.width, img.height)
+          //png or jpg
+          let dataURL: string
+          if (book.cover.indexOf('png') > 0) {
+            dataURL = canvas.toDataURL('image/png')
+          } else
+            dataURL = canvas.toDataURL('image/jpeg')
+          book.picObj = dataURL
+        }
 
-            // 创建 FileReader 对象
-            const fileReader = new FileReader()
-
-            // 当 FileReader 完成读取时，将调用该回调函数
-            fileReader.onloadend = function () {
-              // 获取转换后的 Base64 编码字符串
-              const base64String = fileReader.result
-
-              // 在这里使用转换后的 Base64 编码字符串
-              book.picObj = base64String as string
-            }
-
-            // 读取 Blob 对象并进行转换
-            fileReader.readAsDataURL(blob)
-          })
-          .catch((error: any) => {
-            console.error('Error:', error)
-          })
       }
     })
 }
@@ -810,11 +772,12 @@ watch(
 )
 </script>
 <style>
-.avatar-uploader > .ant-upload {
+.avatar-uploader>.ant-upload {
   width: 170px;
   height: 170px;
   border-radius: 10px;
 }
+
 .ant-upload-select-picture-card i {
   font-size: 32px;
   color: #999;
@@ -824,6 +787,7 @@ watch(
   margin-top: 8px;
   color: #666;
 }
+
 .ant-upload-picture-card-wrapper {
   width: 170px;
 }
@@ -832,18 +796,21 @@ watch(
 .avatar-uploader {
   margin-top: 18px;
 }
+
 .padding {
   padding-top: 40px;
   width: 100%;
   display: flex;
   justify-content: center;
 }
+
 .bottom-box {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   align-items: center;
 }
+
 .text {
   font-size: 20px;
   line-height: 22px;
