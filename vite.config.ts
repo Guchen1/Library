@@ -20,7 +20,7 @@ export default defineConfig({
   },
 build: {
       sourcemap: true,
-      rollupOptions: {
+      /*rollupOptions: {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
@@ -41,6 +41,6 @@ build: {
             }
           },
         },
-      }
+      }*/
     },
 })

@@ -2,22 +2,11 @@
   <div style="margin-top: 20px">
     <BookSearch @show="show(undefined)" style="padding-left: 5px" :searchFunc="search" />
     <TypeList ref="types" style="padding: 20px" v-model:selected="selected" />
-    <BookOperation
-      :typeList="types?.list == undefined ? [] : types.list"
-      ref="BookOperationRef"
-    />
-    <a-layout-content
-      theme="light"
-      style="background-color: white; padding-left: 20px; padding-right: 0px"
-    >
+    <BookOperation :typeList="types?.list == undefined ? [] : types.list" ref="BookOperationRef" />
+    <a-layout-content theme="light" style="background-color: white; padding-left: 20px; padding-right: 0px">
       <a-row>
         <a-col v-for="i in data" :key="i" span="12" :xxl="8" :xxxl="6">
-          <BookCard
-            @show="(e) => show(e)"
-            @delete-book="(e) => deleteBook(e)"
-            :book="i"
-            style="height: 95%"
-          />
+          <BookCard @show="(e) => show(e)" @delete-book="(e) => deleteBook(e)" :book="i" style="height: 95%" />
         </a-col>
       </a-row>
     </a-layout-content>
@@ -47,6 +36,7 @@ const store = reactive<BookDetail[]>([]);
 // Actually toShow
 const data = ref<BookDetail[]>([]);
 const types = ref();
+const loading = ref(false);
 const selected = ref<string[]>([]);
 const show = (book: BookDetail | undefined) => {
   tempbook.value = book;
@@ -134,13 +124,16 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
               store.push(e);
               data.value.push(e);
             });
+            loading.value = false;
           console.log(e.bookCover);
         });
         page.value += 1;
       }
+
     })
     .catch((err: any) => {
       message.error(`Error detected while fetching books: ${err}`);
+      loading.value = false;
     });
 };
 const search = (name: string, author: string, isbn: string, ready: boolean) => {
@@ -176,12 +169,18 @@ function scrollHandle() {
     let bottom =
       Math.abs(
         document.documentElement.scrollHeight -
-          document.documentElement.clientHeight -
-          document.documentElement.scrollTop
+        document.documentElement.clientHeight -
+        document.documentElement.scrollTop
       ) < 1;
     if (bottom && isMore.value) {
       console.log(page.value);
-      request(nameSave, authorSave, isbnSave, readySave);
+      const a = setInterval(() => {
+        if (!loading.value) {
+          clearInterval(a);
+          loading.value = true;
+          request(nameSave, authorSave, isbnSave, readySave);
+        }
+      }, 100);
     }
   };
 }

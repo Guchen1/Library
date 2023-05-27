@@ -21,9 +21,6 @@
         </template>
       </template>
       <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'name'">
-          {{ record.name }}
-        </template>
         <template v-if="column.key === 'borrowdate'">
           {{
             record.borrowdate === undefined ? "" : record.borrowdate.format("YYYY-MM-DD")
