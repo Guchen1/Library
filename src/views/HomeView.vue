@@ -44,6 +44,13 @@ onMounted(() => {
 onUnmounted(() => {
   loading.value = true
   ready.value=false
+  document.body.style.overflow = 'hidden'
+  const a=setInterval(()=>{
+    if(route.path!=='/'){
+      clearInterval(a)
+      document.body.style.overflow = 'auto'
+    }
+  },100)
   window.removeEventListener('message', handleMessage, false)
 })
 const x = computed(() => {
