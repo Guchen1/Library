@@ -136,7 +136,7 @@ const del = async (item?: UserDetail) => {
   } else {
     for (var e of table!.value!.currentList) {
       await axios
-        .post('/ManagerOp/changeAuthority', {
+        .post('/ManagerOp/deleteRole', {
           account: client.clientData.clientName,
           targetAcc: e.accountName
         })
