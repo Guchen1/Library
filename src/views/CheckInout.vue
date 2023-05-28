@@ -145,51 +145,44 @@ const search = async (name: string, author: string, isbn: string, borrower: stri
 
   bookInfo.forEach((e: any) => {
     let whatever = e
-    let count: number = 0
-    function a(whatever: any) {
-      return (e: BorrowRecord) => {
-        if (e.bookName == whatever.bookName) {
-          data.push({
-            name: whatever.bookName,
-            bookId: whatever.bookId,
-            isbn: whatever.bookIsbn,
-            author: whatever.bookAuthor,
-            borrower: e.borrowAccount,
-            borrowdate: dayjs(e.borrowTime, 'YYYY-MM-DD'),
-            duedate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
-            returndate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
-            status:
-              e.borrowIsOverTime == 1 ? 'overdue' : e.borrowIsrenew == 1 ? 'renewed' : 'borrowed',
-            renewable: e.borrowIsrenew == 0,
-            visible: true,
-            borrowId: e.borrowId,
-            fine: 0
-            //TODO-C: Add fine
-          })
-          count++
-        }
-      }
+    console.log(whatever.bookStock)
+    let recordForBook = bookBorrowInfo.filter((e) => e.bookIsbn == whatever.bookIsbn)
+    console.log(recordForBook.length)
+    for (var i of recordForBook) {
+      data.push({
+        name: whatever.bookName,
+        bookId: whatever.bookId,
+        isbn: whatever.bookIsbn,
+        author: whatever.bookAuthor,
+        borrower: i.borrowAccount,
+        borrowdate: dayjs(i.borrowTime, 'YYYY-MM-DD'),
+        duedate: dayjs(i.borrowTime, 'YYYY-MM-DD').add(i.borrowDuration, 'day'),
+        returndate: dayjs(i.borrowTime, 'YYYY-MM-DD').add(i.borrowDuration, 'day'),
+        status: i.borrowIsOverTime == 1 ? 'overdue' : i.borrowIsrenew == 1 ? 'renewed' : 'borrowed',
+        renewable: i.borrowIsrenew == 0,
+        visible: true,
+        borrowId: i.borrowId,
+        fine: 0
+      })
+      //TODO-C: Add fine
     }
-    bookBorrowInfo.forEach(a(whatever))
-    if (!(borrower != '' && e.borrowAccount == undefined)) {
-      for (var i = 0; i < whatever.bookStock - count; ++i) {
-        data.push({
-          name: whatever.bookName,
-          bookId: whatever.bookId,
-          isbn: whatever.bookIsbn,
-          author: whatever.bookAuthor,
-          borrower: undefined,
-          borrowdate: undefined,
-          duedate: undefined,
-          returndate: e.returndate,
-          status: 'available',
-          renewable: undefined,
-          visible: false,
-          borrowId: undefined,
-          fine:0
-          //TODO-C: Add fine
-        })
-      }
+
+    for (var j = 0; j < whatever.bookStock; ++j) {
+      data.push({
+        name: whatever.bookName,
+        bookId: whatever.bookId,
+        isbn: whatever.bookIsbn,
+        author: whatever.bookAuthor,
+        borrower: undefined,
+        borrowdate: undefined,
+        duedate: undefined,
+        returndate: e.returndate,
+        status: 'available',
+        renewable: undefined,
+        visible: false,
+        borrowId: undefined,
+        fine: 0
+      })
     }
   })
 }
