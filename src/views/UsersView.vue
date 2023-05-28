@@ -19,7 +19,28 @@
       <a-button @click="toRole('staff')" class="batch">To Staff</a-button>
       <a-button @click="toRole('superuser')" class="batch">To Superuser</a-button>
       <a-button @click="toRole('manager')" class="batch">To Manager</a-button>
-      <a-button @click="staffCreate()" class="batch" type="primary">New Staff</a-button>
+      <a-popover
+        placement="bottom"
+        v-model:visible="visibleB"
+        title="Create a Patron"
+        trigger="click"
+      >
+        <template #content>
+          <div style="display: flex; flex-direction: column">
+            <div>Username: <a-input class="" v-model:value="stName"></a-input></div>
+            <div>Password: <a-input v-model:value="stPass"></a-input></div>
+            <div style="width: 100%; justify-content: end; display: flex">
+              <a-button
+                type="primary"
+                style="width: 40%; margin-top: 5px; justify-self: end"
+                @click="staffCreate()"
+                >Submit</a-button
+              >
+            </div>
+          </div>
+        </template>
+        <a-button class="batch" type="primary"> Create a Patron</a-button>
+      </a-popover>
       <a-button @click="del(undefined)" class="batch" type="danger">Delete</a-button>
     </div>
     <div style="display: flex; justify-content: center">
@@ -49,6 +70,9 @@ import 'ant-design-vue/es/message/style/css'
 const client = useClient()
 const axios = useAxios().Axios
 const searchString = ref('')
+const visibleB = ref(false)
+const stName = ref('')
+const stPass = ref('')
 const table = ref<typeof UserTable>()
 const clearList = computed(() => {
   return table?.value?.clearList
