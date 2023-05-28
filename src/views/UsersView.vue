@@ -68,20 +68,20 @@ const toRole = async (role: string, item?: UserDetail) => {
       })
       .then((e: AxiosResponse<BackendResponse>) => {
         if (e.data.status) {
+          data.value.forEach((e) => {
+            if (e.accountName == item.accountName) {
+              e.accountType = role
+            }
+          })
           return true
         } else {
-          throw e.data.msg
+          throw e.data.msg.content
         }
       })
       .catch((e: any) => {
         message.info(`Error detected in changing the role: ${e}`)
         return false
       })
-    data.value.forEach((e) => {
-      if (e.accountName == item.accountName) {
-        e.accountType = role
-      }
-    })
   } else {
     for (var e of table!.value!.currentList) {
       await axios
@@ -93,7 +93,7 @@ const toRole = async (role: string, item?: UserDetail) => {
         .then((f: AxiosResponse<BackendResponse>) => {
           console.log(f.data.status)
           if (!f.data.status) {
-            throw f.data.msg
+            throw f.data.msg.content
           }
           data.value.forEach((g) => {
             if (g.accountName == e.accountName) {
@@ -101,57 +101,59 @@ const toRole = async (role: string, item?: UserDetail) => {
             }
           })
         })
-        .catch((f: String) => {
-          message.info(`Error detected in changing the role of ${e.accountName}.`)
+        .catch((e: any) => {
+          message.info(`Error detected in changing the role of ${e.accountName}. ${e}`)
           return false
         })
     }
   }
   //TODO-C: Finish toRole function,更新成功之后刷新页面
 }
-const del = (item?: UserDetail) => {
+const del = async (item?: UserDetail) => {
   //TODO: Finish del function,成功之后刷新页面
   //Ask api tomorrow
 
   if (item != undefined) {
     console.log('start del')
-    axios
+    await axios
       .post('/ManagerOp/deleteRole', {
-        opUser: client.clientData.clientName,
         account: client.clientData.clientName,
         targetAcc: item.accountName
       })
       .then((e: AxiosResponse<BackendResponse>) => {
         if (e.data.status) {
+          data.value.splice(data.value.indexOf(item), 1)
           return true
         } else {
-          throw e.data.msg
+          throw e.data.msg.content
         }
       })
       .catch((e: any) => {
+        console.log(e)
         message.info(`Error detected in deleting ${item.accountName}: ${e}`)
         return false
       })
   } else {
-    table?.value?.currentList.forEach((e: UserDetail) => {
-      axios
+    for (var e of table!.value!.currentList) {
+      await axios
         .post('/ManagerOp/changeAuthority', {
-          opUser: client.clientData.clientName,
           account: client.clientData.clientName,
-          type: e.accountName
+          targetAcc: e.accountName
         })
         .then((f: AxiosResponse<BackendResponse>) => {
           if (!f.data.status) {
-            throw f.data.msg
+            throw f.data.msg.content
+          } else {
+            data.value.splice(data.value.indexOf(e), 1)
           }
         })
-        .catch((f: any) => {
+        .catch((f: String) => {
+          console.log(f)
           message.info(`Error detected in deleting ${e.accountName}: ${f}`)
           return false
         })
-    })
+    }
   }
-  client.reload() //这行就是刷新的
 }
 const changePass = (item: UserDetail, pass: string) => {
   //TODO: change password
@@ -163,7 +165,7 @@ const changePass = (item: UserDetail, pass: string) => {
         opUser: client.clientData.clientName,
         account: client.clientData.clientName,
         targetAcc: item.accountName,
-        newPassword: 'zfh',
+        newPassword: pass,
         OpType: 'manager'
       })
       .then((e: AxiosResponse<BackendResponse>) => {
