@@ -87,6 +87,7 @@ const save = () => {
         message.error('Type already exists')
       } else {
         //TODO-C: save to database
+        let toAdd = newType.value
         axios
           .post('/StaffOp/addCategory', {
             opUser: client.clientData.clientName,
@@ -97,8 +98,8 @@ const save = () => {
             if (!e.data.status) {
               throw e.data.msg.content
             } else {
-              list.value.push(newType.value)
-              temp.value.push(newType.value)
+              list.value.push(toAdd)
+              temp.value.push(toAdd)
               message.info('Adding Booktype Complete')
             }
           })
