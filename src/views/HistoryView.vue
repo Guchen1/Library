@@ -99,46 +99,23 @@ const search = async (name: string, author: string, isbn: string) => {
     message.error(err)
   }
 
-  bookInfo.forEach((e: any) => {
-    let whatever = e
-    console.log(whatever.bookStock)
-    for (var i = 0; i < whatever.bookStock; ++i) {
-      data.push({
-        name: whatever.bookName,
-        bookId: whatever.bookId,
-        isbn: whatever.bookIsbn,
-        author: whatever.bookAuthor,
-        borrower: undefined,
-        borrowdate: undefined,
-        duedate: undefined,
-        returndate: e.returndate,
-        status: 'available',
-        renewable: undefined,
-        visible: false,
-        borrowId: undefined,
-        fine: 0
-      })
-    }
-    let recordForBook = bookBorrowInfo.filter((e) => e.bookIsbn == whatever.bookIsbn)
-    console.log(recordForBook.length)
-    for (i = 0; i < recordForBook.length; ++i) {
-      data.push({
-        name: whatever.bookName,
-        bookId: whatever.bookId,
-        isbn: whatever.bookIsbn,
-        author: whatever.bookAuthor,
-        borrower: e.borrowAccount,
-        borrowdate: dayjs(e.borrowTime, 'YYYY-MM-DD'),
-        duedate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
-        returndate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
-        status: e.borrowIsOverTime == 1 ? 'overdue' : e.borrowIsrenew == 1 ? 'renewed' : 'borrowed',
-        renewable: e.borrowIsrenew == 0,
-        visible: true,
-        borrowId: e.borrowId,
-        fine: 0
-      })
-      //TODO-C: Add fine
-    }
+  bookBorrowInfo.forEach((e) => {
+    let thisbook = bookInfo.filter((f) => f.bookIsbn == e.bookIsbn)
+    data.push({
+      name: e.bookName,
+      bookId: String(thisbook[0]!.bookId),
+      isbn: e.bookIsbn,
+      author: e.bookAuthor,
+      borrower: e.borrowAccount,
+      borrowdate: dayjs(e.borrowTime, 'YYYY-MM-DD'),
+      duedate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
+      returndate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
+      status: e.borrowIsOverTime == 1 ? 'overdue' : e.borrowIsrenew == 1 ? 'renewed' : 'borrowed',
+      renewable: e.borrowIsrenew == 0,
+      visible: true,
+      borrowId: e.borrowId,
+      fine: 0
+    })
   })
 }
 search('', '', '')
