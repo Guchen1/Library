@@ -23,6 +23,7 @@
       ><a-button @click="toRole('user')" class="batch">To Patron</a-button>
       <a-button @click="toRole('super')" class="batch">To Superuser</a-button>
       <a-button @click="toRole('admin')" class="batch">To Admin</a-button>
+      <a-button @click="staffCreate()" class="batch" type="primary">New Staff</a-button>
       <a-button @click="del(undefined)" class="batch" type="danger">Delete</a-button>
     </div>
     <div style="display: flex; justify-content: center">
@@ -56,6 +57,9 @@ const table = ref<typeof UserTable>();
 const clearList = computed(() => {
   return table?.value?.clearList;
 });
+const staffCreate=()=>{
+  //TODO: Finish staffCreate function
+}
 //WARNING: ONLY FOR DEMO! MUST BE REPLACED
 const toRole = (role: string, item?: UserDetail) => {
   if (item != undefined) {

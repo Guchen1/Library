@@ -44,7 +44,8 @@
             style="width: 100%; height: 178px; font-size: 20px !important"
             ><a-form-item style="margin-bottom: 10px" label="ISBN"
               ><a-input
-                style="width: 60%; margin-right: 13px"
+                style=" margin-right: 13px"
+                :style="{ width: isAdd()?'60%':'' }"
                 v-model:value="book.isbn"
                 :disabled="!isAdd()"
               ></a-input
