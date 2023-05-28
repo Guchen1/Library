@@ -107,12 +107,9 @@ const toRole = async (role: string, item?: UserDetail) => {
         })
     }
   }
-  //TODO-C: Finish toRole function,更新成功之后刷新页面
 }
 const del = async (item?: UserDetail) => {
-  //TODO: Finish del function,成功之后刷新页面
-  //Ask api tomorrow
-
+  //TODO-C: Finish del function,成功之后刷新页面
   if (item != undefined) {
     console.log('start del')
     await axios
@@ -158,29 +155,29 @@ const del = async (item?: UserDetail) => {
 const changePass = (item: UserDetail, pass: string) => {
   //TODO: change password
   //Ask api tomorrow
-  if (item != undefined) {
-    console.log('start del')
-    axios
-      .post('/ManagerOp/changePassword', {
-        opUser: client.clientData.clientName,
-        account: client.clientData.clientName,
-        targetAcc: item.accountName,
-        newPassword: pass,
-        OpType: 'manager'
-      })
-      .then((e: AxiosResponse<BackendResponse>) => {
-        if (e.data.status) {
-          message.info(`Change password successfully`)
-          return true
-        } else {
-          throw e.data.msg
-        }
-      })
-      .catch((e: any) => {
-        message.info(`Change password failed`)
-        return false
-      })
-  }
+  console.log('start del')
+  axios
+    .post('/ManagerOp/changePassword', {
+      opUser: client.clientData.clientName,
+      account: client.clientData.clientName,
+      targetAcc: item.accountName,
+      newPassword: pass,
+      OpType: client.clientData.clientType
+    })
+    .then((e: AxiosResponse<BackendResponse>) => {
+      if (e.data.status) {
+        message.info(`Change password successfully`)
+        return true
+      } else {
+        throw e.data.msg.content
+      }
+    })
+    .catch((e: any) => {
+      console.log(e)
+      message.info(`Change password failed`)
+      return false
+    })
+    .finally(() => {})
 }
 
 //TODO-C: Search formula.
