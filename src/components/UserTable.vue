@@ -62,15 +62,10 @@
   </div>
 </template>
 <script setup lang="ts">
-//TODO: Bind to the real data corresponding to the search
+//TODO-C: Bind to the real data corresponding to the search
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
-import { useClient } from '@/stores/client'
-import type { UserDetail, UserTypeResponse } from '@/types/type'
-import { message } from 'ant-design-vue'
-import { usePagination } from 'vue-request'
-import axios, { type AxiosResponse } from 'axios'
+import type { UserDetail } from '@/types/type'
 const newPass = ref('')
-const client = useClient()
 const checkList = ref<UserDetail[]>([])
 const clearList = () => {
   checkList.value = []
@@ -153,8 +148,8 @@ const columns = [
         value: 'staff'
       },
       {
-        text: 'Admin',
-        value: 'admin'
+        text: 'Manager',
+        value: 'manager'
       },
       {
         text: 'Superuser',
@@ -180,24 +175,6 @@ const check = (record: UserDetail, e: boolean) => {
     checkList.value.splice(checkList.value.indexOf(record), 1)
   }
 }
-/*
-const toRole = (record: UserDetail, role: 'user' | 'staff' | 'manager' | 'superuser') => {
-  props.data.forEach((item) => {
-    //TODO: Finish toRole function
-    //For DEMO ONLY!
-    if (item === record) {
-      console.log('ready to change...')
-      //if (emit('toRole', role, item)) {
-      //if (true) {
-      //  console.log('success')
-      item.accountType = role
-      //} else {
-      //  message.error(`Change role for ${item.accountName} failed`)
-      //}
-    }
-  })
-}
-*/
 const checked = computed({
   //可对setter和getter都传参的计算属性
   get: () => {
