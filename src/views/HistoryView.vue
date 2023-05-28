@@ -17,7 +17,7 @@ import BookTable from '@/components/BookTable.vue'
 import type { BookDetail, BookInfo, BookResponse, BorrowRecord, BorrowResponse } from '@/types/type'
 import { useAxios } from '@/stores/axios'
 import { useClient } from '@/stores/client'
-import { onMounted, reactive } from 'vue'
+import { reactive } from 'vue'
 import dayjs from 'dayjs'
 import type { AxiosResponse } from 'axios'
 import message from 'ant-design-vue/lib/message'
@@ -100,6 +100,7 @@ const search = async (name: string, author: string, isbn: string) => {
   }
 
   bookBorrowInfo.forEach((e) => {
+    console.log(e.borrowIsReturn)
     let thisbook = bookInfo.filter((f) => f.bookIsbn == e.bookIsbn)
     data.push({
       name: e.bookName,
@@ -110,7 +111,14 @@ const search = async (name: string, author: string, isbn: string) => {
       borrowdate: dayjs(e.borrowTime, 'YYYY-MM-DD'),
       duedate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
       returndate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
-      status: e.borrowIsOverTime == 1 ? 'overdue' : e.borrowIsrenew == 1 ? 'renewed' : 'borrowed',
+      status:
+        e.borrowIsOverTime == 1
+          ? 'overdue'
+          : e.borrowIsrenew == 1
+          ? 'renewed'
+          : e.borrowIsReturn == 'yes'
+          ? 'returned'
+          : 'borrowed',
       renewable: e.borrowIsrenew == 0,
       visible: true,
       borrowId: e.borrowId,

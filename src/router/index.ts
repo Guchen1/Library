@@ -19,11 +19,6 @@ const router = createRouter({
       component: () => import('../views/HistoryView.vue')
     },
     {
-      path: '/manage',
-      name: 'manage',
-      component: () => import('../views/ManageView.vue')
-    },
-    {
       path: '/check',
       name: 'check',
       component: () => import('../views/CheckInout.vue')

@@ -1,4 +1,3 @@
-import type dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
 
 export interface BookType {
@@ -99,7 +98,7 @@ export interface BookInfo {
   renewable: boolean | undefined
   visible: boolean
   borrowId: number | undefined
-  fine:Number
+  fine: Number
 }
 
 export interface BorrowRecord {
@@ -112,6 +111,7 @@ export interface BorrowRecord {
   borrowIsrenew: number
   borrowIsOverTime: number
   borrowId: number
+  borrowIsReturn: string | undefined
 }
 
 export interface BorrowResponse {

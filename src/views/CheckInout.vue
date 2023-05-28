@@ -94,7 +94,8 @@ const search = async (name: string, author: string, isbn: string, borrower: stri
             e.bookName.indexOf(name) != -1 &&
             e.bookAuthor.indexOf(author) != -1 &&
             e.bookIsbn.indexOf(isbn) != -1 &&
-            e.borrowAccount.indexOf(borrower) != -1
+            e.borrowAccount.indexOf(borrower) != -1 &&
+            e.borrowIsReturn == 'no'
           ) {
             bookBorrowInfo.push(e)
           }
