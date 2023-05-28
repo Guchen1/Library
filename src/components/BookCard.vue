@@ -73,6 +73,7 @@ const borrow = (e: BookDetail) => {
           <div>Location: {{ computedLocation }}</div>
           <div>ISBN: {{ props.book.bookIsbn }}</div>
           <div>Info: {{ props.book.bookSummary }}</div>
+          <div>Avaliable: {{ props.book.bookStock }}</div>
         </div>
       </div>
     </div>
@@ -113,7 +114,7 @@ const borrow = (e: BookDetail) => {
 
 .card .upper .uLeft {
   width: 40%;
-  max-width:100px;
+  max-width: 100px;
   align-items: center;
   display: inline-flex;
 }

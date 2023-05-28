@@ -1,14 +1,35 @@
 <template>
-  <a-modal :maskClosable="false" v-model:visible="visible" :title="null" centered :footer="null" destroyOnClose
-    :closable="false" :bodyStyle="{}">
+  <a-modal
+    :maskClosable="false"
+    v-model:visible="visible"
+    :title="null"
+    centered
+    :footer="null"
+    destroyOnClose
+    :closable="false"
+    :bodyStyle="{}"
+  >
     <a-typography-title style="text-align: center; padding-top: 20px" :level="2">{{
-      bookDetail == undefined ? 'Add a Book' : 'Modify Book'
+      isAdd() ? 'Add a Book' : 'Modify Book'
     }}</a-typography-title>
     <a-spin :spinning="spinning">
       <div class="padding">
-        <a-upload v-model:file-list="fileList" name="avatar" list-type="picture-card" class="avatar-uploader"
-          :show-upload-list="false" :customRequest="customRequest" accept="image/*" @change="handleChange">
-          <img style="max-height: 170px; max-width: 170px" v-if="book?.picObj" :src="book?.picObj" alt="avatar" />
+        <a-upload
+          v-model:file-list="fileList"
+          name="avatar"
+          list-type="picture-card"
+          class="avatar-uploader"
+          :show-upload-list="false"
+          :customRequest="customRequest"
+          accept="image/*"
+          @change="handleChange"
+        >
+          <img
+            style="max-height: 170px; max-width: 170px"
+            v-if="book?.picObj"
+            :src="book?.picObj"
+            alt="avatar"
+          />
           <div v-else>
             <loading-outlined v-if="loading"></loading-outlined>
             <plus-outlined v-else></plus-outlined>
@@ -16,21 +37,32 @@
           </div>
         </a-upload>
         <div style="display: inline-flex; padding-left: 20px">
-          <a-form :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }" :model="book"
-            style="width: 100%; height: 178px; font-size: 20px !important"><a-form-item style="margin-bottom: 10px"
-              label="ISBN"><a-input style="width: 60%; margin-right: 13px" v-model:value="book.isbn"></a-input><a-button
-                :onclick="isbnFill">Check</a-button> </a-form-item><a-form-item style="margin-bottom: 10px"
-              label="Name"><a-input v-model:value="book.name"></a-input> </a-form-item><a-form-item
-              style="margin-bottom: 10px" label="Author"><a-input v-model:value="book.author"></a-input>
-            </a-form-item><a-form-item style="margin-bottom: 10px" label="Type"><a-select v-model:value="book.type"
-                @change="changeType">
+          <a-form
+            :label-col="{ span: 6 }"
+            :wrapper-col="{ span: 18 }"
+            :model="book"
+            style="width: 100%; height: 178px; font-size: 20px !important"
+            ><a-form-item style="margin-bottom: 10px" label="ISBN"
+              ><a-input
+                style="width: 60%; margin-right: 13px"
+                v-model:value="book.isbn"
+                :disabled="!isAdd()"
+              ></a-input
+              ><a-button :onclick="isbnFill" v-if="isAdd()">Check</a-button> </a-form-item
+            ><a-form-item style="margin-bottom: 10px" label="Name"
+              ><a-input v-model:value="book.name"></a-input> </a-form-item
+            ><a-form-item style="margin-bottom: 10px" label="Author"
+              ><a-input v-model:value="book.author"></a-input> </a-form-item
+            ><a-form-item style="margin-bottom: 10px" label="Type"
+              ><a-select v-model:value="book.type" @change="changeType">
                 <template v-for="item in typeList" :key="item">
                   <a-select-option v-if="item != 'All'" :value="item">{{ item }}</a-select-option>
                 </template>
               </a-select>
             </a-form-item>
-            <a-form-item style="margin-bottom: 0px" label="Info"><a-input v-model:value="book.info"></a-input>
-            </a-form-item></a-form>
+            <a-form-item style="margin-bottom: 0px" label="Info"
+              ><a-input v-model:value="book.info"></a-input> </a-form-item
+          ></a-form>
         </div>
       </div>
     </a-spin>
@@ -41,17 +73,19 @@
       </div>
       <div class="bottom-box">
         <div class="text" style="padding-left: 30px">Inventory</div>
-        <a-input-number :precision="0" :min="0" v-model:value="book.inventory"
-          @change="(e: number) => (book.inventory = e)"></a-input-number>
+        <a-input-number
+          :precision="0"
+          :min="0"
+          v-model:value="book.inventory"
+          @change="(e: number) => (book.inventory = e)"
+        ></a-input-number>
       </div>
     </div>
     <div class="padding bottom-box">
       <a-button style="margin-right: 20px" @click="handleCancel">
         <CloseOutlined />Cancel
       </a-button>
-      <a-button type="primary" @click="handleOk(bookDetail == undefined)">
-        <CheckOutlined />OK
-      </a-button>
+      <a-button type="primary" @click="handleOk()"> <CheckOutlined />OK </a-button>
     </div>
   </a-modal>
 </template>
@@ -69,8 +103,11 @@ import type { CascaderProps } from 'ant-design-vue'
 defineProps<{
   typeList: string[]
 }>()
+const emits = defineEmits<{
+  (e: 'addBook', a: BookDetail): void
+  (e: 'changeBook', a: BookDetail): void
+}>()
 const spinning = ref(false)
-const client = useClient()
 const options: CascaderProps['options'] = [
   {
     value: 'floor1',
@@ -519,6 +556,9 @@ const book: BookModify = reactive<BookModify>({
   cover: ''
 })
 const fileList = ref([])
+function isAdd(): boolean {
+  return bookDetail.value == undefined
+}
 function getBase64(img: Blob, callback: (base64Url: string) => void) {
   const reader = new FileReader()
   reader.addEventListener('load', () => callback(reader.result as string))
@@ -590,9 +630,9 @@ const isbnFill = () => {
       book.cover = ''
       message.info('Cover not found.')
       count++
-          if (count == 2) {
-            spinning.value = false
-          }
+      if (count == 2) {
+        spinning.value = false
+      }
     })
     .finally(async () => {
       console.log('Cover address is ' + book.cover)
@@ -631,7 +671,7 @@ const isbnFill = () => {
 
 //TODO-C: Add Book info
 //TODO-C: Change Book info
-const handleOk = async (isAdd: boolean) => {
+const handleOk = async () => {
   if (picChanged.value) {
     await axios
       .post('/picture/upload', {
@@ -650,60 +690,26 @@ const handleOk = async (isAdd: boolean) => {
       })
       .catch(() => message.info('Pic not uploaded.'))
   }
-  if (!isAdd) {
+  let toAppend: BookDetail = {
+    bookId: 1,
+    bookCoverName: '',
+    bookIsbn: book.isbn,
+    bookName: book.name,
+    bookAuthor: book.author,
+    bookPublisher: 'BenderBlog Record',
+    bookSummary: book.info,
+    bookCover: book.cover,
+    bookStock: book.inventory,
+    bookCategoryName: String(book.type),
+    bookPrice: book.price,
+    bookLocation: String(book.location)
+  }
+  if (!isAdd()) {
     console.log('change book')
-    axios
-      .post('/StaffOp/updateBook', {
-        opUser: client.clientData.clientName,
-        isbn: book.isbn,
-        name: book.name,
-        author: book.author,
-        publisher: 'BenderBlog Record',
-        summer: book.info,
-        cover: book.cover,
-        stock: String(book.inventory),
-        category: String(book.type),
-        price: String(book.price),
-        location: book.location
-      })
-      .then((e: AxiosResponse<BackendResponse>) => {
-        if (e.data.status) {
-          message.info('change completed')
-        } else {
-          throw e.data.msg.content
-        }
-      })
-      .catch((e: any) => {
-        console.log(e)
-        message.warning('change failed')
-      })
+    emits('changeBook', toAppend)
   } else {
     console.log('add book')
-    axios
-      .post('/StaffOp/addBook', {
-        opUser: client.clientData.clientName,
-        isbn: book.isbn,
-        name: book.name,
-        author: book.author,
-        publisher: 'BenderBlog Record',
-        summary: book.info,
-        cover: book.cover,
-        stock: String(book.inventory),
-        category: String(book.type),
-        price: String(book.price),
-        location: book.location
-      })
-      .then((e: AxiosResponse<BackendResponse>) => {
-        if (e.data.status) {
-          message.info('change completed')
-        } else {
-          throw e.data.msg.content
-        }
-      })
-      .catch((e: any) => {
-        console.log(e)
-        message.warning('change failed')
-      })
+    emits('addBook', toAppend)
   }
 
   visible.value = false
@@ -782,7 +788,7 @@ watch(
 )
 </script>
 <style>
-.avatar-uploader>.ant-upload {
+.avatar-uploader > .ant-upload {
   width: 170px;
   height: 170px;
   border-radius: 10px;
