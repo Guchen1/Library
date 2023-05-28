@@ -82,7 +82,7 @@ use([
 const visible = ref(false);
 const option = reactive({
   title: {
-    text: "Daily Active Patrons: Today",
+    text: "Daily Active Patrons",
     left: "center",
   },
   series: [
@@ -151,7 +151,7 @@ const option = reactive({
   ],
 });
 const optionsx = ref(JSON.parse(JSON.stringify(option)));
-optionsx.value.title.text = "Daily Active Patrons: Week";
+optionsx.value.title.text = "Weekly Active Patrons";
 optionsx.value.series[0].data[0].value = 0.65;
 //change color
 optionsx.value.series[0].data[0].itemStyle.normal.color = "#f5b461";
@@ -167,7 +167,7 @@ optionsy.value.series[0].data[0].itemStyle.normal.color = "#5cb85c";
 optionsy.value.series[0].backgroundStyle.color = "#e5f7e5";
 //change outline color corresponding to color
 optionsy.value.series[0].outline.itemStyle.borderColor = "#5cb85c";
-optionsy.value.title.text = "Daily Active Patrons: Month";
+optionsy.value.title.text = "Monthly Active Patrons";
 const option1 = reactive({
   title: {
     text: "Fine Statistics",
