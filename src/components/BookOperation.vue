@@ -571,7 +571,7 @@ const isbnFill = () => {
         book.name = item.volumeInfo.title ?? ''
         book.author = item.volumeInfo.authors[0] ?? ''
       } else {
-        message.info('We have not found the book with this isbn.')
+        message.info('Book not found.')
       }
       count++
       if (count == 2) {
@@ -587,6 +587,11 @@ const isbnFill = () => {
     })
     .catch(() => {
       book.cover = ''
+      message.info('Cover not found.')
+      count++
+          if (count == 2) {
+            spinning.value = false
+          }
     })
     .finally(async () => {
       console.log('Cover address is ' + book.cover)
