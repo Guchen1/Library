@@ -559,6 +559,7 @@ const isbnFill = () => {
   if (book.isbn.length != 13 || !isbnCheck()) {
     message.info('Invalid ISBN. ISBN should be 13 digits.')
     //ISBN format check
+    spinning.value = false
     return
   }
   // First get the book info.
