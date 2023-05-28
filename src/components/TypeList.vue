@@ -91,7 +91,7 @@ const save = () => {
           .post('/StaffOp/addCategory', {
             opUser: client.clientData.clientName,
             name: newType.value,
-            pname: 'null'
+            pname: 'books'
           })
           .then((e: AxiosResponse<BackendResponse>) => {
             if (!e.data.status) {
@@ -140,6 +140,7 @@ const del = (item: string) => {
   //TODO-C: delete from database
   axios
     .post('/StaffOp/deleteCategory', {
+      opUser: client.clientData.clientName,
       name: item
     })
     .then((e: AxiosResponse<BackendResponse>) => {
@@ -167,7 +168,7 @@ axios
   })
   .then((e: AxiosResponse<BookTypeResponse>) => {
     e.data.categories.forEach((e) => {
-      list.value.push(e.name)
+      if (e.deepest) list.value.push(e.name)
     })
   })
   .catch((e: any) => {
