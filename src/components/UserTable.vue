@@ -153,8 +153,8 @@ const columns = [
         value: 'staff'
       },
       {
-        text: 'Admin',
-        value: 'admin'
+        text: 'Manager',
+        value: 'manager'
       },
       {
         text: 'Superuser',
