@@ -128,7 +128,9 @@ const borrow = (e: BookDetail) => {
 .card .lower {
   height: 20%;
   justify-content: center;
+  align-items: end;
   display: flex;
+  margin-top: 10px;
   padding-bottom: 10px;
 }
 p {
