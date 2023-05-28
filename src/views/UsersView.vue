@@ -77,8 +77,40 @@ const table = ref<typeof UserTable>()
 const clearList = computed(() => {
   return table?.value?.clearList
 })
-const staffCreate = () => {
-  //TODO: Finish staffCreate function
+const staffCreate = async () => {
+  //TODO-C: Finish staffCreate function
+  if (stName.value.length == 0 || stPass.value.length == 0) {
+    message.error('Pleace fulfill all info.')
+  } else {
+    axios
+      .post('/ManagerOp/creatRole', {
+        opUser: client.clientData.clientName,
+        account: stName.value,
+        password: stPass.value,
+        type: 'staff',
+        email: 'default@example.com'
+      })
+      .then((res: any) => {
+        console.log(res)
+        if (!res.data.status) {
+          throw res.data.msg.content
+        } else {
+          data.value.push({
+            accountName: stName.value,
+            accountPassword: stPass.value,
+            accountType: 'staff'
+          })
+          message.info(`Create Staff complete`)
+        }
+      })
+      .catch((err: any) => {
+        message.error(`Error detected while creating Staff: ${err}`)
+      })
+      .finally(() => {
+        stName.value = ''
+        stPass.value = ''
+      })
+  }
 }
 const toRole = async (role: string, item?: UserDetail) => {
   console.log(role)
