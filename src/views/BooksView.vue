@@ -200,8 +200,12 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
             })
             .then((f: AxiosResponse<PictureResponse>) => {
               if (f.data.status) e.bookCover = 'data:image/jpg;base64,' + f.data.data
-              store.push(e)
-              data.value.push(e)
+              if (store.filter((word) => word.bookIsbn == e.bookIsbn).length == 0) {
+                store.push(e)
+              }
+              if (data.value.filter((word) => word.bookIsbn == e.bookIsbn).length == 0) {
+                data.value.push(e)
+              }
             })
           loading.value = false
           console.log(e.bookCover)
@@ -216,6 +220,7 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
 }
 const search = (name: string, author: string, isbn: string, ready: boolean) => {
   store.splice(0, data.value.length)
+  page.value = 1
   data.value.splice(0, data.value.length)
   request(name, author, isbn, ready)
 }

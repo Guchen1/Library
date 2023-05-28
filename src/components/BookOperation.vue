@@ -609,8 +609,11 @@ const isbnFill = () => {
       let data = e.data
       if (data.totalItems != 0) {
         let item = data.items[0]
-        book.name = item.volumeInfo.title ?? ''
-        book.author = item.volumeInfo.authors[0] ?? ''
+        console.log()
+        book.name = item.volumeInfo.title ?? ' '
+        if (book.author.length > 0) {
+          book.author = item.volumeInfo.authors[0]
+        }
       } else {
         message.info('Book not found.')
       }
