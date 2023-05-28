@@ -53,7 +53,7 @@ const show = (book: BookDetail | undefined) => {
     BookOperationRef.value.visible = true
   }
 }
-const addBook = (newBook: BookDetail) => {
+const addBook = (newBook: BookDetail, location: String[]) => {
   axios
     .post('/StaffOp/addBook', {
       opUser: client.clientData.clientName,
@@ -66,7 +66,7 @@ const addBook = (newBook: BookDetail) => {
       stock: String(newBook.bookStock),
       category: newBook.bookCategoryName,
       price: String(newBook.bookPrice),
-      location: newBook.bookLocation
+      location: location
     })
     .then((e: AxiosResponse<BackendResponse>) => {
       if (e.data.status) {
@@ -81,7 +81,7 @@ const addBook = (newBook: BookDetail) => {
       message.warning('Add book failed.')
     })
 }
-const changeBook = (newBook: BookDetail) => {
+const changeBook = (newBook: BookDetail, location: String[]) => {
   axios
     .post('/StaffOp/updateBook', {
       opUser: client.clientData.clientName,
@@ -94,15 +94,27 @@ const changeBook = (newBook: BookDetail) => {
       stock: String(newBook.bookStock),
       category: newBook.bookCategoryName,
       price: String(newBook.bookPrice),
-      location: newBook.bookLocation
+      location: location
     })
     .then((e: AxiosResponse<BackendResponse>) => {
       if (e.data.status) {
         data.value.forEach((e) => {
           if (e.bookIsbn === newBook.bookIsbn) {
-            e = newBook
+            e.bookName = newBook.bookName
+            e.bookAuthor = newBook.bookAuthor
+            e.bookCategoryName = newBook.bookCategoryName
+            e.bookSummary = newBook.bookSummary
+            if (newBook.bookCover != '') {
+              e.bookCover = newBook.bookCover
+            }
+            if (newBook.bookCoverName != '') {
+              e.bookCoverName = newBook.bookCoverName
+            }
+            e.bookLocation = newBook.bookLocation
+            e.bookStock = newBook.bookStock
           }
         })
+        console.log(data.value)
         message.info('change completed')
       } else {
         throw e.data.msg.content

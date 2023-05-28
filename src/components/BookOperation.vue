@@ -104,8 +104,8 @@ defineProps<{
   typeList: string[]
 }>()
 const emits = defineEmits<{
-  (e: 'addBook', a: BookDetail): void
-  (e: 'changeBook', a: BookDetail): void
+  (e: 'addBook', a: BookDetail, b: String[]): void
+  (e: 'changeBook', a: BookDetail, b: String[]): void
 }>()
 const spinning = ref(false)
 const options: CascaderProps['options'] = [
@@ -702,14 +702,14 @@ const handleOk = async () => {
     bookStock: book.inventory,
     bookCategoryName: String(book.type),
     bookPrice: book.price,
-    bookLocation: String(book.location)
+    bookLocation: `[{"value" : "${book.location[0]}","label" :"${book.location[0]}"} , {"value" : "${book.location[1]}","label" : "${book.location[1]}"} , {"value" : "${book.location[2]}","label":"${book.location[2]}"} , {"value":"${book.location[3]}","label":"${book.location[3]}"}]`
   }
   if (!isAdd()) {
     console.log('change book')
-    emits('changeBook', toAppend)
+    emits('changeBook', toAppend, book.location)
   } else {
     console.log('add book')
-    emits('addBook', toAppend)
+    emits('addBook', toAppend, book.location)
   }
 
   visible.value = false
