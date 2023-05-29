@@ -38,7 +38,7 @@ const info: any = ref({
 (money={商品金额}&name={商品名称}& notify_url={异步通知地址}&out_trade_no={商户订单号}&pid={商户ID}&return_url={同步通知地址}&sitename={站点名称}&type={支付方式}{商户密匙})*/
 
 const mix = async () => {
-    await axios.get('http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=69150&sign=1d55158897a624b0bab40e69b8365143&format=').then((res) => {
+    await axios.get('https://sapi.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=69150&sign=1d55158897a624b0bab40e69b8365143&format=').then((res) => {
         info.value.money = (info.value.money * parseFloat(res.data.result.rate)).toFixed(2)
     })
     console.log(info.value)
