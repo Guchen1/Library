@@ -96,7 +96,7 @@
           </div>
           <div style="display: inline-block">
             <a
-              v-if="record.status == 'overdue' && props.type == 'user' && record.fine != 0"
+              v-if="record.status == 'overdue' && props.type != 'user' && record.fine != 0"
               style="
                 padding-left: 5px;
                 font-size: 10px;
@@ -106,7 +106,7 @@
               type="error"
               size="small"
               @click="fine(record)"
-              >Pay the fine</a
+              >Fine and return</a
             >
           </div>
         </template>

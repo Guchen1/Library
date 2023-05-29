@@ -146,10 +146,13 @@ const search = async (name: string, author: string, isbn: string, borrower: stri
 
   bookInfo.forEach((e: any) => {
     let whatever = e
-    console.log(whatever.bookStock)
+
     let recordForBook = bookBorrowInfo.filter((e) => e.bookIsbn == whatever.bookIsbn)
-    console.log(recordForBook.length)
+    //if i.b
     for (var i of recordForBook) {
+      //borrower like i.borrowAccount
+      console.log(i.borrowAccount.search(borrower))
+      if(borrower!=""&&i.borrowAccount.search(borrower.trim())==-1) continue
       data.push({
         name: whatever.bookName,
         bookId: whatever.bookId,
@@ -167,7 +170,7 @@ const search = async (name: string, author: string, isbn: string, borrower: stri
       })
       //TODO-C: Add fine
     }
-
+    if(borrower.trim()=="")
     for (var j = 0; j < whatever.bookStock; ++j) {
       data.push({
         name: whatever.bookName,
@@ -201,7 +204,6 @@ const newPatron = async () => {
         email: 'default@example.com'
       })
       .then((res: any) => {
-        console.log(res)
         if (!res.data.status) {
           throw res.data.msg.content
         } else {
