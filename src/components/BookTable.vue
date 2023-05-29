@@ -96,7 +96,7 @@
           </div>
           <div style="display: inline-block">
             <a
-              v-if="record.status == 'overdue' && props.type != 'user' && record.fine != 0"
+              v-if="record.status == 'overdue' && props.type != 'user' "
               style="
                 padding-left: 5px;
                 font-size: 10px;
@@ -112,7 +112,7 @@
         </template>
       </template>
     </a-table>
-    <PayAddon @success="(e) => success(e)" v-if="ready" :record="record" />
+    <PayAddon @success="(e) => success(e)" v-if="ready" :fV="fV" :record="record" />
   </div>
 </template>
 <script setup lang="ts">
@@ -131,6 +131,7 @@ const axios = useAxios().Axios
 const client = useClient()
 dayjs.extend(customParseFormat)
 const record = ref()
+const fV=ref(0)
 const ready = ref(false)
 //TODO-C: Finish initalize data.
 const props = defineProps<{
@@ -151,6 +152,15 @@ const hide = (record: BookInfo) => {
     }
   }
 }
+axios.get(useAxios().urlAlter + "/Static/getStatisInfo?opUser="+useClient().clientData.clientName).then((res:any) => {
+  if (res.data.code == 200) {
+    /*maxBook:int//最大借书数目
+    fine:float //罚款金额 美元
+    timeLimit:int //借书时长 天*/
+    fV.value = res.data.fine;
+
+  }
+})
 const fine = (recordx: BookInfo) => {
   record.value = recordx
   ready.value = true

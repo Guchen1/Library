@@ -16,7 +16,7 @@
         ></template>
         <template v-else-if="column.key == 'username'">{{ record.accountName }}</template>
         <template v-else-if="column.key == 'role'">{{
-          record.accountType == 'user' ? 'patron' : record.accountType
+          record.accountType == 'user' ? 'patron' :record.accountType == 'manager'?'admin': record.accountType
         }}</template>
         <template v-else-if="column.key == 'action'">
           <div class="action" style="display: flex; justify-content: space-between">
@@ -25,17 +25,13 @@
                 <a-button
                   @click="emit('toRole', 'staff', record)"
                   v-if="record.accountType != 'staff'"
+                  :disabled="record.accountName==useClient().clientData.clientName"
                   >To Staff</a-button
                 >
                 <a-button
                   @click="emit('toRole', 'manager', record)"
                   v-if="record.accountType != 'manager'"
                   >To Admin</a-button
-                >
-                <a-button
-                  @click="emit('toRole', 'superuser', record)"
-                  v-if="record.accountType != 'superuser'"
-                  >To Superuser</a-button
                 >
               </div>
             </div>
@@ -51,7 +47,7 @@
                 </template>
                 <a-button style="display: inline-block" type="primary">Change Password</a-button>
               </a-popover>
-              <a-button style="display: inline-block" type="danger" @click="emit('delete', record)"
+              <a-button style="display: inline-block" type="danger" @click="emit('delete', record)" :disabled="record.accountName==useClient().clientData.clientName"
                 >Delete</a-button
               >
             </div>
@@ -65,6 +61,7 @@
 //TODO-C: Bind to the real data corresponding to the search
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import type { UserDetail } from '@/types/type'
+import { useClient } from '@/stores/client'
 const newPass = ref('')
 const checkList = ref<UserDetail[]>([])
 const clearList = () => {
@@ -106,6 +103,7 @@ const resize = () => {
     }
   })
 }
+
 const maxHeight = ref<string>('')
 onMounted(() => {
   window.addEventListener('resize', resize)

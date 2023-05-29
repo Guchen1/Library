@@ -16,9 +16,8 @@
       </a-input-search>
     </div>
     <div class="batch-box">
-      <a-button @click="toRole('staff')" class="batch">To Staff</a-button>
-      <a-button @click="toRole('superuser')" class="batch">To Superuser</a-button>
-      <a-button @click="toRole('manager')" class="batch">To Admin</a-button>
+      <a-button @click="toRole('staff')" :disabled="hasPatron||hasSelf" class="batch" >To Staff</a-button>
+      <a-button @click="toRole('manager')" :disabled="hasPatron||hasSelf"  class="batch">To Admin</a-button>
       <a-popover
         placement="bottom"
         v-model:visible="visibleB"
@@ -39,9 +38,9 @@
             </div>
           </div>
         </template>
-        <a-button class="batch" type="primary"> Create a Patron</a-button>
+        <a-button class="batch" type="primary"> Create a Staff</a-button>
       </a-popover>
-      <a-button @click="del(undefined)" class="batch" type="danger">Delete</a-button>
+      <a-button @click="del(undefined)" class="batch" type="danger" :disabled="hasSelf">Delete</a-button>
     </div>
     <div style="display: flex; justify-content: center">
       <UserTable
@@ -112,6 +111,24 @@ const staffCreate = async () => {
       })
   }
 }
+const hasPatron = computed((item: UserDetail) => {
+  let flag=false
+  table.value?.currentList.forEach((e:any) => {
+    if (e.accountType == 'user') {
+      flag=true
+    }
+  })
+  return flag
+})
+const hasSelf = computed((item: UserDetail) => {
+  let flag=false
+  table.value?.currentList.forEach((e:any) => {
+    if (e.accountName == client.clientData.clientName) {
+      flag=true
+    }
+  })
+  return flag
+})
 const toRole = async (role: string, item?: UserDetail) => {
   console.log(role)
   console.log(item)
@@ -243,11 +260,11 @@ const searchx = () => {
     .post('SuperuserOp/userInfo', {
       opUser: client.clientData.clientName,
       page: '1',
-      num: '999'
+      num: '99999'
     })
     .then((res: AxiosResponse<UserTypeResponse>) => {
       console.log('searchStr' + searchString.value)
-      data.value = res.data.accounts.filter((e) => e.accountName.indexOf(searchString.value) != -1)
+      data.value = res.data.accounts.filter((e) => (e.accountName.indexOf(searchString.value) != -1&&e.accountType!='superuser'))
     })
     .catch((e: any) => {
       message.error(`Error while fetching user data: ${e}`)
