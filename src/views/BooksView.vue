@@ -194,19 +194,21 @@ const request = (name: string, author: string, isbn: string, ready: boolean) => 
         //TODO-C: ask backend to update api
         resobj.forEach((e) => {
           e.bookCoverName = e.bookCover
-          axios
-            .post('/picture/download', {
-              name: e.bookCover
-            })
-            .then((f: AxiosResponse<PictureResponse>) => {
-              if (f.data.status) e.bookCover = 'data:image/jpg;base64,' + f.data.data
-              if (store.filter((word) => word.bookIsbn == e.bookIsbn).length == 0) {
-                store.push(e)
-              }
-              if (data.value.filter((word) => word.bookIsbn == e.bookIsbn).length == 0) {
-                data.value.push(e)
-              }
-            })
+          if (e.bookCover.substring(0, 4) == 'http') {
+            axios
+              .post('/picture/download', {
+                name: e.bookCover
+              })
+              .then((f: AxiosResponse<PictureResponse>) => {
+                if (f.data.status) e.bookCover = 'data:image/jpg;base64,' + f.data.data
+              })
+          }
+          if (store.filter((word) => word.bookIsbn == e.bookIsbn).length == 0) {
+            store.push(e)
+          }
+          if (data.value.filter((word) => word.bookIsbn == e.bookIsbn).length == 0) {
+            data.value.push(e)
+          }
           loading.value = false
           console.log(e.bookCover)
         })
