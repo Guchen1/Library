@@ -115,7 +115,7 @@ const search = async (name: string, author: string, isbn: string) => {
         e.borrowReturnDate != undefined
           ? dayjs(e.borrowReturnDate, 'YYYY-MM-DD')
           : e.borrowIsReturn == 'yes'
-          ? dayjs(new Date(), 'YYYY-MM-DD')
+          ? dayjs()
           : undefined,
       status:
         e.borrowIsReturn == 'yes'
