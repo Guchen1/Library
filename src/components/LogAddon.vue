@@ -27,7 +27,7 @@ defineExpose({
         >
           operated by {{ props.data.opUser }}
         </div>
-        <div style="font-size: 18px; color: rgb(100, 100, 100)">Created at {{ data.opTime }}</div>
+        <div style="font-size: 18px; color: rgb(100, 100, 100)">Created at {{ data.opTime.toDate().toDateString() }}</div>
         <div style="padding: 10px">
           <a-tag
             style="

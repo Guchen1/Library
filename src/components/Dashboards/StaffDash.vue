@@ -30,11 +30,7 @@ axios.get(useAxios().urlAlter + "/StaffOp/getStatisInfo?opUser="+useClient().cli
     let day = today.getDay();
     if(day==0)day=7;
     //把周内这天之后的都改成undefined,注意我把周一当成数组的第一天，但是系统把周日当成第一天
-    for (let i = day; i < 7; i++) {
-      res.data.borrow[i] = undefined;
-      res.data.return[i] = undefined;
-    }
-    
+
 
     options.value.series[0].data = res.data.borrow;
     options.value.series[1].data = res.data.return;

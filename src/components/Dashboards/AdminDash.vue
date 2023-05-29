@@ -65,6 +65,7 @@ import { PieChart, LineChart, GaugeChart } from "echarts/charts";
 import { CanvasRenderer } from "echarts/renderers";
 import { useAxios } from "@/stores/axios";
 import axios from "axios";
+import 'ant-design-vue/es/message/style/css'
 import {
   TitleComponent,
   TooltipComponent,
@@ -191,6 +192,8 @@ axios.get(useAxios().urlAlter + "/ManagerOp/getStatisInfo?opUser="+useClient().c
     option1.series[0].data = res.data.fine;
     
     option2.series[0].data = res.data.patronNum;
+    const today = new Date().getMonth();
+    option2.series[0].data=option2.series[0].data.slice(0, today + 1);
   }
 });
 axios.get(useAxios().urlAlter + "/Static/getStatisInfo?opUser="+useClient().clientData.clientName).then((res) => {

@@ -71,7 +71,7 @@
           </a-popover>
 
           <a
-            v-else-if="props.type != 'user'"
+            v-else-if="props.type != 'user'&&record.status != 'overdue'"
             type="primary"
             style="font-size: 10px; white-space: nowrap"
             size="small"
@@ -81,7 +81,7 @@
           <div style="display: inline-block">
             <a
               :disabled="record.renewable == false ? 'disabled' : null"
-              v-if="record.status != 'available' && record.status != 'returned'"
+              v-if="record.status != 'available' && record.status != 'returned'&&record.status != 'overdue'"
               style="
                 padding-left: 5px;
                 font-size: 10px;
@@ -98,7 +98,6 @@
             <a
               v-if="record.status == 'overdue' && props.type != 'user' "
               style="
-                padding-left: 5px;
                 font-size: 10px;
                 word-wrap: break-word;
                 word-break: keep-all;
@@ -106,7 +105,7 @@
               type="error"
               size="small"
               @click="fine(record)"
-              >Fine and return</a
+              >Fine and Return</a
             >
           </div>
         </template>
