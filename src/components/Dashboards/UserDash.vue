@@ -14,10 +14,18 @@ import {
   GridComponent,
 } from "echarts/components";
 import VChart, { THEME_KEY } from "vue-echarts";
+import { useAxios } from "@/stores/axios";
+import axios from "axios";
 import { ref, reactive, onMounted, onUnmounted, watch, nextTick, provide } from "vue";
+import { useClient } from "@/stores/client";
 provide(THEME_KEY, "light");
 // 注册必须的组件
-
+axios.get(useAxios().urlAlter + "/UserOp/getStatisInfo?opUser="+useClient().clientData.clientName).then((res) => {
+  if (res.data.code == 200) {
+    option.value.series[0].data = res.data.borrow;
+    option.value.series[1].data = res.data.return;
+  }
+});
 use([
   CanvasRenderer,
   BarChart,
@@ -66,24 +74,12 @@ const option = ref({
     {
       name: "Borrow",
       type: "bar",
-      data: [
-        { value: 335 },
-        { value: 310 },
-        { value: 234 },
-        { value: 135 },
-        { value: 1548 },
-      ],
+      data:[],
     },
     {
       name: "Return",
       type: "bar",
-      data: [
-        { value: 335 },
-        { value: 310 },
-        { value: 234 },
-        { value: 135 },
-        { value: 1548 },
-      ],
+      data: [],
     },
   ],
 });

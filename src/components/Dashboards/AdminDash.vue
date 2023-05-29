@@ -5,7 +5,16 @@
       :centered="true"
       :closable="false"
       title="Settings"
+      @ok="ok"
     >
+    <a-form-item label="Max books borrowed/time">
+        <a-input-number
+          v-model:value="books"
+          :min="0"
+          :step="1"
+          style="width: 100%"
+        ></a-input-number>
+      </a-form-item>
       <a-form-item label="Fine per book overdue">
         <a-input-number
           v-model:value="fine"
@@ -54,6 +63,8 @@
 import { use } from "echarts/core";
 import { PieChart, LineChart, GaugeChart } from "echarts/charts";
 import { CanvasRenderer } from "echarts/renderers";
+import { useAxios } from "@/stores/axios";
+import axios from "axios";
 import {
   TitleComponent,
   TooltipComponent,
@@ -64,9 +75,15 @@ import {
 import "echarts-liquidfill";
 import VChart, { THEME_KEY } from "vue-echarts";
 import { ref, reactive, onMounted, onUnmounted, watch, nextTick, provide } from "vue";
+import { useClient } from "@/stores/client";
+import { message } from "ant-design-vue";
 provide(THEME_KEY, "light");
 const fine = ref(0);
 const limit = ref(0);
+const books=ref(0)
+//用户一次最大借书数英文描述
+//Maximum number of books borrowed by users at one time
+
 // 注册必须的组件
 use([
   CanvasRenderer,
@@ -101,7 +118,7 @@ const option = reactive({
           // 水球图数据
           name: "score", // 水球图数据名称
           direction: "right", // 水球图数据方向
-          value: 0.45, // 水球图数据值
+          value: 0, // 水球图数据值
           itemStyle: {
             // 水球图数据样式
             opacity: 1, // 水球图数据透明度
@@ -152,7 +169,6 @@ const option = reactive({
 });
 const optionsx = ref(JSON.parse(JSON.stringify(option)));
 optionsx.value.title.text = "Weekly Active Patrons";
-optionsx.value.series[0].data[0].value = 0.65;
 //change color
 optionsx.value.series[0].data[0].itemStyle.normal.color = "#f5b461";
 //change background color corresponding to color
@@ -160,7 +176,6 @@ optionsx.value.series[0].backgroundStyle.color = "#ffe5d0";
 //change outline color corresponding to color
 optionsx.value.series[0].outline.itemStyle.borderColor = "#f5b461";
 const optionsy = ref(JSON.parse(JSON.stringify(option)));
-optionsy.value.series[0].data[0].value = 0.85;
 //different color like green
 optionsy.value.series[0].data[0].itemStyle.normal.color = "#5cb85c";
 //change background color corresponding to color
@@ -168,6 +183,43 @@ optionsy.value.series[0].backgroundStyle.color = "#e5f7e5";
 //change outline color corresponding to color
 optionsy.value.series[0].outline.itemStyle.borderColor = "#5cb85c";
 optionsy.value.title.text = "Monthly Active Patrons";
+axios.get(useAxios().urlAlter + "/ManagerOp/getStatisInfo?opUser="+useClient().clientData.clientName).then((res) => {
+  if (res.data.code == 200) {
+    option.series[0].data[0].value = res.data.active[0];
+    optionsx.value.series[0].data[0].value = res.data.active[1];
+    optionsy.value.series[0].data[0].value = res.data.active[2];
+    option1.series[0].data = res.data.fine;
+    option2.series[0].data = res.data.patronNum;
+  }
+});
+axios.get(useAxios().urlAlter + "/Static/getStatisInfo?opUser="+useClient().clientData.clientName).then((res) => {
+  if (res.data.code == 200) {
+    /*maxBook:int//最大借书数目
+    fine:float //罚款金额 美元
+    timeLimit:int //借书时长 天*/
+    fine.value = res.data.fine;
+    limit.value = res.data.timeLimit;
+    books.value=res.data.maxBook
+  }
+})
+const ok=()=>{
+  axios.post(useAxios().urlAlter + "/ManagerOp/Set",{
+    opUser:useClient().clientData.clientName,
+    maxBook:books.value,
+    fine:fine.value,
+    timeLimit:limit.value
+  }).then((res)=>{
+    if(res.data.code==200){
+      message.success("Success")
+    }
+    else{
+      message.error("Fail")
+    }
+  }).catch((err)=>{
+    message.error("Fail")
+  })
+  visible.value=false
+}
 const option1 = reactive({
   title: {
     text: "Fine Statistics",
@@ -222,7 +274,7 @@ const option1 = reactive({
     {
       type: "line",
       radius: "50%",
-      data: [{ value: 1000 }, { value: 7 }, { value: 10 }, { value: 50 }],
+      data:[],
       emphasis: {
         itemStyle: {
           shadowBlur: 10,
@@ -267,7 +319,7 @@ const option2 = reactive({
     {
       type: "line",
       radius: "50%",
-      data: [{ value: 1000 }, { value: 7 }, { value: 10 }, { value: 50 }],
+      data: [],
       emphasis: {
         itemStyle: {
           shadowBlur: 10,

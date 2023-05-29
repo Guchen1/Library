@@ -18,7 +18,7 @@
     <div class="batch-box">
       <a-button @click="toRole('staff')" class="batch">To Staff</a-button>
       <a-button @click="toRole('superuser')" class="batch">To Superuser</a-button>
-      <a-button @click="toRole('manager')" class="batch">To Manager</a-button>
+      <a-button @click="toRole('manager')" class="batch">To Admin</a-button>
       <a-popover
         placement="bottom"
         v-model:visible="visibleB"

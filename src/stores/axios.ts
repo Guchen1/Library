@@ -4,11 +4,12 @@ import axios from 'axios'
 
 export const useAxios = defineStore('axios', () => {
   const Axios = ref()
+  const urlAlter = ref('')
   const serverUrl = ref('https://library.superbart.xyz')
   Axios.value = axios.create({
     baseURL: 'https://spm.guchen.work:8433'
     // withCredentials:true,
   })
 
-  return { Axios, serverUrl }
+  return { Axios, serverUrl, urlAlter }
 })

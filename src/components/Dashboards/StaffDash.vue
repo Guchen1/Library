@@ -14,11 +14,20 @@ import {
   GridComponent,
 } from "echarts/components";
 import VChart, { THEME_KEY } from "vue-echarts";
+import { useAxios } from "@/stores/axios";
 import { ref, reactive, onMounted, onUnmounted, watch, nextTick, provide } from "vue";
+import axios from "axios";
+import { useClient } from "@/stores/client";
 provide(THEME_KEY, "light");
 // 注册必须的组件
 const out = ref<Array<Number>>([]);
 const in_ = ref<Array<Number>>([]);
+axios.get(useAxios().urlAlter + "/StaffOp/getStatisInfo?opUser="+useClient().clientData.clientName).then((res) => {
+  if (res.data.code == 200) {
+    options.value.series[0].data = res.data.borrow;
+    options.value.series[1].data = res.data.return;
+  }
+});
 use([
   CanvasRenderer,
   LineChart,
@@ -53,13 +62,7 @@ const options = ref({
     {
       name: "Borrow",
       type: "line",
-      data: [
-        { value: 335 },
-        { value: 310 },
-        { value: 234 },
-        { value: 135 },
-        { value: 1548 },
-      ],
+      data: [],
       emphasis: {
         itemStyle: {
           shadowBlur: 10,
@@ -71,13 +74,7 @@ const options = ref({
     {
       name: "Return",
       type: "line",
-      data: [
-        { value: 201 },
-        { value: 110 },
-        { value: 34 },
-        { value: 235 },
-        { value: 1548 },
-      ],
+      data: [],
       emphasis: {
         itemStyle: {
           shadowBlur: 10,
