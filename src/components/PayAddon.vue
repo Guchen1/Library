@@ -11,7 +11,7 @@ import { useRouter } from 'vue-router'
 import type { BookInfo } from '@/types/type'
 import axios from 'axios'
 import { useAxios } from '@/stores/axios'
-const url = ref('http://pay.fccak.cn/submit.php')
+const url = ref('https://pay.fccak.cn/submit.php')
 const ready = ref(false)
 const router = useRouter()
 const visible = ref(false)
