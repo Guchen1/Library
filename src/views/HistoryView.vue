@@ -12,6 +12,7 @@
 </template>
 
 <script setup lang="ts">
+import 'ant-design-vue/es/message/style/css'
 import BookSearch from '@/components/BookSearch.vue'
 import BookTable from '@/components/BookTable.vue'
 import type { BookDetail, BookInfo, BookResponse, BorrowRecord, BorrowResponse } from '@/types/type'

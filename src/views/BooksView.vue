@@ -27,6 +27,7 @@
 </template>
 
 <script setup lang="ts">
+import 'ant-design-vue/es/message/style/css'
 import BookCard from '@/components/BookCard.vue'
 import { ref, reactive, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import BookSearch from '@/components/BookSearch.vue'
