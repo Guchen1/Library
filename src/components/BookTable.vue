@@ -277,7 +277,6 @@ const checked = computed({
   set: () => {}
 })
 const success = (e: any) => {
-  message.success(e.success)
   ready.value = false
 }
 const data = reactive<BookInfo[]>([])
