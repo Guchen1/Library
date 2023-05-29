@@ -1,17 +1,21 @@
 <template>
   <div>
-    <a-table :scroll="{
-      y:
-        $route.path == '/history'
-          ? width > 1380
-            ? props.height - 320 + 'px'
-            : props.height - 360 + 'px'
-          : width > 1576
+    <a-table
+      :scroll="{
+        y:
+          $route.path == '/history'
+            ? width > 1380
+              ? props.height - 320 + 'px'
+              : props.height - 360 + 'px'
+            : width > 1576
             ? props.height - 310 + 'px'
             : props.height - 365 + 'px',
-      visible: false
-    }" :columns="columns" :pagination="{ position: ['bottomCenter'], pageSize: 12, showSizeChanger: false }"
-      :data-source="data">
+        visible: false
+      }"
+      :columns="columns"
+      :pagination="{ position: ['bottomCenter'], pageSize: 12, showSizeChanger: false }"
+      :data-source="data"
+    >
       <template #headerCell="{ column }">
         <template v-if="column.key === 'isbn'">
           <span style="color: #1d39c4"> ISBN </span>
@@ -25,8 +29,8 @@
           {{ record.borrowdate === undefined ? '' : record.borrowdate.format('YYYY-MM-DD') }}
         </template>
         <template v-if="column.key === 'duedate'">
-          {{ record.duedate === undefined ? '' : record.duedate.format('YYYY-MM-DD') }} </template><template
-          v-if="column.key === 'returndate'">
+          {{ record.duedate === undefined ? '' : record.duedate.format('YYYY-MM-DD') }} </template
+        ><template v-if="column.key === 'returndate'">
           {{ record.returndate === undefined ? '' : record.returndate.format('YYYY-MM-DD') }}
         </template>
         <template v-if="column.key === 'name'">
@@ -34,7 +38,10 @@
         </template>
         <template v-else-if="column.key === 'selected'">
           <div style="display: flex; justify-content: center">
-            <a-checkbox :checked="checked(record)" @update:checked="check(record, $event)"></a-checkbox>
+            <a-checkbox
+              :checked="checked(record)"
+              @update:checked="check(record, $event)"
+            ></a-checkbox>
           </div>
         </template>
         <template v-else-if="column.key === 'status'">
@@ -45,32 +52,66 @@
           <a-tag v-else color="red" class="tag">Overdue</a-tag>
         </template>
         <template v-else-if="column.key === 'action'">
-          <a-popover placement="left" v-if="record.status == 'available' && props.type != 'user'"
-            v-model:open="record.visible" title="Please input patron name" trigger="click">
+          <a-popover
+            placement="left"
+            v-if="record.status == 'available' && props.type != 'user'"
+            v-model:open="record.visible"
+            title="Please input patron name"
+            trigger="click"
+          >
             <template #content>
-              <a-input v-model:value="name"></a-input><a-button style="display: inline-block"
-                @click="borrow(record, name)">Submit</a-button>
+              <a-input v-model:value="name"></a-input
+              ><a-button style="display: inline-block" @click="borrow(record, name)"
+                >Submit</a-button
+              >
             </template>
-            <a style="font-size: 10px; white-space: nowrap" type="primary" size="small">Check Out</a>
+            <a style="font-size: 10px; white-space: nowrap" type="primary" size="small"
+              >Check Out</a
+            >
           </a-popover>
 
-          <a v-else-if="props.type != 'user' && record.status != 'overdue'" type="primary"
-            style="font-size: 10px; white-space: nowrap" size="small" @click="returnBook(record)">Return</a>
+          <a
+            v-else-if="props.type != 'user' && record.status != 'overdue'"
+            type="primary"
+            style="font-size: 10px; white-space: nowrap"
+            size="small"
+            @click="returnBook(record)"
+            >Return</a
+          >
           <div style="display: inline-block">
-            <a :disabled="record.renewable == false ? 'disabled' : null"
-              v-if="record.status != 'available' && record.status != 'returned' && record.status != 'overdue'" style="
+            <a
+              :disabled="record.renewable == false ? 'disabled' : null"
+              v-if="
+                record.status != 'available' &&
+                record.status != 'returned' &&
+                record.status != 'overdue'
+              "
+              style="
                 padding-left: 5px;
                 font-size: 10px;
                 word-wrap: break-word;
                 word-break: keep-all;
-              " type="primary" size="small" @click="renew(record)">Renew</a>
+              "
+              type="primary"
+              size="small"
+              @click="renew(record)"
+              >Renew</a
+            >
           </div>
           <div style="display: inline-block">
-            <a v-if="record.status == 'overdue' && props.type != 'user'" style="
+            <a
+              v-if="record.status == 'overdue' && props.type != 'user'"
+              style="
+                padding-left: 5px;
                 font-size: 10px;
                 word-wrap: break-word;
                 word-break: keep-all;
-              " type="error" size="small" @click="fine(record)">Fine and Return</a>
+              "
+              type="error"
+              size="small"
+              @click="fine(record)"
+              >Fine and Return</a
+            >
           </div>
         </template>
       </template>
@@ -115,21 +156,22 @@ const hide = (record: BookInfo) => {
     }
   }
 }
-axios.get(useAxios().urlAlter + "/Static/getStatisInfo?opUser=" + useClient().clientData.clientName).then((res: any) => {
-  if (res.data.code == 200) {
-    /*maxBook:int//最大借书数目
+axios
+  .get(useAxios().urlAlter + '/Static/getStatisInfo?opUser=' + useClient().clientData.clientName)
+  .then((res: any) => {
+    if (res.data.code == 200) {
+      /*maxBook:int//最大借书数目
     fine:float //罚款金额 美元
     timeLimit:int //借书时长 天*/
-    fV.value = res.data.fine;
-
-  }
-})
+      fV.value = res.data.fine
+    }
+  })
 const fine = (recordx: BookInfo) => {
   record.value = recordx
   ready.value = true
 }
 const currentList = computed({
-  set: () => { },
+  set: () => {},
   get: () => {
     let temp: Array<BookInfo> = []
     data.forEach((item) => {
@@ -169,39 +211,28 @@ const returnBook = async (record: BookInfo) => {
 }
 const borrow = (record: BookInfo, person: string) => {
   //TODO: 检测用户是否达到借书上限制，是否缴纳罚金
-  axios.get('https://spm.guchen.work:8848/UserOp/bookCount?opUser=' + person).then((res: any) => {
-    if (res.data.code == 200)
-      if (res.data.numAva < 1) {
-        message.error('Reach borrow limit!')
-        return
+  await axios
+    .post('/StaffOp/borrowBook', {
+      opUser: client.clientData.clientName,
+      bookId: record.bookId,
+      userAccount: person,
+      dates: '30'
+    })
+    .then((e: AxiosResponse<BackendResponse>) => {
+      if (!e.data.status) {
+        throw e.data.msg.content
       }
-      else {
-        axios
-          .post('/StaffOp/borrowBook', {
-            opUser: client.clientData.clientName,
-            bookId: record.bookId,
-            userAccount: person,
-            dates: '30'
-          })
-          .then((e: AxiosResponse<BackendResponse>) => {
-            if (!e.data.status) {
-              throw e.data.msg.content
-            }
-            message.info(`Borrow book success!`)
-            data[data.indexOf(record)].borrowdate = dayjs()
-            data[data.indexOf(record)].borrower = name.value
-            data[data.indexOf(record)].duedate = dayjs().add(30, 'day')
-            data[data.indexOf(record)].returndate = dayjs().add(30, 'day')
-            data[data.indexOf(record)].status = 'borrowed'
-            client.reload()
-          })
-          .catch((e: any) => {
-            message.error(`Error detected when borrowing books: ${e}`)
-          })
-      }
-  })
-
-
+      message.info(`Borrow book success!`)
+      data[data.indexOf(record)].borrowdate = dayjs()
+      data[data.indexOf(record)].borrower = name.value
+      data[data.indexOf(record)].duedate = dayjs().add(30, 'day')
+      data[data.indexOf(record)].returndate = undefined
+      data[data.indexOf(record)].status = 'borrowed'
+      client.reload()
+    })
+    .catch((e: any) => {
+      message.error(`Error detected when borrowing books: ${e}`)
+    })
 }
 const renew = (record: BookInfo) => {
   //TODO-C: Finish renew function
@@ -219,7 +250,7 @@ const renew = (record: BookInfo) => {
       }
       message.info(`Renew book success!`)
       data[data.indexOf(record)].duedate?.add(30, 'day')
-      data[data.indexOf(record)].returndate?.add(30, 'day')
+      data[data.indexOf(record)] == undefined
       client.reload()
     })
     .catch((e: any) => {
@@ -249,7 +280,7 @@ const checked = computed({
       }
     }
   },
-  set: () => { }
+  set: () => {}
 })
 const success = (e: any) => {
   ready.value = false

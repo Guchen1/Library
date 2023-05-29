@@ -111,7 +111,8 @@ const search = async (name: string, author: string, isbn: string) => {
       borrower: e.borrowAccount,
       borrowdate: dayjs(e.borrowTime, 'YYYY-MM-DD'),
       duedate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
-      returndate: dayjs(e.borrowTime, 'YYYY-MM-DD').add(e.borrowDuration, 'day'),
+      returndate:
+        e.borrowReturnDate != undefined ? dayjs(e.borrowReturnDate, 'YYYY-MM-DD') : undefined,
       status:
         e.borrowIsOverTime == 1
           ? 'overdue'

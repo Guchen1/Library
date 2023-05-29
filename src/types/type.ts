@@ -112,6 +112,7 @@ export interface BorrowRecord {
   borrowIsOverTime: number
   borrowId: number
   borrowIsReturn: string | undefined
+  borrowReturnDate: string | undefined
 }
 
 export interface BorrowResponse {

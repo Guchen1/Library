@@ -152,7 +152,7 @@ const search = async (name: string, author: string, isbn: string, borrower: stri
     for (var i of recordForBook) {
       //borrower like i.borrowAccount
       console.log(i.borrowAccount.search(borrower))
-      if(borrower!=""&&i.borrowAccount.search(borrower.trim())==-1) continue
+      if (borrower != '' && i.borrowAccount.search(borrower.trim()) == -1) continue
       data.push({
         name: whatever.bookName,
         bookId: whatever.bookId,
@@ -161,7 +161,8 @@ const search = async (name: string, author: string, isbn: string, borrower: stri
         borrower: i.borrowAccount,
         borrowdate: dayjs(i.borrowTime, 'YYYY-MM-DD'),
         duedate: dayjs(i.borrowTime, 'YYYY-MM-DD').add(i.borrowDuration, 'day'),
-        returndate: dayjs(i.borrowTime, 'YYYY-MM-DD').add(i.borrowDuration, 'day'),
+        returndate:
+          i.borrowReturnDate != undefined ? dayjs(i.borrowReturnDate, 'YYYY-MM-DD') : undefined,
         status: i.borrowIsOverTime == 1 ? 'overdue' : i.borrowIsrenew == 1 ? 'renewed' : 'borrowed',
         renewable: i.borrowIsrenew == 0,
         visible: true,
@@ -170,24 +171,24 @@ const search = async (name: string, author: string, isbn: string, borrower: stri
       })
       //TODO-C: Add fine
     }
-    if(borrower.trim()=="")
-    for (var j = 0; j < whatever.bookStock; ++j) {
-      data.push({
-        name: whatever.bookName,
-        bookId: whatever.bookId,
-        isbn: whatever.bookIsbn,
-        author: whatever.bookAuthor,
-        borrower: undefined,
-        borrowdate: undefined,
-        duedate: undefined,
-        returndate: e.returndate,
-        status: 'available',
-        renewable: undefined,
-        visible: false,
-        borrowId: undefined,
-        fine: 0
-      })
-    }
+    if (borrower.trim() == '')
+      for (var j = 0; j < whatever.bookStock; ++j) {
+        data.push({
+          name: whatever.bookName,
+          bookId: whatever.bookId,
+          isbn: whatever.bookIsbn,
+          author: whatever.bookAuthor,
+          borrower: undefined,
+          borrowdate: undefined,
+          duedate: undefined,
+          returndate: e.returndate,
+          status: 'available',
+          renewable: undefined,
+          visible: false,
+          borrowId: undefined,
+          fine: 0
+        })
+      }
   })
 }
 //TODO-C: Create Patron
