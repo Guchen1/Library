@@ -38,7 +38,14 @@ const emits = defineEmits<{
 const borrow = (e: BookDetail) => {
   //TODO-C: Complete borrow book api.
   //Axios no need to async
-  axios
+  axios.get('https://spm.guchen.work:8848/UserOp/bookCount?opUser=' + client.clientData.clientName).then((res: any) => {
+    if(res.data.code==200)
+    if (res.data.numAva < 1) {
+      message.error('Reach borrow limit!')
+      return
+    }
+    else{
+      axios
     .post('/UserOp/borrowBook', {
       opUser: client.clientData.clientName,
       bookId: String(e.bookId),
@@ -57,6 +64,9 @@ const borrow = (e: BookDetail) => {
     .catch((e: any) => {
       message.error(`Error detected while borrowing books: ${e}`)
     })
+    }
+  })
+  
 }
 </script>
 
