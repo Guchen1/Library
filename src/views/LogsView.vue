@@ -65,7 +65,7 @@ const search = () => {
     .post("/SuperuserOp/logInfo", {
       opUser: client.clientData.clientName,
       page: "1",
-      num: "999",
+      num: "99999",
     })
     .then((res: AxiosResponse<LogResponse>) => {
       res.data.logs.forEach((e) =>
