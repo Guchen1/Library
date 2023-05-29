@@ -211,7 +211,7 @@ const returnBook = async (record: BookInfo) => {
 }
 const borrow = (record: BookInfo, person: string) => {
   //TODO: 检测用户是否达到借书上限制，是否缴纳罚金
-  await axios
+  axios
     .post('/StaffOp/borrowBook', {
       opUser: client.clientData.clientName,
       bookId: record.bookId,
