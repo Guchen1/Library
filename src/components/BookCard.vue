@@ -37,6 +37,7 @@ const emits = defineEmits<{
 }>()
 const borrow = (e: BookDetail) => {
   //TODO-C: Complete borrow book api.
+  //Axios no need to async
   axios
     .post('/UserOp/borrowBook', {
       opUser: client.clientData.clientName,

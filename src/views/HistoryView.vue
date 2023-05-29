@@ -114,10 +114,10 @@ const search = async (name: string, author: string, isbn: string) => {
       status:
         e.borrowIsOverTime == 1
           ? 'overdue'
-          : e.borrowIsrenew == 1
-          ? 'renewed'
           : e.borrowIsReturn == 'yes'
           ? 'returned'
+          : e.borrowIsrenew == 1
+          ? 'renewed'
           : 'borrowed',
       renewable: e.borrowIsrenew == 0,
       visible: true,

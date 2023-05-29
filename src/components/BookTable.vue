@@ -167,9 +167,10 @@ const currentList = computed({
     return temp
   }
 })
-const returnBook = (record: BookInfo) => {
+const returnBook = async (record: BookInfo) => {
   //TODO-C: Return books
-  axios
+  //TODO: 检测用户是否缴纳罚金
+  await axios
     .post('/StaffOp/returnBook', {
       opUser: client.clientData.clientName,
       bookId: record.bookId,
@@ -193,9 +194,9 @@ const returnBook = (record: BookInfo) => {
       message.error(`Error detected when returing books: ${e}`)
     })
 }
-const borrow = (record: BookInfo, person: string) => {
-  //TODO-C: Borrow books
-  axios
+const borrow = async (record: BookInfo, person: string) => {
+  //TODO: 检测用户是否达到借书上限制，是否缴纳罚金
+  await axios
     .post('/StaffOp/borrowBook', {
       opUser: client.clientData.clientName,
       bookId: record.bookId,
@@ -220,7 +221,7 @@ const borrow = (record: BookInfo, person: string) => {
 }
 const renew = (record: BookInfo) => {
   //TODO-C: Finish renew function
-  //Waiting backend to impleent 'has renewed' state
+  //TODO：查询用户是否缴纳罚金
   axios
     .post('/UserOp/renewBook', {
       opUser: client.clientData.clientName,
