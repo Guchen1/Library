@@ -78,7 +78,7 @@ window.addEventListener("message", function (event) {
 //按顺序拼接url
 const urlMix = () => {
     const { pid, type, out_trade_no, notify_url, return_url, name, money, sitename, sign, sign_type } = info.value
-    url.value = `http://pay.fccak.cn/submit.php?pid=${pid}&type=${type}&out_trade_no=${out_trade_no}&notify_url=${notify_url}&return_url=${return_url}&name=${name}&money=${money}&sitename=${sitename}&sign=${sign}&sign_type=${sign_type}`
+    url.value = `https://pay.fccak.cn/submit.php?pid=${pid}&type=${type}&out_trade_no=${out_trade_no}&notify_url=${notify_url}&return_url=${return_url}&name=${name}&money=${money}&sitename=${sitename}&sign=${sign}&sign_type=${sign_type}`
 }
 </script>
 <style></style>
