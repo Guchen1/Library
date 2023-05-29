@@ -612,7 +612,7 @@ const isbnFill = () => {
         let item = data.items[0]
         console.log()
         book.name = item.volumeInfo.title ?? ' '
-        if (book.author.length > 0) {
+        if (book.author! == '') {
           book.author = item.volumeInfo.authors[0]
         }
       } else {
