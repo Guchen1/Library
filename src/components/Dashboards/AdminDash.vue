@@ -189,6 +189,7 @@ axios.get(useAxios().urlAlter + "/ManagerOp/getStatisInfo?opUser="+useClient().c
     optionsx.value.series[0].data[0].value = res.data.active[1];
     optionsy.value.series[0].data[0].value = res.data.active[2];
     option1.series[0].data = res.data.fine;
+    
     option2.series[0].data = res.data.patronNum;
   }
 });
